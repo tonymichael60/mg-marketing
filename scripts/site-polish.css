@@ -1,0 +1,125 @@
+/* Liquid glass nav bar (after ui-layouts.com/components/liquid-glass). Size and shape stay Framer's. */
+.framer-peFtD {
+  background-color: rgba(255, 255, 255, 0.42) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.15), 0 0 12px rgba(0, 0, 0, 0.08), 0 0 24px rgba(255, 255, 255, 0.1) !important;
+  isolation: isolate;
+}
+/* Bend layer: blurred backdrop, distorted by the #mg-glass-distortion SVG filter. */
+.framer-peFtD::before,
+.framer-peFtD::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.framer-peFtD::before {
+  z-index: -1;
+  -webkit-backdrop-filter: blur(14px) saturate(1.8);
+  backdrop-filter: blur(14px) saturate(1.8);
+  filter: url(#mg-glass-distortion);
+}
+/* Edge layer: inner highlights. */
+.framer-peFtD::after {
+  z-index: 2;
+  box-shadow: inset 3px 3px 3px 0 rgba(255, 255, 255, 0.45), inset -3px -3px 3px 0 rgba(255, 255, 255, 0.45);
+}
+
+/* Nav logo wordmark: darker than Framer's grey gradient so it reads on the glass. */
+.framer-peFtD .framer-iw40tg [data-text-fill] {
+  background-image: linear-gradient(162deg, rgb(30, 32, 36) 0%, rgb(4, 5, 7) 100%) !important;
+}
+
+/* Nav links: liquid glass capsule on hover, focus and press. */
+.framer-peFtD .framer-FsDr0 { position: relative; isolation: isolate; overflow: visible !important; }
+.framer-peFtD .framer-1aq94il { overflow: visible !important; }
+.framer-peFtD .framer-FsDr0::before {
+  content: "";
+  position: absolute;
+  inset: -7px -14px;
+  z-index: -1;
+  border-radius: 999px;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.18) 55%, rgba(255, 255, 255, 0.35));
+  -webkit-backdrop-filter: blur(6px) saturate(1.8);
+  backdrop-filter: blur(6px) saturate(1.8);
+  box-shadow: inset 2px 2px 2px 0 rgba(255, 255, 255, 0.6), inset -2px -2px 2px 0 rgba(255, 255, 255, 0.35), 0 4px 10px rgba(0, 0, 0, 0.12);
+  opacity: 0;
+  scale: 0.8;
+  transition: opacity 0.3s ease, scale 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.framer-peFtD .framer-FsDr0:hover::before,
+.framer-peFtD .framer-FsDr0:focus-visible::before,
+.framer-peFtD .framer-FsDr0:active::before {
+  opacity: 1;
+  scale: 1;
+}
+
+/* Nav link hover: dark blue text, underline and capsule tint instead of orange. */
+.framer-peFtD .framer-FsDr0:hover p,
+.framer-peFtD .framer-FsDr0:focus-visible p {
+  color: #020a70 !important;
+  --framer-text-color: #020a70 !important;
+}
+/* Not only on hover: Framer fades the underline out after mouse-out, so it must stay blue. */
+.framer-peFtD .framer-FsDr0 .framer-150vfhi {
+  background-color: #020a70 !important;
+}
+.framer-peFtD .framer-FsDr0::before {
+  background: linear-gradient(135deg, rgba(220, 228, 255, 0.6), rgba(120, 140, 230, 0.18) 55%, rgba(200, 212, 255, 0.4)) !important;
+  box-shadow: inset 2px 2px 2px 0 rgba(255, 255, 255, 0.6), inset -2px -2px 2px 0 rgba(255, 255, 255, 0.35), 0 4px 12px rgba(2, 10, 112, 0.22) !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Smoother first paint: content eases in instead of popping. */
+  #main {
+    animation: mg-page-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  @keyframes mg-page-enter {
+    from { opacity: 0; filter: blur(6px); }
+  }
+  img {
+    transition: opacity 0.4s ease;
+  }
+
+  /* Interactive buttons. Uses the scale/translate properties so Framer's own transforms are untouched. */
+  .framer-2XDaJ,
+  .framer-iV5Xi,
+  .framer-FsDr0,
+  .framer-wgchk,
+  .framer-iw40tg {
+    transition: scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), translate 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+  }
+  .framer-2XDaJ:hover {
+    scale: 1.04;
+    translate: 0 -2px;
+    filter: brightness(1.12);
+  }
+  .framer-iV5Xi:hover {
+    translate: 0 -3px;
+  }
+  .framer-FsDr0:hover,
+  .framer-iw40tg:hover {
+    translate: 0 -1px;
+  }
+  .framer-2XDaJ:active,
+  .framer-iV5Xi:active,
+  .framer-FsDr0:active,
+  .framer-wgchk:active,
+  .framer-iw40tg:active {
+    scale: 0.96;
+    translate: 0 0;
+    transition-duration: 0.1s;
+  }
+}
+
+.framer-2XDaJ:focus-visible,
+.framer-iV5Xi:focus-visible,
+.framer-FsDr0:focus-visible,
+.framer-wgchk:focus-visible,
+.framer-iw40tg:focus-visible {
+  outline: 2px solid rgb(253, 58, 37);
+  outline-offset: 3px;
+}

@@ -1,0 +1,154 @@
+/* Services section: pinned staircase of service cards. Mounted and driven by site-services.js. */
+.mg-services-host > :not(.mg-services) { display: none !important; }
+.mg-services-host { display: block !important; height: auto !important; overflow: visible !important; }
+
+.mg-services {
+  --mg-ink: rgb(41, 44, 46);
+  --mg-muted: rgb(113, 113, 122);
+  --mg-card: rgb(24, 24, 27);
+  --mg-card-h: clamp(400px, calc(100vh - 300px), 500px);
+  position: relative;
+  height: 300vh;
+  width: 100%;
+  border-radius: 24px;
+  background: #fff;
+  color: var(--mg-ink);
+  font-family: Urbanist, "Urbanist Placeholder", sans-serif;
+}
+.mg-services__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border-radius: inherit;
+}
+.mg-services__inner {
+  width: 100%;
+  max-width: 1296px;
+  margin: 0 auto;
+  padding: 0 56px;
+  box-sizing: border-box;
+}
+.mg-services__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+.mg-services__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 16px;
+  border-radius: 8px;
+  background: rgb(242, 242, 242);
+  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.06);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+}
+.mg-services__tag::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--mg-ink);
+}
+.mg-services h2 {
+  margin: 20px 0 0;
+  font-size: 64px;
+  line-height: 68px;
+  letter-spacing: -1.92px;
+  font-weight: 600;
+  background: linear-gradient(306deg, rgb(41, 44, 46) 41%, rgba(0, 0, 0, 0) 186%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.mg-services__header > p {
+  max-width: 400px;
+  margin: 0;
+  color: var(--mg-muted);
+  font-size: 16px;
+  line-height: 24px;
+  text-align: right;
+}
+
+.mg-services__cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+.mg-service {
+  display: flex;
+  flex-direction: column;
+  height: var(--mg-card-h);
+  overflow: hidden;
+  border-radius: 20px;
+  background: radial-gradient(120% 70% at 30% 0%, rgb(58, 58, 63) 0%, var(--mg-card) 60%);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+  color: #fff;
+  will-change: transform;
+}
+.mg-service__media {
+  position: relative;
+  flex: none;
+  aspect-ratio: 415 / 240;
+  margin: 8px 8px 0;
+  overflow: hidden;
+  border-radius: 14px;
+}
+.mg-service__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mg-service__media span {
+  position: absolute;
+  right: 14px;
+  bottom: 6px;
+  font-size: 56px;
+  line-height: 1;
+  font-weight: 600;
+  letter-spacing: -1.5px;
+  color: #fff;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+  font-variant-numeric: tabular-nums;
+}
+.mg-service__body { display: flex; flex-direction: column; flex: 1; padding: 20px 20px 22px; min-height: 0; }
+.mg-service h3 { margin: 0; font-size: 24px; line-height: 30px; font-weight: 600; letter-spacing: -0.24px; }
+.mg-service p { margin: 10px 0 0; color: rgba(255, 255, 255, 0.68); font-size: 15px; line-height: 22px; }
+.mg-service ul { display: flex; flex-wrap: wrap; gap: 6px; margin: auto 0 0; padding: 16px 0 0; list-style: none; }
+.mg-service li {
+  padding: 5px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 600;
+}
+
+@media (max-width: 1199.98px) {
+  .mg-services__inner { padding: 0 32px; }
+  .mg-services h2 { font-size: 44px; line-height: 50px; letter-spacing: -1px; }
+  .mg-services__cards { gap: 14px; }
+  .mg-service h3 { font-size: 20px; line-height: 26px; }
+  .mg-service p { font-size: 14px; line-height: 20px; }
+  .mg-service__media span { font-size: 42px; }
+}
+/* Phone: no pinning; cards stack in one column. */
+@media (max-width: 809.98px) {
+  .mg-services { height: auto; }
+  .mg-services__pin { position: relative; height: auto; padding: 56px 0; }
+  .mg-services__inner { padding: 0 16px; }
+  .mg-services__header { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 28px; }
+  .mg-services__header > p { text-align: left; }
+  .mg-services h2 { font-size: 40px; line-height: 46px; letter-spacing: -1.2px; }
+  .mg-services__cards { grid-template-columns: 1fr; }
+  .mg-service { height: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mg-services { height: auto; }
+  .mg-services__pin { position: relative; height: auto; padding: 96px 0; }
+}
