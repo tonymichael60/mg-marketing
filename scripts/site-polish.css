@@ -120,7 +120,7 @@
 .framer-FsDr0:focus-visible,
 .framer-wgchk:focus-visible,
 .framer-iw40tg:focus-visible {
-  outline: 2px solid rgb(253, 58, 37);
+  outline: 2px solid var(--token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a, rgb(20, 34, 227));
   outline-offset: 3px;
 }
 
@@ -128,4 +128,68 @@
 .framer-03p7A .framer-662aja {
   -webkit-mask: linear-gradient(90deg, #0000 0%, #000000e6 12.5723%, #000 50%, #000000e6 87.4277%, #0000 100%) !important;
   mask: linear-gradient(90deg, #0000 0%, #000000e6 12.5723%, #000 50%, #000000e6 87.4277%, #0000 100%) !important;
+}
+
+/* Accent colour: the orange accent token (#fd3a25) becomes the hero's blue, so every orange accent
+   (statistics bars and suffixes, dots, borders) turns blue. The statistics bar glow is a literal orange. */
+body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
+[data-framer-name="Statistics"] [data-framer-name="Bar"] {
+  box-shadow: 0 2.77px 2.21px 0 rgba(20, 34, 227, 0.25), 0 3px 4px 0 rgba(20, 34, 227, 0.3) !important;
+}
+/* "Available for worldwide project" pulse ring: literal orange halo. */
+.framer-1eipfdp { background-color: rgba(20, 34, 227, 0.25) !important; }
+
+/* Phone menu: solid dark-navy backdrop instead of a full-screen blur, which repainted slowly on phones. */
+.framer-qZQ5t.framer-1d1l2ka { background-color: rgba(2, 6, 40, 0.94) !important; }
+.framer-qZQ5t.framer-19wkzlx { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+
+/* Phone nav: space between the wordmark and the menu button. */
+.framer-peFtD .framer-wgchk { margin-left: 20px; }
+
+/* Luxury navy/white gradients. Statistics and Testimonials share one deep-navy base so the two panels read as one. */
+.framer-279ugc {
+  background: radial-gradient(70% 90% at 0% 0%, rgba(20, 34, 227, 0.38) 0%, rgba(2, 10, 112, 0.18) 45%, transparent 75%), #03051a !important;
+}
+.framer-1ynxxm3 {
+  background: radial-gradient(65% 80% at 100% 100%, rgba(20, 34, 227, 0.32) 0%, rgba(2, 10, 112, 0.16) 45%, transparent 75%), #03051a !important;
+}
+/* Features: white panel with a soft navy halo behind the central logo. */
+.framer-gtsbnt {
+  background: radial-gradient(45% 40% at 50% 55%, rgba(20, 34, 227, 0.12) 0%, rgba(20, 34, 227, 0.04) 50%, transparent 75%), linear-gradient(180deg, #fff 0%, #f2f4ff 60%, #edecec 100%) !important;
+}
+/* Tools: a soft white glow with a pale-navy ring that fades into the page grey, so it has no hard edges. */
+.framer-1vb41im {
+  background: radial-gradient(50% 55% at 50% 50%, #fff 0%, rgba(228, 233, 253, 0.95) 45%, rgba(237, 236, 236, 0) 85%) !important;
+}
+.framer-1thhh33 { background: transparent !important; }
+/* Gradients for About, Services, Process and Featured Works: navy tints whose top and bottom edges fade into the
+   neighbouring section colour (page grey #edecec or white), so sections join without a visible seam. */
+.framer-2vcsc7 {
+  background: radial-gradient(55% 40% at 80% 30%, rgba(150, 168, 245, 0.75) 0%, rgba(237, 236, 236, 0) 70%), radial-gradient(40% 30% at 12% 62%, rgba(170, 184, 245, 0.6) 0%, rgba(237, 236, 236, 0) 70%) !important;
+}
+/* Services: a plain white rounded card with a soft drop shadow, sitting in a soft navy halo that spreads around it.
+   The wrappers stop clipping so the shadow and halo show; the halo fades out before it reaches neighbouring content. */
+.framer-7u2uc9 { overflow: visible !important; padding-bottom: 64px !important; isolation: isolate; }
+.framer-7u2uc9::before {
+  content: "";
+  position: absolute;
+  inset: -60px 0 -140px;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(34% 30% at 6% 32%, rgba(130, 150, 245, 0.65) 0%, rgba(237, 236, 236, 0) 70%),
+    radial-gradient(34% 30% at 94% 68%, rgba(120, 140, 245, 0.6) 0%, rgba(237, 236, 236, 0) 70%),
+    radial-gradient(55% 15% at 50% 82%, rgba(150, 168, 250, 0.6) 0%, rgba(237, 236, 236, 0) 70%);
+}
+.framer-87ga54 { overflow: visible !important; }
+.framer-1n5cfl9 {
+  border-radius: 40px !important;
+  background: #fff !important;
+  box-shadow: 0 36px 64px -28px rgba(0, 0, 0, 0.28), 0 12px 24px -12px rgba(0, 0, 0, 0.14) !important;
+}
+.mg-process__pin {
+  background: radial-gradient(42% 40% at 72% 52%, rgba(150, 168, 245, 0.7) 0%, rgba(237, 236, 236, 0) 100%);
+}
+.framer-rjy3eh {
+  background: linear-gradient(180deg, #edecec 0%, #e0e6ff 18%, #dde3ff 45%, #f1f3ff 80%, #fff 100%) !important;
 }

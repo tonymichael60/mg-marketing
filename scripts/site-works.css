@@ -117,13 +117,18 @@
   .mg-work__body { padding: 40px 32px 32px; }
   .mg-work h3 { font-size: 27px; line-height: 39px; letter-spacing: -0.27px; }
 }
-/* Phone: image on top, text below, no stacking. */
+/* Phone: image on top, text below; compact so each card fits the screen while the cards stack. */
 @media (max-width: 809.98px) {
   .mg-works { gap: 20px; }
-  .mg-work { position: relative; top: auto; grid-template-columns: 1fr; min-height: 0; border-radius: 28px; transform: none !important; }
-  .mg-work__media { order: -1; aspect-ratio: 4 / 3; }
-  .mg-work__body { padding: 28px 22px 26px; }
-  .mg-work h3 { font-size: 26px; line-height: 34px; letter-spacing: -0.26px; }
-  .mg-work__desc { font-size: 16px; line-height: 24px; }
-  .mg-work__cta { margin-top: 8px; }
+  .mg-work { top: calc(16px + var(--i) * 12px); grid-template-columns: 1fr; min-height: 0; border-radius: 28px; }
+  .mg-work__media { order: -1; aspect-ratio: 16 / 9; }
+  .mg-work__body { padding: 20px 20px 22px; }
+  .mg-work h3 { font-size: 24px; line-height: 30px; letter-spacing: -0.24px; }
+  .mg-work__desc { margin-top: 8px; font-size: 15px; line-height: 22px; }
+  .mg-work__meta { margin-top: 14px; padding: 12px 0; }
+  .mg-work__meta small { font-size: 13px; line-height: 18px; }
+  .mg-work__tags { gap: 4px 14px; margin-top: 4px; }
+  .mg-work__tags span { font-size: 15px; line-height: 22px; }
+  .mg-work__tags span::before { width: 8px; height: 8px; }
+  .mg-work__cta { margin-top: 6px; padding: 12px 22px; }
 }

@@ -39,7 +39,6 @@
   function update() {
     if (!block || !block.isConnected) return;
     const cards = [...block.children];
-    if (innerWidth < 810) return;
     const progress = cards.map(card => {
       const r = card.getBoundingClientRect(), stick = parseFloat(getComputedStyle(card).top);
       return Math.min(1, Math.max(0, 1 - (r.top - stick) / innerHeight));

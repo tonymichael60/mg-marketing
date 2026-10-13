@@ -96,6 +96,34 @@ if(!servicesEase.test(servicesJs)) throw new Error('Services accordion transitio
 fs.writeFileSync(servicesScript,servicesJs.replace(servicesEase,()=>servicesEaseFixed));
 console.log('Applied smooth services accordion transition.');
 
+// Accent dot glow: the animated dot component hardcodes an orange glow; use the blue accent from site-polish.css.
+const dotScript=path.join(root,'mirror/framerusercontent.com/sites/4nHYQx2yRdfCawW7aBBb5U/Z8MROexOS.Dh7cvlqX.mjs');
+const dotJs=fs.readFileSync(dotScript,'utf8');
+const dotJsBlue=dotJs.replace(/boxShadow:`([^`]*)`/g,(m,v)=>'boxShadow:`'+v.replaceAll('rgba(253, 58, 37,','rgba(20, 34, 227,').replaceAll('rgb(253, 58, 37)','rgb(20, 34, 227)')+'`');
+if(dotJsBlue!==dotJs) fs.writeFileSync(dotScript,dotJsBlue);
+else if(!dotJs.includes('rgb(20, 34, 227)')) throw new Error('Accent dot glow not found');
+console.log('Applied blue accent dot glow.');
+
+// Testimonial rating stars: orange SVG asset, recoloured to the blue accent.
+const starSvg=path.join(root,'mirror/framerusercontent.com/images/ir3Y9RLfZ854i7W0EQDhS0Zl4M.svg');
+fs.writeFileSync(starSvg,fs.readFileSync(starSvg,'utf8').replace('fill="#FD3A25"','fill="#1422E3"'));
+console.log('Set blue rating stars.');
+
+// Phone menu: the overlay popped in and out with 0s transitions. Fade the backdrop and slide the menu panel instead.
+// The panel's full-screen backdrop blur is dropped in site-polish.css, since repainting it made phones stutter.
+const menuEdits=[
+  ['animate:{opacity:1,transition:{delay:0,duration:0,ease:[.5,0,.88,.77],type:`tween`}},className:`${P(b,`framer-1d1l2ka`)}','animate:{opacity:1,transition:{delay:0,duration:.35,ease:[.22,1,.36,1],type:`tween`}},className:`${P(b,`framer-1d1l2ka`)}'],
+  ['exit:{opacity:0,transition:{delay:0,duration:0,ease:[.12,.23,.5,1],type:`tween`}},initial:{opacity:0},onTap:()=>e.hide()},`lk3t5TMlZ`)','exit:{opacity:0,transition:{delay:0,duration:.3,ease:[.4,0,.2,1],type:`tween`}},initial:{opacity:0},onTap:()=>e.hide()},`lk3t5TMlZ`)'],
+  ['y(O.div,{className:P(b,`framer-19wkzlx`),','y(O.div,{initial:{opacity:0,y:-24},animate:{opacity:1,y:0,transition:{duration:.45,ease:[.22,1,.36,1]}},exit:{opacity:0,y:-24,transition:{duration:.3,ease:[.4,0,.2,1]}},className:P(b,`framer-19wkzlx`),'],
+];
+let menuJs=fs.readFileSync(mainScript,'utf8');
+for(const [from,to] of menuEdits) {
+  if(menuJs.includes(from)) menuJs=menuJs.replace(from,to);
+  else if(!menuJs.includes(to)) throw new Error('Phone menu animation hook not found');
+}
+fs.writeFileSync(mainScript,menuJs);
+console.log('Applied smooth phone menu.');
+
 // Link hover colour: dark blue instead of orange in the shared nav link component (header, footer, phone menu).
 const linkOrange='rgb(255, 77, 0)', linkBlue='rgb(2, 10, 112)';
 const linkComponent=path.join(root,'mirror/framerusercontent.com/sites/4nHYQx2yRdfCawW7aBBb5U/Xx_sbLkzD.hqZYkhdL.mjs');
