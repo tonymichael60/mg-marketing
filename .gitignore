@@ -2,3 +2,7 @@ node_modules/
 .sites-local/
 artifacts/
 *.zip
+
+# Local Netlify folder
+.netlify
+.DS_Store

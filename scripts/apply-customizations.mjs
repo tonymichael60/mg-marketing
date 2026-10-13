@@ -86,6 +86,16 @@ if(mainJs.includes(overlayHook)) fs.writeFileSync(mainScript,mainJs.replace(over
 else if(!mainJs.includes(overlayHookFixed)) throw new Error('Nav overlay hook not found');
 console.log('Applied nav scroll lock fix.');
 
+// Services accordion: open/close over 0.8s on a soft ease-in-out curve, and fade the description in on the same curve
+// instead of a linear 0.4s, so cards opened on hover (site-services.js) grow and shrink smoothly.
+const servicesScript=path.join(root,'mirror/framerusercontent.com/sites/4nHYQx2yRdfCawW7aBBb5U/gMDC8wuXltBR4wh60X5cUr025fkyq8Qs6oYlq5qzICs.qCTdhhq8.mjs');
+const servicesEase=/Ln=\{delay:[^,]+,duration:[^,]+,ease:\[[^\]]+\],type:`tween`\},Rn=\{opacity:1,rotate:0,rotateX:0,rotateY:0,scale:1,skewX:0,skewY:0,transition:\{delay:[^,]+,duration:[^,]+,ease:\[[^\]]+\],type:`tween`\}/;
+const servicesEaseFixed='Ln={delay:0,duration:.8,ease:[.4,0,.2,1],type:`tween`},Rn={opacity:1,rotate:0,rotateX:0,rotateY:0,scale:1,skewX:0,skewY:0,transition:{delay:.15,duration:.6,ease:[.4,0,.2,1],type:`tween`}';
+const servicesJs=fs.readFileSync(servicesScript,'utf8');
+if(!servicesEase.test(servicesJs)) throw new Error('Services accordion transition not found');
+fs.writeFileSync(servicesScript,servicesJs.replace(servicesEase,()=>servicesEaseFixed));
+console.log('Applied smooth services accordion transition.');
+
 // Link hover colour: dark blue instead of orange in the shared nav link component (header, footer, phone menu).
 const linkOrange='rgb(255, 77, 0)', linkBlue='rgb(2, 10, 112)';
 const linkComponent=path.join(root,'mirror/framerusercontent.com/sites/4nHYQx2yRdfCawW7aBBb5U/Xx_sbLkzD.hqZYkhdL.mjs');

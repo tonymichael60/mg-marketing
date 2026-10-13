@@ -282,6 +282,12 @@
   outline-offset: 3px;
 }
 
+/* Logo ticker: fade logos out at the right end, mirroring Framer's left-edge fade. */
+.framer-03p7A .framer-662aja {
+  -webkit-mask: linear-gradient(90deg, #0000 0%, #000000e6 12.5723%, #000 50%, #000000e6 87.4277%, #0000 100%) !important;
+  mask: linear-gradient(90deg, #0000 0%, #000000e6 12.5723%, #000 50%, #000000e6 87.4277%, #0000 100%) !important;
+}
+
 /* Process section: pinned, scroll-drawn "Groot Method" route. Mounted by site-process.js. */
 .mg-process-host > :not(.mg-process) { display: none !important; }
 .mg-process-host { display: block !important; height: auto !important; padding: 0 !important; }
@@ -431,159 +437,14 @@
   .mg-step, .mg-process__path * { transition: none !important; }
 }
 
-/* Services section: pinned staircase of service cards. Mounted and driven by site-services.js. */
-.mg-services-host > :not(.mg-services) { display: none !important; }
-.mg-services-host { display: block !important; height: auto !important; overflow: visible !important; }
-
-.mg-services {
-  --mg-ink: rgb(41, 44, 46);
-  --mg-muted: rgb(113, 113, 122);
-  --mg-card: rgb(24, 24, 27);
-  --mg-card-h: clamp(400px, calc(100vh - 300px), 500px);
-  position: relative;
-  height: 300vh;
-  width: 100%;
-  border-radius: 24px;
-  background: #fff;
-  color: var(--mg-ink);
-  font-family: Urbanist, "Urbanist Placeholder", sans-serif;
-}
-.mg-services__pin {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  border-radius: inherit;
-}
-.mg-services__inner {
-  width: 100%;
-  max-width: 1296px;
-  margin: 0 auto;
-  padding: 0 56px;
-  box-sizing: border-box;
-}
-.mg-services__header {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 32px;
-  margin-bottom: 40px;
-}
-.mg-services__tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 7px 16px;
-  border-radius: 8px;
-  background: rgb(242, 242, 242);
-  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.06);
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 600;
-}
-.mg-services__tag::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--mg-ink);
-}
-.mg-services h2 {
-  margin: 20px 0 0;
-  font-size: 64px;
-  line-height: 68px;
-  letter-spacing: -1.92px;
-  font-weight: 600;
-  background: linear-gradient(306deg, rgb(41, 44, 46) 41%, rgba(0, 0, 0, 0) 186%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.mg-services__header > p {
-  max-width: 400px;
-  margin: 0;
-  color: var(--mg-muted);
-  font-size: 16px;
-  line-height: 24px;
-  text-align: right;
-}
-
-.mg-services__cards {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 20px;
-  align-items: start;
-}
-.mg-service {
-  display: flex;
-  flex-direction: column;
-  height: var(--mg-card-h);
-  overflow: hidden;
-  border-radius: 20px;
-  background: radial-gradient(120% 70% at 30% 0%, rgb(58, 58, 63) 0%, var(--mg-card) 60%);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
-  color: #fff;
-  will-change: transform;
-}
-.mg-service__media {
-  position: relative;
-  flex: none;
-  aspect-ratio: 415 / 240;
-  margin: 8px 8px 0;
-  overflow: hidden;
-  border-radius: 14px;
-}
-.mg-service__media img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.mg-service__media span {
-  position: absolute;
-  right: 14px;
-  bottom: 6px;
-  font-size: 56px;
-  line-height: 1;
-  font-weight: 600;
-  letter-spacing: -1.5px;
-  color: #fff;
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
-  font-variant-numeric: tabular-nums;
-}
-.mg-service__body { display: flex; flex-direction: column; flex: 1; padding: 20px 20px 22px; min-height: 0; }
-.mg-service h3 { margin: 0; font-size: 24px; line-height: 30px; font-weight: 600; letter-spacing: -0.24px; }
-.mg-service p { margin: 10px 0 0; color: rgba(255, 255, 255, 0.68); font-size: 15px; line-height: 22px; }
-.mg-service ul { display: flex; flex-wrap: wrap; gap: 6px; margin: auto 0 0; padding: 16px 0 0; list-style: none; }
-.mg-service li {
-  padding: 5px 11px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.08);
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 600;
-}
-
-@media (max-width: 1199.98px) {
-  .mg-services__inner { padding: 0 32px; }
-  .mg-services h2 { font-size: 44px; line-height: 50px; letter-spacing: -1px; }
-  .mg-services__cards { gap: 14px; }
-  .mg-service h3 { font-size: 20px; line-height: 26px; }
-  .mg-service p { font-size: 14px; line-height: 20px; }
-  .mg-service__media span { font-size: 42px; }
-}
-/* Phone: no pinning; cards stack in one column. */
-@media (max-width: 809.98px) {
-  .mg-services { height: auto; }
-  .mg-services__pin { position: relative; height: auto; padding: 56px 0; }
-  .mg-services__inner { padding: 0 16px; }
-  .mg-services__header { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 28px; }
-  .mg-services__header > p { text-align: left; }
-  .mg-services h2 { font-size: 40px; line-height: 46px; letter-spacing: -1.2px; }
-  .mg-services__cards { grid-template-columns: 1fr; }
-  .mg-service { height: auto; }
+/* Services accordion: cards lift slightly under the mouse and settle back, easing in and out both ways.
+   site-services.js opens them on hover. */
+@media (hover: hover) and (pointer: fine) {
+  [data-framer-name="Services"] .framer-56cFz { transition: translate 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
+  [data-framer-name="Services"] .framer-56cFz:hover { translate: 0 -4px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mg-services { height: auto; }
-  .mg-services__pin { position: relative; height: auto; padding: 96px 0; }
+  [data-framer-name="Services"] .framer-56cFz { transition: none; }
 }
 
 /* Featured Works: stacked case-study cards (after marketinglab.framer.ai "Work That Delivers Results"). Mounted by site-works.js. */
@@ -880,83 +741,25 @@
   else addEventListener('load', start, { once: true });
 })();
 
-// Services section: replaces the Framer accordion with a pinned row of cards that rise into place one by one
-// as the page scrolls (staircase reveal). Framer can re-render its section, so the block is re-mounted when it goes missing.
+// Services accordion: open a card when the mouse rests on it, instead of only on click.
+// Framer opens cards from its tap gesture, so the hover replays a pointer tap on the card.
+// The short delay stops a chain of openings while cards resize under a moving cursor.
 (() => {
-  const img = name => `/mirror/framerusercontent.com/images/${name}.svg`;
-  const services = [
-    ['AI Strategy &amp; Mapping', 'Identify high-ROI use cases and define a realistic, measurable AI roadmap.', ['Stakeholder discovery', 'Value model &amp; KPI definition', 'Data readiness assessment'], 'N7WdKszYpXppuGfH2FoUpbIP2tw'],
-    ['AI UX &amp; Product Design', 'Human-centered flows, prompts, and interfaces that build trust and adoption.', ['Prompt UX patterns', 'Prototype flows', 'Usability testing with real users'], 'tgFn5KOHxuVzRnxxY5K6e8rrbc'],
-    ['LLM / Agent Development', 'Domain-specific copilots and agents that plan, execute, and report.', ['Multi-step planning', 'Function calling &amp; toolchains', 'Guardrails and audit trails'], 'VNUMGxu8bHPlCHeUaFBUKKuh2OQ'],
-    ['Data Engineering &amp; Pipelines', 'Reliable data flows from ingestion to features, built for scale and cost control.', ['Data cleaning &amp; chunking', 'Hybrid search', 'Freshness, citations, and re-ranking'], 'LQzz6Xgeq2bSRwjEyr5inS0xDw4'],
-  ];
-  const html = `
-    <div class="mg-services__pin">
-      <div class="mg-services__inner">
-        <div class="mg-services__header">
-          <div>
-            <span class="mg-services__tag">Services</span>
-            <h2>End-to-End AI Services</h2>
-          </div>
-          <p>We turn ambiguous AI ideas into production features your users trust—combining strategy, design, engineering, and rigorous evaluation.</p>
-        </div>
-        <div class="mg-services__cards">${services.map(([title, text, points, image], i) => `
-          <article class="mg-service">
-            <div class="mg-service__media"><img src="${img(image)}" alt="" loading="lazy" decoding="async"><span>${String(i + 1).padStart(2, '0')}</span></div>
-            <div class="mg-service__body">
-              <h3>${title}</h3>
-              <p>${text}</p>
-              <ul>${points.map(p => `<li>${p}</li>`).join('')}</ul>
-            </div>
-          </article>`).join('')}
-        </div>
-      </div>
-    </div>`;
-
-  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)');
-  let block = null;
-  function mount() {
-    const host = [...document.querySelectorAll('[data-framer-name="Services"]')].find(el => el.offsetParent !== null);
-    if (!host || host.querySelector(':scope > .mg-services')) return;
-    host.classList.add('mg-services-host');
-    // The hidden Framer container carries the nav anchor; hand it to the visible block.
-    host.querySelectorAll('#services').forEach(el => el.removeAttribute('id'));
-    block = document.createElement('section');
-    block.className = 'mg-services';
-    block.id = 'services';
-    block.innerHTML = html;
-    host.appendChild(block);
-    update();
-  }
-
-  // Card i starts i steps below the row and rises one step per step of scroll, so each card
-  // travels at scroll speed and stops level with the others, like a column of sticky slots.
-  function update() {
-    if (!block || !block.isConnected) return;
-    const cards = block.querySelectorAll('.mg-service');
-    if (innerWidth < 810 || reduceMotion.matches) { block.style.height = ''; cards.forEach(c => { c.style.transform = ''; }); return; }
-    const step = cards[0].offsetHeight + 24;
-    const travel = (cards.length - 1) * step;
-    block.style.height = `${innerHeight + travel * 1.15}px`;
-    const scrolled = Math.min(travel, Math.max(0, -block.getBoundingClientRect().top));
-    cards.forEach((c, i) => { c.style.transform = `translateY(${Math.max(0, i * step - scrolled)}px)`; });
-  }
-
-  let ticking = false;
-  const requestUpdate = () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => { ticking = false; update(); });
-  };
-  addEventListener('scroll', requestUpdate, { passive: true });
-  addEventListener('resize', requestUpdate);
-
-  const start = () => {
-    mount();
-    new MutationObserver(() => { if (!block || !block.isConnected) mount(); }).observe(document.body, { childList: true, subtree: true });
-  };
-  if (document.readyState === 'complete') start();
-  else addEventListener('load', start, { once: true });
+  const card = '[data-framer-name="Services"] .framer-56cFz';
+  let timer = 0;
+  addEventListener('pointerover', e => {
+    if (e.pointerType !== 'mouse') return;
+    const el = e.target.closest(card);
+    clearTimeout(timer);
+    if (!el || !/Closed/.test(el.dataset.framerName || '')) return;
+    timer = setTimeout(() => {
+      if (!el.matches(':hover') || !/Closed/.test(el.dataset.framerName || '')) return;
+      const o = { bubbles: true, pointerType: 'mouse', isPrimary: true, button: 0 };
+      el.dispatchEvent(new PointerEvent('pointerdown', o));
+      el.dispatchEvent(new PointerEvent('pointerup', o));
+      el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    }, 150);
+  });
 })();
 
 // Featured Works: replaces the Framer project cards with stacked, sticky case-study cards.
