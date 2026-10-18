@@ -1,12 +1,12 @@
-/* Liquid glass nav bar (after ui-layouts.com/components/liquid-glass). Size and shape stay Framer's. */
+/* Liquid glass nav bar, after Apple's Liquid Glass: nearly clear glass that bends the backdrop at its edges,
+   a thin specular rim lit at the top-left and bottom-right, and white type. Size and shape stay Framer's. */
 .framer-peFtD {
-  background-color: rgba(255, 255, 255, 0.42) !important;
+  background-color: rgba(255, 255, 255, 0.07) !important;
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.15), 0 0 12px rgba(0, 0, 0, 0.08), 0 0 24px rgba(255, 255, 255, 0.1) !important;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.18), inset 0 -8px 18px rgba(0, 0, 0, 0.22), 0 10px 30px rgba(0, 0, 0, 0.35) !important;
   isolation: isolate;
 }
-/* Bend layer: blurred backdrop, distorted by the #mg-glass-distortion SVG filter. */
 .framer-peFtD::before,
 .framer-peFtD::after {
   content: "";
@@ -15,24 +15,34 @@
   border-radius: inherit;
   pointer-events: none;
 }
+/* Lens layer: lightly blurred backdrop, bent inward near the edges by the #mg-glass-distortion SVG filter. */
 .framer-peFtD::before {
   z-index: -1;
-  -webkit-backdrop-filter: blur(14px) saturate(1.8);
-  backdrop-filter: blur(14px) saturate(1.8);
+  -webkit-backdrop-filter: blur(8px) saturate(1.6) brightness(1.1);
+  backdrop-filter: blur(8px) saturate(1.6) brightness(1.1);
   filter: url(#mg-glass-distortion);
 }
-/* Edge layer: inner highlights. */
+/* Rim layer: a 1px border whose brightness follows the light, strongest at the top-left and bottom-right. */
 .framer-peFtD::after {
   z-index: 2;
-  box-shadow: inset 3px 3px 3px 0 rgba(255, 255, 255, 0.45), inset -3px -3px 3px 0 rgba(255, 255, 255, 0.45);
+  padding: 1.2px;
+  background: conic-gradient(from 0deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.12) 12.5%, rgba(255, 255, 255, 0.85) 37.5%, rgba(255, 255, 255, 0.12) 62.5%, rgba(255, 255, 255, 0.95) 87.5%, rgba(255, 255, 255, 0.5));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
 }
 
-/* Nav logo wordmark: darker than Framer's grey gradient so it reads on the glass. */
+/* Nav type: white on the dark glass. */
 .framer-peFtD .framer-iw40tg [data-text-fill] {
-  background-image: linear-gradient(162deg, rgb(30, 32, 36) 0%, rgb(4, 5, 7) 100%) !important;
+  background-image: linear-gradient(162deg, #fff 0%, #dfe3ff 100%) !important;
+}
+.framer-peFtD .framer-iw40tg img { filter: invert(1) brightness(1.1); }
+.framer-peFtD .framer-FsDr0 p {
+  color: rgba(255, 255, 255, 0.9) !important;
+  --framer-text-color: rgba(255, 255, 255, 0.9) !important;
 }
 
-/* Nav links: liquid glass capsule on hover, focus and press. */
+/* Nav links: small liquid glass capsule on hover, focus and press. */
 .framer-peFtD .framer-FsDr0 { position: relative; isolation: isolate; overflow: visible !important; }
 .framer-peFtD .framer-1aq94il { overflow: visible !important; }
 .framer-peFtD .framer-FsDr0::before {
@@ -42,10 +52,10 @@
   z-index: -1;
   border-radius: 999px;
   pointer-events: none;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.18) 55%, rgba(255, 255, 255, 0.35));
-  -webkit-backdrop-filter: blur(6px) saturate(1.8);
-  backdrop-filter: blur(6px) saturate(1.8);
-  box-shadow: inset 2px 2px 2px 0 rgba(255, 255, 255, 0.6), inset -2px -2px 2px 0 rgba(255, 255, 255, 0.35), 0 4px 10px rgba(0, 0, 0, 0.12);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.06) 55%, rgba(255, 255, 255, 0.14));
+  -webkit-backdrop-filter: blur(6px) saturate(1.6);
+  backdrop-filter: blur(6px) saturate(1.6);
+  box-shadow: inset 1px 1px 1px rgba(255, 255, 255, 0.55), inset -1px -1px 1px rgba(255, 255, 255, 0.25), 0 4px 12px rgba(0, 0, 0, 0.25);
   opacity: 0;
   scale: 0.8;
   transition: opacity 0.3s ease, scale 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -56,20 +66,68 @@
   opacity: 1;
   scale: 1;
 }
-
-/* Nav link hover: dark blue text, underline and capsule tint instead of orange. */
 .framer-peFtD .framer-FsDr0:hover p,
 .framer-peFtD .framer-FsDr0:focus-visible p {
-  color: #020a70 !important;
-  --framer-text-color: #020a70 !important;
+  color: #fff !important;
+  --framer-text-color: #fff !important;
 }
-/* Not only on hover: Framer fades the underline out after mouse-out, so it must stay blue. */
+/* Not only on hover: Framer fades the underline out after mouse-out, so it must keep the light colour. */
 .framer-peFtD .framer-FsDr0 .framer-150vfhi {
-  background-color: #020a70 !important;
+  background-color: #b9c3ff !important;
 }
-.framer-peFtD .framer-FsDr0::before {
-  background: linear-gradient(135deg, rgba(220, 228, 255, 0.6), rgba(120, 140, 230, 0.18) 55%, rgba(200, 212, 255, 0.4)) !important;
-  box-shadow: inset 2px 2px 2px 0 rgba(255, 255, 255, 0.6), inset -2px -2px 2px 0 rgba(255, 255, 255, 0.35), 0 4px 12px rgba(2, 10, 112, 0.22) !important;
+
+/* Hero "AI-Driven Agency" tag: the same liquid glass as the nav. On hover a diagonal light streak sweeps across it
+   and it lifts slightly, matching the Explore Services button. */
+.framer-tt1cxh-container .framer-kev61 {
+  position: relative;
+  isolation: isolate;
+  overflow: visible !important;
+  background-color: rgba(255, 255, 255, 0.07) !important;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.18), inset 0 -6px 12px rgba(0, 0, 0, 0.22), 0 8px 22px rgba(0, 0, 0, 0.35) !important;
+  transition: scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), translate 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+}
+.framer-tt1cxh-container .framer-kev61::before,
+.framer-tt1cxh-container .framer-kev61::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.framer-tt1cxh-container .framer-kev61::before {
+  z-index: -1;
+  background: linear-gradient(110deg, rgba(255, 255, 255, 0) 47.5%, rgba(255, 255, 255, 0.85) 50%, rgba(255, 255, 255, 0) 52.5%) no-repeat;
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  transition: background-position 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-backdrop-filter: blur(8px) saturate(1.6) brightness(1.1);
+  backdrop-filter: blur(8px) saturate(1.6) brightness(1.1);
+  filter: url(#mg-glass-distortion);
+}
+.framer-tt1cxh-container .framer-kev61::after {
+  z-index: 2;
+  padding: 1.2px;
+  background: conic-gradient(from 0deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.12) 12.5%, rgba(255, 255, 255, 0.85) 37.5%, rgba(255, 255, 255, 0.12) 62.5%, rgba(255, 255, 255, 0.95) 87.5%, rgba(255, 255, 255, 0.5));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.framer-tt1cxh-container .framer-kev61 p {
+  color: #fff !important;
+  --framer-text-color: #fff !important;
+}
+.framer-tt1cxh-container .framer-kev61 img { filter: invert(1) brightness(1.1); }
+.framer-tt1cxh-container .framer-kev61:hover::before { background-position: 0% 0; }
+/* The headline block clipped exactly at the tag's top edge, cutting off the hover lift and glow. */
+.framer-24em38 { overflow: visible !important; }
+.framer-tt1cxh-container .framer-kev61:hover {
+  scale: 1.04;
+  translate: 0 -2px;
+  filter: brightness(1.12);
+}
+@media (prefers-reduced-motion: reduce) {
+  .framer-tt1cxh-container .framer-kev61,
+  .framer-tt1cxh-container .framer-kev61::before { transition: none; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -124,6 +182,43 @@
   outline-offset: 3px;
 }
 
+
+/* Client logos: every logo shows at the same visual weight. Each box is sized to an equal ink area (height capped), and
+   its image is scaled and offset so only the logo's visible region fills the box, ignoring each PNG's blank margins. */
+.framer-662aja .framer-e4sd2r { align-items: center !important; gap: 60px !important; padding: 41px 60px 41px 0; }
+.framer-662aja .framer-e4sd2r > div { position: relative !important; flex: none !important; overflow: hidden !important; }
+.framer-662aja .framer-e4sd2r > div img { position: absolute !important; max-width: none !important; object-fit: fill !important; }
+/* Logo wall after overtake-wbs.framer.website: calm, uniform monochrome grey wordmarks, no hover shift. */
+.framer-662aja .framer-e4sd2r > div img { filter: grayscale(1); opacity: 0.6; }
+/* "Trusted by 100+ top-tier brands": plain muted sentence eyebrow (reference style), not uppercase. */
+.framer-zney4t p {
+  text-transform: none;
+  --framer-letter-spacing: 0px;
+  letter-spacing: normal;
+  text-align: left;
+  color: rgb(106, 110, 110);
+  --framer-text-color: rgb(106, 110, 110);
+}
+.framer-zney4t p span { color: inherit; --framer-text-color: rgb(106, 110, 110); }
+/* A second, never-visible copy of the Padathil logo nested in the first box. */
+.framer-662aja .framer-1e8khbk { display: none !important; }
+.framer-662aja .framer-1n8wit7 { width: 58.8px !important; height: 60.0px !important; }
+.framer-662aja .framer-1n8wit7 img { width: 65.2px !important; height: 65.2px !important; left: -3.2px !important; top: -2.6px !important; }
+.framer-662aja .framer-120tkn0 { width: 81.2px !important; height: 56.6px !important; }
+.framer-662aja .framer-120tkn0 img { width: 92.4px !important; height: 92.4px !important; left: -5.6px !important; top: -15.6px !important; }
+.framer-662aja .framer-ecrq1 { width: 118.2px !important; height: 38.9px !important; }
+.framer-662aja .framer-ecrq1 img { width: 173.0px !important; height: 138.9px !important; left: -26.2px !important; top: -46.7px !important; }
+.framer-662aja .framer-1ufw05j { width: 69.3px !important; height: 60.0px !important; }
+.framer-662aja .framer-1ufw05j img { width: 146.0px !important; height: 146.0px !important; left: -38.3px !important; top: -43.0px !important; }
+.framer-662aja .framer-aa22rq { width: 126.2px !important; height: 36.4px !important; }
+.framer-662aja .framer-aa22rq img { width: 137.3px !important; height: 87.3px !important; left: -5.5px !important; top: -24.5px !important; }
+.framer-662aja .framer-kdywir { width: 68.4px !important; height: 60.0px !important; }
+.framer-662aja .framer-kdywir img { width: 79.2px !important; height: 87.0px !important; left: -5.4px !important; top: -13.5px !important; }
+
+/* FAQ rows and the contact form: 40px corners like the site's other raised cards (Framer had 24px). */
+[data-framer-name="FAQ"] .framer-WHLkL,
+.framer-1fb76sd { border-radius: 40px !important; }
+
 /* Logo ticker: fade logos out at the right end, mirroring Framer's left-edge fade. */
 .framer-03p7A .framer-662aja {
   -webkit-mask: linear-gradient(90deg, #0000 0%, #000000e6 12.5723%, #000 50%, #000000e6 87.4277%, #0000 100%) !important;
@@ -162,7 +257,7 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
   background: radial-gradient(50% 55% at 50% 50%, #fff 0%, rgba(228, 233, 253, 0.95) 45%, rgba(237, 236, 236, 0) 85%) !important;
 }
 .framer-1thhh33 { background: transparent !important; }
-/* Gradients for About, Services, Process and Featured Works: navy tints whose top and bottom edges fade into the
+/* Gradients for About, Services and Process: navy tints whose top and bottom edges fade into the
    neighbouring section colour (page grey #edecec or white), so sections join without a visible seam. */
 .framer-2vcsc7 {
   background: radial-gradient(55% 40% at 80% 30%, rgba(150, 168, 245, 0.75) 0%, rgba(237, 236, 236, 0) 70%), radial-gradient(40% 30% at 12% 62%, rgba(170, 184, 245, 0.6) 0%, rgba(237, 236, 236, 0) 70%) !important;
@@ -190,6 +285,43 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
 .mg-process__pin {
   background: radial-gradient(42% 40% at 72% 52%, rgba(150, 168, 245, 0.7) 0%, rgba(237, 236, 236, 0) 100%);
 }
-.framer-rjy3eh {
-  background: linear-gradient(180deg, #edecec 0%, #e0e6ff 18%, #dde3ff 45%, #f1f3ff 80%, #fff 100%) !important;
+
+/* Footer watermark: "MediaGroots" lettering in place of the template's "AgenAI" SVG. The text sits in the same
+   box, so it keeps the footer's fade and scroll parallax. Font size tracks the box width so the word always fits. */
+.framer-1451u8p > .svgContainer { display: none; }
+.framer-1451u8p {
+  container-type: inline-size;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
 }
+/* Same fill as the SVG: #292c2e at 10% at the top, fading out toward the baseline. */
+.framer-1451u8p::after {
+  content: "MediaGroots";
+  font: 600 17.4cqw/1 Urbanist, "Urbanist Placeholder", sans-serif;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  color: transparent;
+  background: linear-gradient(rgba(41, 44, 46, 0.1), rgba(41, 44, 46, 0) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* Contact "Form Nav" email + phone links: white text (preset 164zv43 renders them near-black rgb(9,9,11)). */
+.framer-v-1g40zfx .framer-text,
+.framer-v-1g40zfx p {
+  color: #fff !important;
+  --framer-text-color: #fff !important;
+}
+
+/* ===== Overtake monochrome look (reference: overtake-wbs.framer.website) =====
+   Minimal black/grey on white. Flips the blue accent token to near-black site-wide (dots, bars,
+   stars, borders). Remove this block to restore the blue accent. */
+body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
+[data-framer-name="Statistics"] [data-framer-name="Bar"] {
+  box-shadow: 0 2.77px 2.21px 0 rgba(11, 11, 12, 0.18), 0 3px 4px 0 rgba(11, 11, 12, 0.22) !important;
+}
+.framer-1eipfdp { background-color: rgba(11, 11, 12, 0.2) !important; }
+
+/* Remove the white panel behind the "Why Choose Us" (Benefits) section. */
+.framer-1v2z8lb { background-color: transparent !important; box-shadow: none !important; }

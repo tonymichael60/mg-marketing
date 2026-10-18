@@ -1,9 +1,3 @@
-/* Services accordion: cards lift slightly under the mouse and settle back, easing in and out both ways.
-   site-services.js opens them on hover. */
-@media (hover: hover) and (pointer: fine) {
-  [data-framer-name="Services"] .framer-56cFz { transition: translate 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
-  [data-framer-name="Services"] .framer-56cFz:hover { translate: 0 -4px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  [data-framer-name="Services"] .framer-56cFz { transition: none; }
-}
+/* Services accordion: click only. The hover-open and hover lift were removed per request;
+   open/close is animated by Framer's own variant transition (tuned in apply-customizations.mjs). */
+[data-framer-name="Services"] .framer-56cFz { cursor: pointer; }

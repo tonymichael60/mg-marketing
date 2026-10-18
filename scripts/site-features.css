@@ -1,0 +1,91 @@
+/* Features tree: glowing blue branches, travelling light pulses (added by site-features.js) and a luminous centre logo. */
+svg.framer-9xleZ,
+svg.framer-x8YHN {
+  overflow: visible;
+  filter: drop-shadow(0 0 3px rgba(20, 34, 227, 0.45)) drop-shadow(0 0 10px rgba(20, 34, 227, 0.2));
+}
+/* Resting track: a faint lavender line instead of flat grey. */
+svg.framer-9xleZ path[stroke="rgb(212, 212, 216)"]:not(.mg-pulse),
+svg.framer-x8YHN path[stroke="rgb(212, 212, 216)"]:not(.mg-pulse) {
+  stroke: rgba(120, 138, 240, 0.35);
+  stroke-width: 1.5;
+}
+/* Framer's animated line: brighter blue and a little thicker. */
+svg.framer-9xleZ path[stroke^="var(--token-1971cadb"],
+svg.framer-x8YHN path[stroke^="var(--token-1971cadb"] {
+  stroke: #1422e3;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+/* Branch dots. */
+svg.framer-9xleZ path[fill="rgb(213, 208, 212)"],
+svg.framer-x8YHN path[fill="rgb(213, 208, 212)"] { fill: rgba(150, 165, 245, 0.6); }
+svg.framer-9xleZ path[fill^="var(--token-1971cadb"],
+svg.framer-x8YHN path[fill^="var(--token-1971cadb"] { fill: #1422e3; }
+
+/* Travelling light: a short bright dash that runs from the logo to the card ends, then repeats. */
+.mg-pulse {
+  fill: none;
+  stroke: #b7c3ff;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 0.05 0.95;
+  stroke-dashoffset: 0.05;
+  animation: mg-pulse-run 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
+@keyframes mg-pulse-run {
+  0% { stroke-dashoffset: 0.05; opacity: 0; }
+  8% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { stroke-dashoffset: -0.95; opacity: 0; }
+}
+
+/* Centre logo: deep blue gradient, soft glow, a slow breathing halo and an occasional sheen. */
+.framer-wky74u {
+  position: relative;
+  overflow: visible !important;
+  background: linear-gradient(150deg, #2a3bf0 0%, #0a17a8 45%, #030a5e 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -10px 20px rgba(0, 0, 0, 0.3), 0 18px 44px rgba(20, 34, 227, 0.45), 0 0 90px rgba(20, 34, 227, 0.25) !important;
+}
+.framer-wky74u::before,
+.framer-wky74u::after {
+  content: "";
+  position: absolute;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.framer-wky74u::before {
+  inset: -12px;
+  border: 1px solid rgba(130, 148, 255, 0.55);
+  animation: mg-halo 3.6s ease-out infinite;
+}
+.framer-wky74u::after {
+  inset: 0;
+  background: linear-gradient(110deg, rgba(255, 255, 255, 0) 42%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0) 58%) no-repeat;
+  background-size: 300% 100%;
+  animation: mg-sheen 6s ease-in-out infinite;
+}
+@keyframes mg-halo {
+  0% { opacity: 0.9; scale: 0.94; }
+  100% { opacity: 0; scale: 1.22; }
+}
+@keyframes mg-sheen {
+  0%, 55% { background-position: 100% 0; }
+  85%, 100% { background-position: 0% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mg-pulse { display: none; }
+  .framer-wky74u::before,
+  .framer-wky74u::after { animation: none; }
+  .framer-wky74u::before { opacity: 0; }
+}
+
+/* "All Features in One" box: round all corners, add top spacing + breathing room, light drop shadow. */
+.framer-gtsbnt {
+  border-radius: 40px !important;
+  margin-top: 56px !important;
+  padding-top: 72px !important;
+  box-shadow: 0 18px 60px rgba(11, 11, 12, 0.16) !important;
+}

@@ -101,6 +101,20 @@
   object-fit: cover;
 }
 
+/* Card pop after td-signal.framer.website: each card springs up from scale(0.9) with a slight
+   overshoot the first time it scrolls into view (site-works.js toggles .mg-work--in), staggered per card. */
+@media (prefers-reduced-motion: no-preference) {
+  .mg-work {
+    opacity: 0;
+    transform: scale(0.9);
+    transform-origin: 50% 50%;
+    transition: transform 0.62s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.42s ease-out;
+    transition-delay: calc(var(--i) * 80ms);
+  }
+  .mg-work.mg-work--in { opacity: 1; transform: none; }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .mg-work__cta { transition: scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease; }
   .mg-work__cta svg { transition: translate 0.35s var(--mg-ease); }
@@ -132,3 +146,6 @@
   .mg-work__tags span::before { width: 8px; height: 8px; }
   .mg-work__cta { margin-top: 6px; padding: 12px 22px; }
 }
+
+/* Remove the white panel behind the Featured Works section; cards sit on the page background. */
+.framer-rjy3eh { background-color: transparent !important; box-shadow: none !important; }

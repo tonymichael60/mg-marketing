@@ -138,10 +138,15 @@ console.log(`Set dark blue link hover in ${linkFiles} files.`);
 
 // Liquid glass nav, smoother load, interactive buttons. Replaced on each run so CSS edits apply.
 const scriptsDir=path.dirname(fileURLToPath(import.meta.url));
-const polishCss=['site-polish.css','site-process.css','site-services.css','site-works.css'].map(f=>fs.readFileSync(path.join(scriptsDir,f),'utf8')).join('\n');
+const polishCss=['site-polish.css','site-process.css','site-services.css','site-works.css','site-features.css','site-trust.css'].map(f=>fs.readFileSync(path.join(scriptsDir,f),'utf8')).join('\n');
 const polishStyle=`<style id="site-polish">${polishCss}</style>`;
-const processScript=`<script id="site-process">${['site-process.js','site-services.js','site-works.js'].map(f=>fs.readFileSync(path.join(scriptsDir,f),'utf8')).join('\n')}</script>`;
-const glassFilter='<svg id="site-polish-filter" aria-hidden="true" style="position:absolute;width:0;height:0"><filter id="mg-glass-distortion" x="0" y="0" width="100%" height="100%" filterUnits="objectBoundingBox"><feTurbulence type="fractalNoise" baseFrequency="0.003 0.007" numOctaves="1" result="turbulence"/><feDisplacementMap in="SourceGraphic" in2="turbulence" scale="60" xChannelSelector="R" yChannelSelector="G"/></filter></svg>';
+// Runs early in <head>, before Framer's deferred modules, so a refresh lands at the top (home).
+const headScript=`<script id="site-home">${fs.readFileSync(path.join(scriptsDir,'site-home.js'),'utf8')}</script>`;
+const processScript=`<script id="site-process">${['site-process.js','site-services.js','site-works.js','site-features.js','site-faq.js','site-trust.js'].map(f=>fs.readFileSync(path.join(scriptsDir,f),'utf8')).join('\n')}</script>`;
+// Liquid glass lens: a displacement map that is neutral in the middle and pulls the backdrop inward near each edge,
+// so the glass bends what is behind it like Apple's Liquid Glass. Red drives x, green drives y.
+const glassFilter='<svg id="site-polish-filter" aria-hidden="true" style="position:absolute;width:0;height:0"><filter id="mg-glass-distortion" x="0" y="0" width="1" height="1" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB"><feImage href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27 preserveAspectRatio=%27none%27%3E%3ClinearGradient id=%27g%27%3E%3Cstop offset=%270%27 stop-color=%27rgb(255,0,0)%27/%3E%3Cstop offset=%27.12%27 stop-color=%27rgb(128,0,0)%27/%3E%3Cstop offset=%27.88%27 stop-color=%27rgb(128,0,0)%27/%3E%3Cstop offset=%271%27 stop-color=%27rgb(0,0,0)%27/%3E%3C/linearGradient%3E%3Crect width=%27100%27 height=%27100%27 fill=%27url(%23g)%27/%3E%3C/svg%3E" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="rx"/><feImage href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27 preserveAspectRatio=%27none%27%3E%3ClinearGradient id=%27g%27 x2=%270%27 y2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27rgb(0,255,0)%27/%3E%3Cstop offset=%27.3%27 stop-color=%27rgb(0,128,0)%27/%3E%3Cstop offset=%27.7%27 stop-color=%27rgb(0,128,0)%27/%3E%3Cstop offset=%271%27 stop-color=%27rgb(0,0,0)%27/%3E%3C/linearGradient%3E%3Crect width=%27100%27 height=%27100%27 fill=%27url(%23g)%27/%3E%3C/svg%3E" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="gy"/><feComposite in="rx" in2="gy" operator="arithmetic" k2="1" k3="1" result="map"/><feDisplacementMap in="SourceGraphic" in2="map" scale="0.08" xChannelSelector="R" yChannelSelector="G"/></filter></svg>';
+
 let polished=0;
 function visitPolish(dir) {
   for(const entry of fs.readdirSync(dir,{withFileTypes:true})) {
@@ -150,10 +155,11 @@ function visitPolish(dir) {
     if(!entry.name.endsWith('.html')) continue;
     let html=fs.readFileSync(file,'utf8')
       .replace(/<style id="site-polish">.*?<\/style>/s,'')
+      .replace(/<script id="site-home">.*?<\/script>/s,'')
       .replace(/<svg id="site-polish-filter".*?<\/svg>/s,'')
       .replace(/<script id="site-process">.*?<\/script>/s,'');
     if(!html.includes('</body>')) throw new Error(`Missing document body: ${file}`);
-    html=html.replace('</head>',()=>polishStyle+'</head>').replace('</body>',()=>glassFilter+processScript+'</body>');
+    html=html.replace('</head>',()=>headScript+polishStyle+'</head>').replace('</body>',()=>glassFilter+processScript+'</body>');
     fs.writeFileSync(file,html);
     polished++;
   }

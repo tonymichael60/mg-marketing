@@ -32,32 +32,25 @@
     block.className = 'mg-works';
     block.innerHTML = html;
     cards.after(block);
-    update();
+    observe();
   }
 
-  // Each card shrinks back as the cards after it slide over it.
-  function update() {
-    if (!block || !block.isConnected) return;
-    const cards = [...block.children];
-    const progress = cards.map(card => {
-      const r = card.getBoundingClientRect(), stick = parseFloat(getComputedStyle(card).top);
-      return Math.min(1, Math.max(0, 1 - (r.top - stick) / innerHeight));
-    });
-    cards.forEach((card, i) => {
-      const depth = progress.slice(i + 1).reduce((sum, p) => sum + p, 0);
-      card.style.transform = depth ? `scale(${1 - depth * 0.04})` : '';
-      card.style.filter = depth ? `brightness(${1 - depth * 0.04})` : '';
-    });
+  // Card pop after td-signal.framer.website: each card springs up from scale(0.9)
+  // the first time it scrolls into view. Spring overshoot lives in site-works.css.
+  let io = null;
+  function observe() {
+    if (!block) return;
+    if (!io) {
+      io = new IntersectionObserver(entries => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          e.target.classList.add('mg-work--in');
+          io.unobserve(e.target);
+        }
+      }, { threshold: 0.2, rootMargin: '0px 0px -8% 0px' });
+    }
+    for (const card of block.children) io.observe(card);
   }
-
-  let ticking = false;
-  const requestUpdate = () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => { ticking = false; update(); });
-  };
-  addEventListener('scroll', requestUpdate, { passive: true });
-  addEventListener('resize', requestUpdate);
 
   const start = () => {
     mount();

@@ -1,35 +1,38 @@
-// Process section: replaces the Framer slideshow with a pinned, scroll-drawn route (the "Groot Method").
+// Process section: replaces the Framer slideshow with a fanned deck of step cards
+// (after td-signal.framer.website "From brief to better content that performs").
 // Framer can re-render its section, so the block is re-mounted whenever it goes missing.
 (() => {
-  const steps = [
-    ['01', 'Root', '3-7 DAYS', 'Align on problems, data reality, and success metrics. Opportunity brief, KPI model, phased roadmap, effort/cost ranges.'],
-    ['02', 'Grow', '1-2 WEEKS', 'We build the growth engine: funnels, campaigns, AI content, and smart automations that seamlessly tie it together.'],
-    ['03', 'Validate & Evals', '1 WEEK', 'Prove accuracy, usability, safety, and cost. Eval dashboard, acceptance thresholds, decision to iterate/ship.'],
+  const cards = [
+    ['01', 'Strategy', 'Audit the brand, audience, and feed. Define pillars, hooks, briefs, and the launch plan.'],
+    ['02', 'Production', 'Create scripts, creator direction, edits, captions, stills, and platform-ready variants.'],
+    ['03', 'Optimization', 'Measure watch time, saves, clicks, and conversions. Use the data to improve each batch.'],
+    ['04', 'Scale', 'Expand winning angles into new hooks, creators, formats, and ads. Cut the rest.'],
   ];
-  const route = 'M60 510 C 180 520, 200 380, 300 350 S 420 300, 440 210 S 520 60, 560 50';
-  const nodes = [[60, 510, 96, 546, '01 ROOT'], [300, 350, 196, 316, '02 GROW'], [560, 50, 380, 30, '03 VALIDATE']];
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const spark = '<svg class="mg-spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c.55 5.2 1 5.65 10 10-9 4.35-9.45 4.8-10 10-.55-5.2-1-5.65-10-10 9-4.35 9.45-4.8 10-10Z" fill="currentColor"/></svg>';
   const html = `
-    <div class="mg-process__pin"><div class="mg-process__grid">
-      <div>
-        <span class="mg-process__tag">Process</span>
-        <h2>From Idea<br>to Production</h2>
-        <div class="mg-process__stage">Stage <span data-stage>01</span> / 03</div>
-        <div class="mg-process__steps">${steps.map(([n, title, days, text], i) => `
-          <div class="mg-step${i ? '' : ' is-on'}"><div class="mg-step__head"><h4><small>${n}</small>${title.replace('&', '&amp;')}</h4><span class="mg-step__days">${days}</span></div><p>${text}</p></div>`).join('')}
-        </div>
+    <div class="mg-process__inner">
+      <header class="mg-process__header">
+        <span class="mg-process__tag">The process</span>
+        <h2>From brief to better content <span class="mg-process__muted">that performs.</span></h2>
+      </header>
+      <div class="mg-proc-cards">${cards.map(([n, title, text], i) => `
+        <article class="mg-pcard" style="--i:${i}">
+          <div class="mg-pcard__top"><span class="mg-pcard__num">${n}</span>${spark}</div>
+          <div class="mg-pcard__body"><h3>${esc(title)}</h3><p>${esc(text)}</p></div>
+        </article>`).join('')}
       </div>
-      <div class="mg-process__path" aria-hidden="true">
-        <svg viewBox="0 0 600 570">
-          <defs><linearGradient id="mg-route-gradient" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#0e15a8"/><stop offset="1" stop-color="#4b5cff"/></linearGradient></defs>
-          <path class="track" d="${route}"/>
-          <path class="draw" d="${route}"/>
-          ${nodes.map(([cx, cy, tx, ty, label], i) => `<g class="node${i ? '' : ' is-on'}"><circle class="ring" cx="${cx}" cy="${cy}" r="22"/><circle class="core" cx="${cx}" cy="${cy}" r="8"/><text x="${tx}" y="${ty}">${label}</text></g>`).join('')}
-        </svg>
-        <div class="mg-process__head"></div>
-      </div>
-    </div></div>`;
+    </div>`;
 
-  let block = null;
+  let block = null, io = null;
+  function reveal() {
+    if (!block) return;
+    const row = block.querySelector('.mg-proc-cards');
+    if (!io) io = new IntersectionObserver(entries => {
+      for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+    }, { threshold: 0.25 });
+    io.observe(row);
+  }
   function mount() {
     const host = [...document.querySelectorAll('[data-framer-name="Process"]')].find(el => el.offsetParent !== null);
     if (!host || host.querySelector(':scope > .mg-process')) return;
@@ -39,37 +42,8 @@
     block.id = 'process';
     block.innerHTML = html;
     host.appendChild(block);
-    update();
+    reveal();
   }
-
-  function update() {
-    if (!block || !block.isConnected) return;
-    const draw = block.querySelector('.draw');
-    const stepEls = block.querySelectorAll('.mg-step');
-    if (innerWidth < 810) { stepEls.forEach(s => s.classList.add('is-on')); return; }
-    const len = draw.getTotalLength();
-    const r = block.getBoundingClientRect();
-    const p = Math.min(1, Math.max(0, -r.top / (r.height - innerHeight)));
-    draw.style.strokeDasharray = len;
-    draw.style.strokeDashoffset = len * (1 - p);
-    const pt = draw.getPointAtLength(len * p);
-    const svg = block.querySelector('svg'), box = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
-    block.querySelector('.mg-process__head').style.transform = `translate(${pt.x * box.width / vb.width}px,${pt.y * box.height / vb.height}px)`;
-    let stage = 0;
-    [0, 0.45, 0.9].forEach((s, i) => { if (p >= s - 0.02) stage = i; });
-    block.querySelectorAll('.node').forEach((n, i) => n.classList.toggle('is-on', i <= stage));
-    stepEls.forEach((s, i) => s.classList.toggle('is-on', i === stage));
-    block.querySelector('[data-stage]').textContent = String(stage + 1).padStart(2, '0');
-  }
-
-  let ticking = false;
-  const requestUpdate = () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => { ticking = false; update(); });
-  };
-  addEventListener('scroll', requestUpdate, { passive: true });
-  addEventListener('resize', requestUpdate);
 
   const start = () => {
     mount();

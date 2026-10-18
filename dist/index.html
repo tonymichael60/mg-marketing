@@ -156,15 +156,29 @@
     
     <!-- End of headEnd -->
 	
-<style id="site-branding-overrides">#__framer-badge-container,.__framer-badge{display:none!important}</style><style id="site-polish">/* Liquid glass nav bar (after ui-layouts.com/components/liquid-glass). Size and shape stay Framer's. */
+<style id="site-branding-overrides">#__framer-badge-container,.__framer-badge{display:none!important}</style><script id="site-home">// On refresh, always land at the top (home), not the last scroll position.
+// Framer saves scroll in history.state.scrollPosition and restores it on reload; this runs in <head>
+// before Framer's deferred modules, zeroes that saved position, then forces the top once hydration settles.
+(function () {
+  try { history.scrollRestoration = 'manual'; } catch (e) {}
+  try {
+    var s = history.state;
+    if (s && s.scrollPosition) { s.scrollPosition = { x: 0, y: 0 }; history.replaceState(s, ''); }
+  } catch (e) {}
+  function top() { try { window.scrollTo(0, 0); } catch (e) {} }
+  addEventListener('DOMContentLoaded', top);
+  addEventListener('load', function () { top(); requestAnimationFrame(top); setTimeout(top, 60); setTimeout(top, 200); });
+  addEventListener('pageshow', function (e) { if (e.persisted) top(); });
+})();
+</script><style id="site-polish">/* Liquid glass nav bar, after Apple's Liquid Glass: nearly clear glass that bends the backdrop at its edges,
+   a thin specular rim lit at the top-left and bottom-right, and white type. Size and shape stay Framer's. */
 .framer-peFtD {
-  background-color: rgba(255, 255, 255, 0.42) !important;
+  background-color: rgba(255, 255, 255, 0.07) !important;
   -webkit-backdrop-filter: none !important;
   backdrop-filter: none !important;
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.15), 0 0 12px rgba(0, 0, 0, 0.08), 0 0 24px rgba(255, 255, 255, 0.1) !important;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.18), inset 0 -8px 18px rgba(0, 0, 0, 0.22), 0 10px 30px rgba(0, 0, 0, 0.35) !important;
   isolation: isolate;
 }
-/* Bend layer: blurred backdrop, distorted by the #mg-glass-distortion SVG filter. */
 .framer-peFtD::before,
 .framer-peFtD::after {
   content: "";
@@ -173,24 +187,34 @@
   border-radius: inherit;
   pointer-events: none;
 }
+/* Lens layer: lightly blurred backdrop, bent inward near the edges by the #mg-glass-distortion SVG filter. */
 .framer-peFtD::before {
   z-index: -1;
-  -webkit-backdrop-filter: blur(14px) saturate(1.8);
-  backdrop-filter: blur(14px) saturate(1.8);
+  -webkit-backdrop-filter: blur(8px) saturate(1.6) brightness(1.1);
+  backdrop-filter: blur(8px) saturate(1.6) brightness(1.1);
   filter: url(#mg-glass-distortion);
 }
-/* Edge layer: inner highlights. */
+/* Rim layer: a 1px border whose brightness follows the light, strongest at the top-left and bottom-right. */
 .framer-peFtD::after {
   z-index: 2;
-  box-shadow: inset 3px 3px 3px 0 rgba(255, 255, 255, 0.45), inset -3px -3px 3px 0 rgba(255, 255, 255, 0.45);
+  padding: 1.2px;
+  background: conic-gradient(from 0deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.12) 12.5%, rgba(255, 255, 255, 0.85) 37.5%, rgba(255, 255, 255, 0.12) 62.5%, rgba(255, 255, 255, 0.95) 87.5%, rgba(255, 255, 255, 0.5));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
 }
 
-/* Nav logo wordmark: darker than Framer's grey gradient so it reads on the glass. */
+/* Nav type: white on the dark glass. */
 .framer-peFtD .framer-iw40tg [data-text-fill] {
-  background-image: linear-gradient(162deg, rgb(30, 32, 36) 0%, rgb(4, 5, 7) 100%) !important;
+  background-image: linear-gradient(162deg, #fff 0%, #dfe3ff 100%) !important;
+}
+.framer-peFtD .framer-iw40tg img { filter: invert(1) brightness(1.1); }
+.framer-peFtD .framer-FsDr0 p {
+  color: rgba(255, 255, 255, 0.9) !important;
+  --framer-text-color: rgba(255, 255, 255, 0.9) !important;
 }
 
-/* Nav links: liquid glass capsule on hover, focus and press. */
+/* Nav links: small liquid glass capsule on hover, focus and press. */
 .framer-peFtD .framer-FsDr0 { position: relative; isolation: isolate; overflow: visible !important; }
 .framer-peFtD .framer-1aq94il { overflow: visible !important; }
 .framer-peFtD .framer-FsDr0::before {
@@ -200,10 +224,10 @@
   z-index: -1;
   border-radius: 999px;
   pointer-events: none;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.18) 55%, rgba(255, 255, 255, 0.35));
-  -webkit-backdrop-filter: blur(6px) saturate(1.8);
-  backdrop-filter: blur(6px) saturate(1.8);
-  box-shadow: inset 2px 2px 2px 0 rgba(255, 255, 255, 0.6), inset -2px -2px 2px 0 rgba(255, 255, 255, 0.35), 0 4px 10px rgba(0, 0, 0, 0.12);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.06) 55%, rgba(255, 255, 255, 0.14));
+  -webkit-backdrop-filter: blur(6px) saturate(1.6);
+  backdrop-filter: blur(6px) saturate(1.6);
+  box-shadow: inset 1px 1px 1px rgba(255, 255, 255, 0.55), inset -1px -1px 1px rgba(255, 255, 255, 0.25), 0 4px 12px rgba(0, 0, 0, 0.25);
   opacity: 0;
   scale: 0.8;
   transition: opacity 0.3s ease, scale 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -214,20 +238,68 @@
   opacity: 1;
   scale: 1;
 }
-
-/* Nav link hover: dark blue text, underline and capsule tint instead of orange. */
 .framer-peFtD .framer-FsDr0:hover p,
 .framer-peFtD .framer-FsDr0:focus-visible p {
-  color: #020a70 !important;
-  --framer-text-color: #020a70 !important;
+  color: #fff !important;
+  --framer-text-color: #fff !important;
 }
-/* Not only on hover: Framer fades the underline out after mouse-out, so it must stay blue. */
+/* Not only on hover: Framer fades the underline out after mouse-out, so it must keep the light colour. */
 .framer-peFtD .framer-FsDr0 .framer-150vfhi {
-  background-color: #020a70 !important;
+  background-color: #b9c3ff !important;
 }
-.framer-peFtD .framer-FsDr0::before {
-  background: linear-gradient(135deg, rgba(220, 228, 255, 0.6), rgba(120, 140, 230, 0.18) 55%, rgba(200, 212, 255, 0.4)) !important;
-  box-shadow: inset 2px 2px 2px 0 rgba(255, 255, 255, 0.6), inset -2px -2px 2px 0 rgba(255, 255, 255, 0.35), 0 4px 12px rgba(2, 10, 112, 0.22) !important;
+
+/* Hero "AI-Driven Agency" tag: the same liquid glass as the nav. On hover a diagonal light streak sweeps across it
+   and it lifts slightly, matching the Explore Services button. */
+.framer-tt1cxh-container .framer-kev61 {
+  position: relative;
+  isolation: isolate;
+  overflow: visible !important;
+  background-color: rgba(255, 255, 255, 0.07) !important;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.18), inset 0 -6px 12px rgba(0, 0, 0, 0.22), 0 8px 22px rgba(0, 0, 0, 0.35) !important;
+  transition: scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), translate 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease;
+}
+.framer-tt1cxh-container .framer-kev61::before,
+.framer-tt1cxh-container .framer-kev61::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.framer-tt1cxh-container .framer-kev61::before {
+  z-index: -1;
+  background: linear-gradient(110deg, rgba(255, 255, 255, 0) 47.5%, rgba(255, 255, 255, 0.85) 50%, rgba(255, 255, 255, 0) 52.5%) no-repeat;
+  background-size: 300% 100%;
+  background-position: 100% 0;
+  transition: background-position 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-backdrop-filter: blur(8px) saturate(1.6) brightness(1.1);
+  backdrop-filter: blur(8px) saturate(1.6) brightness(1.1);
+  filter: url(#mg-glass-distortion);
+}
+.framer-tt1cxh-container .framer-kev61::after {
+  z-index: 2;
+  padding: 1.2px;
+  background: conic-gradient(from 0deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.12) 12.5%, rgba(255, 255, 255, 0.85) 37.5%, rgba(255, 255, 255, 0.12) 62.5%, rgba(255, 255, 255, 0.95) 87.5%, rgba(255, 255, 255, 0.5));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.framer-tt1cxh-container .framer-kev61 p {
+  color: #fff !important;
+  --framer-text-color: #fff !important;
+}
+.framer-tt1cxh-container .framer-kev61 img { filter: invert(1) brightness(1.1); }
+.framer-tt1cxh-container .framer-kev61:hover::before { background-position: 0% 0; }
+/* The headline block clipped exactly at the tag's top edge, cutting off the hover lift and glow. */
+.framer-24em38 { overflow: visible !important; }
+.framer-tt1cxh-container .framer-kev61:hover {
+  scale: 1.04;
+  translate: 0 -2px;
+  filter: brightness(1.12);
+}
+@media (prefers-reduced-motion: reduce) {
+  .framer-tt1cxh-container .framer-kev61,
+  .framer-tt1cxh-container .framer-kev61::before { transition: none; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -282,6 +354,43 @@
   outline-offset: 3px;
 }
 
+
+/* Client logos: every logo shows at the same visual weight. Each box is sized to an equal ink area (height capped), and
+   its image is scaled and offset so only the logo's visible region fills the box, ignoring each PNG's blank margins. */
+.framer-662aja .framer-e4sd2r { align-items: center !important; gap: 60px !important; padding: 41px 60px 41px 0; }
+.framer-662aja .framer-e4sd2r > div { position: relative !important; flex: none !important; overflow: hidden !important; }
+.framer-662aja .framer-e4sd2r > div img { position: absolute !important; max-width: none !important; object-fit: fill !important; }
+/* Logo wall after overtake-wbs.framer.website: calm, uniform monochrome grey wordmarks, no hover shift. */
+.framer-662aja .framer-e4sd2r > div img { filter: grayscale(1); opacity: 0.6; }
+/* "Trusted by 100+ top-tier brands": plain muted sentence eyebrow (reference style), not uppercase. */
+.framer-zney4t p {
+  text-transform: none;
+  --framer-letter-spacing: 0px;
+  letter-spacing: normal;
+  text-align: left;
+  color: rgb(106, 110, 110);
+  --framer-text-color: rgb(106, 110, 110);
+}
+.framer-zney4t p span { color: inherit; --framer-text-color: rgb(106, 110, 110); }
+/* A second, never-visible copy of the Padathil logo nested in the first box. */
+.framer-662aja .framer-1e8khbk { display: none !important; }
+.framer-662aja .framer-1n8wit7 { width: 58.8px !important; height: 60.0px !important; }
+.framer-662aja .framer-1n8wit7 img { width: 65.2px !important; height: 65.2px !important; left: -3.2px !important; top: -2.6px !important; }
+.framer-662aja .framer-120tkn0 { width: 81.2px !important; height: 56.6px !important; }
+.framer-662aja .framer-120tkn0 img { width: 92.4px !important; height: 92.4px !important; left: -5.6px !important; top: -15.6px !important; }
+.framer-662aja .framer-ecrq1 { width: 118.2px !important; height: 38.9px !important; }
+.framer-662aja .framer-ecrq1 img { width: 173.0px !important; height: 138.9px !important; left: -26.2px !important; top: -46.7px !important; }
+.framer-662aja .framer-1ufw05j { width: 69.3px !important; height: 60.0px !important; }
+.framer-662aja .framer-1ufw05j img { width: 146.0px !important; height: 146.0px !important; left: -38.3px !important; top: -43.0px !important; }
+.framer-662aja .framer-aa22rq { width: 126.2px !important; height: 36.4px !important; }
+.framer-662aja .framer-aa22rq img { width: 137.3px !important; height: 87.3px !important; left: -5.5px !important; top: -24.5px !important; }
+.framer-662aja .framer-kdywir { width: 68.4px !important; height: 60.0px !important; }
+.framer-662aja .framer-kdywir img { width: 79.2px !important; height: 87.0px !important; left: -5.4px !important; top: -13.5px !important; }
+
+/* FAQ rows and the contact form: 40px corners like the site's other raised cards (Framer had 24px). */
+[data-framer-name="FAQ"] .framer-WHLkL,
+.framer-1fb76sd { border-radius: 40px !important; }
+
 /* Logo ticker: fade logos out at the right end, mirroring Framer's left-edge fade. */
 .framer-03p7A .framer-662aja {
   -webkit-mask: linear-gradient(90deg, #0000 0%, #000000e6 12.5723%, #000 50%, #000000e6 87.4277%, #0000 100%) !important;
@@ -320,7 +429,7 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
   background: radial-gradient(50% 55% at 50% 50%, #fff 0%, rgba(228, 233, 253, 0.95) 45%, rgba(237, 236, 236, 0) 85%) !important;
 }
 .framer-1thhh33 { background: transparent !important; }
-/* Gradients for About, Services, Process and Featured Works: navy tints whose top and bottom edges fade into the
+/* Gradients for About, Services and Process: navy tints whose top and bottom edges fade into the
    neighbouring section colour (page grey #edecec or white), so sections join without a visible seam. */
 .framer-2vcsc7 {
   background: radial-gradient(55% 40% at 80% 30%, rgba(150, 168, 245, 0.75) 0%, rgba(237, 236, 236, 0) 70%), radial-gradient(40% 30% at 12% 62%, rgba(170, 184, 245, 0.6) 0%, rgba(237, 236, 236, 0) 70%) !important;
@@ -348,47 +457,71 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
 .mg-process__pin {
   background: radial-gradient(42% 40% at 72% 52%, rgba(150, 168, 245, 0.7) 0%, rgba(237, 236, 236, 0) 100%);
 }
-.framer-rjy3eh {
-  background: linear-gradient(180deg, #edecec 0%, #e0e6ff 18%, #dde3ff 45%, #f1f3ff 80%, #fff 100%) !important;
+
+/* Footer watermark: "MediaGroots" lettering in place of the template's "AgenAI" SVG. The text sits in the same
+   box, so it keeps the footer's fade and scroll parallax. Font size tracks the box width so the word always fits. */
+.framer-1451u8p > .svgContainer { display: none; }
+.framer-1451u8p {
+  container-type: inline-size;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+/* Same fill as the SVG: #292c2e at 10% at the top, fading out toward the baseline. */
+.framer-1451u8p::after {
+  content: "MediaGroots";
+  font: 600 17.4cqw/1 Urbanist, "Urbanist Placeholder", sans-serif;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  color: transparent;
+  background: linear-gradient(rgba(41, 44, 46, 0.1), rgba(41, 44, 46, 0) 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
-/* Process section: pinned, scroll-drawn "Groot Method" route. Mounted by site-process.js. */
+/* Contact "Form Nav" email + phone links: white text (preset 164zv43 renders them near-black rgb(9,9,11)). */
+.framer-v-1g40zfx .framer-text,
+.framer-v-1g40zfx p {
+  color: #fff !important;
+  --framer-text-color: #fff !important;
+}
+
+/* ===== Overtake monochrome look (reference: overtake-wbs.framer.website) =====
+   Minimal black/grey on white. Flips the blue accent token to near-black site-wide (dots, bars,
+   stars, borders). Remove this block to restore the blue accent. */
+body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
+[data-framer-name="Statistics"] [data-framer-name="Bar"] {
+  box-shadow: 0 2.77px 2.21px 0 rgba(11, 11, 12, 0.18), 0 3px 4px 0 rgba(11, 11, 12, 0.22) !important;
+}
+.framer-1eipfdp { background-color: rgba(11, 11, 12, 0.2) !important; }
+
+/* Remove the white panel behind the "Why Choose Us" (Benefits) section. */
+.framer-1v2z8lb { background-color: transparent !important; box-shadow: none !important; }
+
+/* Process section: fanned deck of step cards (after td-signal.framer.website), in brand blue.
+   Mounted by site-process.js. Replaces the old pinned scroll-drawn route. */
 .mg-process-host > :not(.mg-process) { display: none !important; }
 .mg-process-host { display: block !important; height: auto !important; padding: 0 !important; }
 
 .mg-process {
-  --mg-ink: rgb(41, 44, 46);
-  --mg-muted: rgb(113, 113, 122);
-  --mg-faint: rgba(41, 44, 46, 0.32);
-  --mg-line: rgba(41, 44, 46, 0.1);
-  --mg-blue: #2a35d9;
-  --mg-blue-deep: #0e15a8;
-  --mg-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  position: relative;
-  height: 320vh;
+  --mg-ink: rgb(17, 17, 19);
+  --mg-muted: rgb(97, 102, 106);
+  --mg-accent: #1422e3;
+  display: block;
   width: 100%;
+  padding: clamp(72px, 9vw, 130px) 0 clamp(40px, 5vw, 72px);
   color: var(--mg-ink);
   font-family: Urbanist, "Urbanist Placeholder", sans-serif;
 }
-.mg-process__pin {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-}
-.mg-process__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  gap: clamp(24px, 3vw, 48px);
-  align-items: center;
+.mg-process__inner {
   width: 100%;
   max-width: 1296px;
   margin: 0 auto;
   padding: 0 72px;
   box-sizing: border-box;
 }
+.mg-process__header { position: relative; text-align: center; margin-bottom: clamp(40px, 5vw, 72px); }
+/* Old boxed "Process" badge: grey pill with a hard-drop shadow and a leading dot. */
 .mg-process__tag {
   display: inline-flex;
   align-items: center;
@@ -400,6 +533,7 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
   font-size: 16px;
   line-height: 24px;
   font-weight: 600;
+  color: var(--mg-ink);
 }
 .mg-process__tag::before {
   content: "";
@@ -409,107 +543,99 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
   background: var(--mg-ink);
 }
 .mg-process h2 {
-  margin: 24px 0 14px;
-  font-size: 72px;
-  line-height: 72px;
-  letter-spacing: -2.16px;
-  font-weight: 600;
-  background: linear-gradient(270deg, rgb(41, 44, 46) 75%, rgb(97, 102, 106) 105%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  margin: 20px 0 0;
+  font-size: clamp(34px, 5vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-weight: 700;
 }
-.mg-process__stage {
-  font-size: 18px;
-  line-height: 28px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--mg-blue);
-  font-variant-numeric: tabular-nums;
-}
-.mg-process__steps { margin-top: 24px; display: grid; gap: 12px; }
-.mg-step {
-  padding: 20px 22px;
-  border-radius: 22px;
-  background: rgb(243, 243, 243);
-  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.05), 0 10px 24px rgba(0, 0, 0, 0.06);
-  opacity: 0.38;
-  scale: 0.97;
-  transform-origin: left;
-  transition: opacity 0.6s var(--mg-ease), scale 0.6s var(--mg-ease);
-}
-.mg-step.is-on { opacity: 1; scale: 1; }
-.mg-step__head { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
-.mg-step h4 { display: flex; align-items: baseline; gap: 14px; margin: 0; font-size: 36px; line-height: 48px; font-weight: 600; letter-spacing: -0.36px; }
-.mg-step h4 small { font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: 0.14em; color: var(--mg-blue); }
-.mg-step__days {
-  flex-shrink: 0;
-  padding: 6px 14px;
-  border: 1px solid var(--mg-line);
-  border-radius: 999px;
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 600;
-}
-.mg-step p { margin: 6px 0 0; color: var(--mg-muted); font-size: 16px; line-height: 24px; font-weight: 400; }
+.mg-process__muted { color: var(--mg-muted); }
 
-.mg-process__path { position: relative; aspect-ratio: 1.05; width: min(100%, 88vh); justify-self: center; }
-.mg-process__path svg { width: 100%; height: 100%; overflow: visible; }
-.mg-process__path .track { fill: none; stroke: var(--mg-line); stroke-width: 2; stroke-dasharray: 4 8; }
-.mg-process__path .draw { fill: none; stroke: url(#mg-route-gradient); stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 8px rgba(42, 53, 217, 0.45)); }
-.mg-process__path .ring { fill: rgb(243, 243, 243); stroke: rgba(41, 44, 46, 0.18); stroke-width: 1.5; transition: fill 0.6s var(--mg-ease), stroke 0.6s var(--mg-ease); }
-.mg-process__path .core { fill: #fff; transform-box: fill-box; transform-origin: center; transform: scale(0); transition: transform 0.6s var(--mg-ease); }
-.mg-process__path .node.is-on .ring { fill: var(--mg-blue); stroke: var(--mg-blue-deep); }
-.mg-process__path .node.is-on .core { transform: scale(1); }
-.mg-process__path text { fill: var(--mg-faint); font-family: inherit; font-size: 16px; font-weight: 600; letter-spacing: 0.14em; transition: fill 0.6s var(--mg-ease); }
-.mg-process__path .node.is-on text { fill: var(--mg-ink); }
-.mg-process__head {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 18px;
-  height: 18px;
-  margin: -9px 0 0 -9px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 0 0 6px rgba(42, 53, 217, 0.25), 0 0 26px 6px rgba(42, 53, 217, 0.55);
+/* Fanned deck: cards overlap and step down to the right, each slightly rotated. */
+.mg-proc-cards {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 8px;
+  /* Reserve room for the stepped-down cards so the deck never overlaps Featured Works. */
+  padding-bottom: 210px;
+}
+.mg-pcard {
+  flex: 0 0 auto;
+  width: clamp(230px, 22vw, 300px);
+  min-height: 340px;
+  box-sizing: border-box;
+  padding: 26px 26px 30px;
+  border-radius: 26px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+  transform: translateY(var(--dy)) rotate(var(--rot));
+  transform-origin: center;
+}
+.mg-pcard:nth-child(1) { --dy: 0px;   --rot: -6deg; z-index: 1; background: #ffffff;  color: var(--mg-ink); }
+.mg-pcard:nth-child(2) { --dy: 60px;  --rot: -2deg; z-index: 2; background: #dbe0ff;  color: var(--mg-ink); }
+.mg-pcard:nth-child(3) { --dy: 128px; --rot: 3deg;  z-index: 3; background: var(--mg-accent); color: #fff; }
+.mg-pcard:nth-child(4) { --dy: 196px; --rot: 6deg;  z-index: 4; background: #020a70;  color: #fff; }
+.mg-pcard:not(:first-child) { margin-left: clamp(-56px, -3vw, -36px); }
+
+.mg-pcard__top { display: flex; align-items: center; justify-content: space-between; }
+.mg-pcard__num { font-size: 20px; font-weight: 600; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; opacity: 0.85; }
+.mg-pcard__top .mg-spark { width: 20px; height: 20px; color: currentColor; opacity: 0.85; }
+.mg-pcard__body { margin-top: auto; }
+.mg-pcard h3 { margin: 0 0 8px; font-size: 24px; line-height: 30px; font-weight: 700; letter-spacing: -0.01em; }
+.mg-pcard p { margin: 0; font-size: 16px; line-height: 23px; font-weight: 500; opacity: 0.86; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .mg-pcard {
+    opacity: 0;
+    transform: translateY(34px) rotate(0deg) scale(0.96);
+    transition: opacity 0.5s ease, transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transition-delay: calc(var(--i) * 90ms);
+  }
+  .mg-proc-cards.is-in .mg-pcard { opacity: 1; transform: translateY(var(--dy)) rotate(var(--rot)); }
+  .mg-pcard { transition-property: opacity, transform; }
+  .mg-pcard:hover {
+    transform: translateY(calc(var(--dy) - 14px)) rotate(var(--rot)) scale(1.03);
+    z-index: 9;
+    transition-delay: 0s;
+  }
 }
 
+/* Tablet: smaller cards, gentler stair. */
 @media (max-width: 1199.98px) {
-  .mg-process__grid { padding: 0 40px; }
-  .mg-process h2 { font-size: 42px; line-height: 50px; letter-spacing: -0.96px; }
-  .mg-step h4 { font-size: 27px; line-height: 39px; letter-spacing: -0.27px; }
-}
-/* Short desktop screens: fold inactive descriptions so the pinned column fits. */
-@media (min-width: 810px) and (max-height: 860px) {
-  .mg-step p { max-height: 72px; overflow: hidden; transition: max-height 0.6s var(--mg-ease), margin 0.6s var(--mg-ease); }
-  .mg-step:not(.is-on) p { max-height: 0; margin-top: 0; }
-}
-/* Phone: no pinning; steps stack, all active. */
-@media (max-width: 809.98px) {
-  .mg-process { height: auto; }
-  .mg-process__pin { position: relative; height: auto; padding: 72px 0; }
-  .mg-process__grid { grid-template-columns: 1fr; padding: 0 20px; }
-  .mg-process__path, .mg-process__stage { display: none; }
-  .mg-step { opacity: 1; scale: 1; }
-  .mg-step__head { flex-wrap: wrap; }
-  .mg-process h2 { font-size: 40px; line-height: 48px; letter-spacing: -1.2px; }
-  .mg-step h4 { font-size: 26px; line-height: 34px; letter-spacing: -0.26px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .mg-step, .mg-process__path * { transition: none !important; }
+  .mg-process__inner { padding: 0 40px; }
+  .mg-pcard { width: clamp(200px, 24vw, 260px); min-height: 300px; padding: 22px; }
+  .mg-pcard:nth-child(2) { --dy: 44px; }
+  .mg-pcard:nth-child(3) { --dy: 92px; }
+  .mg-pcard:nth-child(4) { --dy: 140px; }
+  .mg-proc-cards { padding-bottom: 150px; }
+  .mg-pcard h3 { font-size: 21px; line-height: 27px; }
+  .mg-pcard p { font-size: 15px; line-height: 21px; }
 }
 
-/* Services accordion: cards lift slightly under the mouse and settle back, easing in and out both ways.
-   site-services.js opens them on hover. */
-@media (hover: hover) and (pointer: fine) {
-  [data-framer-name="Services"] .framer-56cFz { transition: translate 0.7s cubic-bezier(0.4, 0, 0.2, 1); }
-  [data-framer-name="Services"] .framer-56cFz:hover { translate: 0 -4px; }
+/* Phone: stack, no rotation, full width. */
+@media (max-width: 809.98px) {
+  .mg-process__inner { padding: 0 20px; }
+  .mg-proc-cards { flex-direction: column; gap: 16px; padding-bottom: 0; }
+  .mg-pcard {
+    width: 100%;
+    min-height: 0;
+    margin-left: 0 !important;
+    --dy: 0px !important;
+    --rot: 0deg !important;
+  }
+  .mg-process h2 { font-size: 34px; }
 }
-@media (prefers-reduced-motion: reduce) {
-  [data-framer-name="Services"] .framer-56cFz { transition: none; }
+@media (max-width: 809.98px) and (prefers-reduced-motion: no-preference) {
+  .mg-pcard { transform: translateY(24px) scale(0.98); }
+  .mg-proc-cards.is-in .mg-pcard { transform: none; }
+  .mg-pcard:hover { transform: translateY(-4px) scale(1.01); }
 }
+
+/* Services accordion: click only. The hover-open and hover lift were removed per request;
+   open/close is animated by Framer's own variant transition (tuned in apply-customizations.mjs). */
+[data-framer-name="Services"] .framer-56cFz { cursor: pointer; }
 
 /* Featured Works: stacked case-study cards (after marketinglab.framer.ai "Work That Delivers Results"). Mounted by site-works.js. */
 .mg-works-host > .framer-kxz02j { display: none !important; }
@@ -614,6 +740,20 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
   object-fit: cover;
 }
 
+/* Card pop after td-signal.framer.website: each card springs up from scale(0.9) with a slight
+   overshoot the first time it scrolls into view (site-works.js toggles .mg-work--in), staggered per card. */
+@media (prefers-reduced-motion: no-preference) {
+  .mg-work {
+    opacity: 0;
+    transform: scale(0.9);
+    transform-origin: 50% 50%;
+    transition: transform 0.62s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.42s ease-out;
+    transition-delay: calc(var(--i) * 80ms);
+  }
+  .mg-work.mg-work--in { opacity: 1; transform: none; }
+}
+
 @media (prefers-reduced-motion: no-preference) {
   .mg-work__cta { transition: scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease; }
   .mg-work__cta svg { transition: translate 0.35s var(--mg-ease); }
@@ -644,6 +784,142 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
   .mg-work__tags span { font-size: 15px; line-height: 22px; }
   .mg-work__tags span::before { width: 8px; height: 8px; }
   .mg-work__cta { margin-top: 6px; padding: 12px 22px; }
+}
+
+/* Remove the white panel behind the Featured Works section; cards sit on the page background. */
+.framer-rjy3eh { background-color: transparent !important; box-shadow: none !important; }
+
+/* Features tree: glowing blue branches, travelling light pulses (added by site-features.js) and a luminous centre logo. */
+svg.framer-9xleZ,
+svg.framer-x8YHN {
+  overflow: visible;
+  filter: drop-shadow(0 0 3px rgba(20, 34, 227, 0.45)) drop-shadow(0 0 10px rgba(20, 34, 227, 0.2));
+}
+/* Resting track: a faint lavender line instead of flat grey. */
+svg.framer-9xleZ path[stroke="rgb(212, 212, 216)"]:not(.mg-pulse),
+svg.framer-x8YHN path[stroke="rgb(212, 212, 216)"]:not(.mg-pulse) {
+  stroke: rgba(120, 138, 240, 0.35);
+  stroke-width: 1.5;
+}
+/* Framer's animated line: brighter blue and a little thicker. */
+svg.framer-9xleZ path[stroke^="var(--token-1971cadb"],
+svg.framer-x8YHN path[stroke^="var(--token-1971cadb"] {
+  stroke: #1422e3;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+/* Branch dots. */
+svg.framer-9xleZ path[fill="rgb(213, 208, 212)"],
+svg.framer-x8YHN path[fill="rgb(213, 208, 212)"] { fill: rgba(150, 165, 245, 0.6); }
+svg.framer-9xleZ path[fill^="var(--token-1971cadb"],
+svg.framer-x8YHN path[fill^="var(--token-1971cadb"] { fill: #1422e3; }
+
+/* Travelling light: a short bright dash that runs from the logo to the card ends, then repeats. */
+.mg-pulse {
+  fill: none;
+  stroke: #b7c3ff;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 0.05 0.95;
+  stroke-dashoffset: 0.05;
+  animation: mg-pulse-run 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
+@keyframes mg-pulse-run {
+  0% { stroke-dashoffset: 0.05; opacity: 0; }
+  8% { opacity: 1; }
+  85% { opacity: 1; }
+  100% { stroke-dashoffset: -0.95; opacity: 0; }
+}
+
+/* Centre logo: deep blue gradient, soft glow, a slow breathing halo and an occasional sheen. */
+.framer-wky74u {
+  position: relative;
+  overflow: visible !important;
+  background: linear-gradient(150deg, #2a3bf0 0%, #0a17a8 45%, #030a5e 100%) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -10px 20px rgba(0, 0, 0, 0.3), 0 18px 44px rgba(20, 34, 227, 0.45), 0 0 90px rgba(20, 34, 227, 0.25) !important;
+}
+.framer-wky74u::before,
+.framer-wky74u::after {
+  content: "";
+  position: absolute;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.framer-wky74u::before {
+  inset: -12px;
+  border: 1px solid rgba(130, 148, 255, 0.55);
+  animation: mg-halo 3.6s ease-out infinite;
+}
+.framer-wky74u::after {
+  inset: 0;
+  background: linear-gradient(110deg, rgba(255, 255, 255, 0) 42%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0) 58%) no-repeat;
+  background-size: 300% 100%;
+  animation: mg-sheen 6s ease-in-out infinite;
+}
+@keyframes mg-halo {
+  0% { opacity: 0.9; scale: 0.94; }
+  100% { opacity: 0; scale: 1.22; }
+}
+@keyframes mg-sheen {
+  0%, 55% { background-position: 100% 0; }
+  85%, 100% { background-position: 0% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mg-pulse { display: none; }
+  .framer-wky74u::before,
+  .framer-wky74u::after { animation: none; }
+  .framer-wky74u::before { opacity: 0; }
+}
+
+/* "All Features in One" box: round all corners, add top spacing + breathing room, light drop shadow. */
+.framer-gtsbnt {
+  border-radius: 40px !important;
+  margin-top: 56px !important;
+  padding-top: 72px !important;
+  box-shadow: 0 18px 60px rgba(11, 11, 12, 0.16) !important;
+}
+
+/* Trust bar after overtake-wbs.framer.website: the row (.framer-19b0sxl) is already a horizontal white
+   card with the headline on the left and the client logo marquee on the right. We add a 3-avatar cluster
+   to the left of the headline and a vertical divider before the logos. Nodes are injected as siblings in
+   site-trust.js (never moving Framer's own nodes), so the flex gap is zeroed and spacing set per item. */
+.framer-19b0sxl { gap: 0 !important; }
+/* Drop the white card: logos sit on the page background like overtake-wbs.framer.website. */
+.framer-19b0sxl { background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }
+/* Rings separate overlapping avatars against the page grey, not white. */
+.mg-trust-avatars > span { box-shadow: 0 0 0 3px rgb(237, 236, 236); }
+
+.mg-trust-avatars {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 18px;
+}
+.mg-trust-avatars > span {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 0 0 3px #fff;
+}
+.mg-trust-avatars > span + span { margin-left: -14px; }
+
+.mg-trust-divider {
+  flex: none;
+  align-self: center;
+  width: 1px;
+  height: 52px;
+  margin: 0 44px;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 809.98px) {
+  .mg-trust-avatars { margin-right: 14px; }
+  .mg-trust-avatars > span { width: 38px; height: 38px; }
+  .mg-trust-divider { height: 44px; margin: 0 24px; }
 }
 </style></head>
 <body>
@@ -729,38 +1005,41 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
 	<!-- Start of bodyEnd -->
     
     <!-- End of bodyEnd -->
-<svg id="site-polish-filter" aria-hidden="true" style="position:absolute;width:0;height:0"><filter id="mg-glass-distortion" x="0" y="0" width="100%" height="100%" filterUnits="objectBoundingBox"><feTurbulence type="fractalNoise" baseFrequency="0.003 0.007" numOctaves="1" result="turbulence"/><feDisplacementMap in="SourceGraphic" in2="turbulence" scale="60" xChannelSelector="R" yChannelSelector="G"/></filter></svg><script id="site-process">// Process section: replaces the Framer slideshow with a pinned, scroll-drawn route (the "Groot Method").
+<svg id="site-polish-filter" aria-hidden="true" style="position:absolute;width:0;height:0"><filter id="mg-glass-distortion" x="0" y="0" width="1" height="1" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB"><feImage href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27 preserveAspectRatio=%27none%27%3E%3ClinearGradient id=%27g%27%3E%3Cstop offset=%270%27 stop-color=%27rgb(255,0,0)%27/%3E%3Cstop offset=%27.12%27 stop-color=%27rgb(128,0,0)%27/%3E%3Cstop offset=%27.88%27 stop-color=%27rgb(128,0,0)%27/%3E%3Cstop offset=%271%27 stop-color=%27rgb(0,0,0)%27/%3E%3C/linearGradient%3E%3Crect width=%27100%27 height=%27100%27 fill=%27url(%23g)%27/%3E%3C/svg%3E" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="rx"/><feImage href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27 preserveAspectRatio=%27none%27%3E%3ClinearGradient id=%27g%27 x2=%270%27 y2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27rgb(0,255,0)%27/%3E%3Cstop offset=%27.3%27 stop-color=%27rgb(0,128,0)%27/%3E%3Cstop offset=%27.7%27 stop-color=%27rgb(0,128,0)%27/%3E%3Cstop offset=%271%27 stop-color=%27rgb(0,0,0)%27/%3E%3C/linearGradient%3E%3Crect width=%27100%27 height=%27100%27 fill=%27url(%23g)%27/%3E%3C/svg%3E" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="gy"/><feComposite in="rx" in2="gy" operator="arithmetic" k2="1" k3="1" result="map"/><feDisplacementMap in="SourceGraphic" in2="map" scale="0.08" xChannelSelector="R" yChannelSelector="G"/></filter></svg><script id="site-process">// Process section: replaces the Framer slideshow with a fanned deck of step cards
+// (after td-signal.framer.website "From brief to better content that performs").
 // Framer can re-render its section, so the block is re-mounted whenever it goes missing.
 (() => {
-  const steps = [
-    ['01', 'Root', '3-7 DAYS', 'Align on problems, data reality, and success metrics. Opportunity brief, KPI model, phased roadmap, effort/cost ranges.'],
-    ['02', 'Grow', '1-2 WEEKS', 'We build the growth engine: funnels, campaigns, AI content, and smart automations that seamlessly tie it together.'],
-    ['03', 'Validate & Evals', '1 WEEK', 'Prove accuracy, usability, safety, and cost. Eval dashboard, acceptance thresholds, decision to iterate/ship.'],
+  const cards = [
+    ['01', 'Strategy', 'Audit the brand, audience, and feed. Define pillars, hooks, briefs, and the launch plan.'],
+    ['02', 'Production', 'Create scripts, creator direction, edits, captions, stills, and platform-ready variants.'],
+    ['03', 'Optimization', 'Measure watch time, saves, clicks, and conversions. Use the data to improve each batch.'],
+    ['04', 'Scale', 'Expand winning angles into new hooks, creators, formats, and ads. Cut the rest.'],
   ];
-  const route = 'M60 510 C 180 520, 200 380, 300 350 S 420 300, 440 210 S 520 60, 560 50';
-  const nodes = [[60, 510, 96, 546, '01 ROOT'], [300, 350, 196, 316, '02 GROW'], [560, 50, 380, 30, '03 VALIDATE']];
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const spark = '<svg class="mg-spark" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c.55 5.2 1 5.65 10 10-9 4.35-9.45 4.8-10 10-.55-5.2-1-5.65-10-10 9-4.35 9.45-4.8 10-10Z" fill="currentColor"/></svg>';
   const html = `
-    <div class="mg-process__pin"><div class="mg-process__grid">
-      <div>
-        <span class="mg-process__tag">Process</span>
-        <h2>From Idea<br>to Production</h2>
-        <div class="mg-process__stage">Stage <span data-stage>01</span> / 03</div>
-        <div class="mg-process__steps">${steps.map(([n, title, days, text], i) => `
-          <div class="mg-step${i ? '' : ' is-on'}"><div class="mg-step__head"><h4><small>${n}</small>${title.replace('&', '&amp;')}</h4><span class="mg-step__days">${days}</span></div><p>${text}</p></div>`).join('')}
-        </div>
+    <div class="mg-process__inner">
+      <header class="mg-process__header">
+        <span class="mg-process__tag">The process</span>
+        <h2>From brief to better content <span class="mg-process__muted">that performs.</span></h2>
+      </header>
+      <div class="mg-proc-cards">${cards.map(([n, title, text], i) => `
+        <article class="mg-pcard" style="--i:${i}">
+          <div class="mg-pcard__top"><span class="mg-pcard__num">${n}</span>${spark}</div>
+          <div class="mg-pcard__body"><h3>${esc(title)}</h3><p>${esc(text)}</p></div>
+        </article>`).join('')}
       </div>
-      <div class="mg-process__path" aria-hidden="true">
-        <svg viewBox="0 0 600 570">
-          <defs><linearGradient id="mg-route-gradient" x1="0" y1="1" x2="1" y2="0"><stop stop-color="#0e15a8"/><stop offset="1" stop-color="#4b5cff"/></linearGradient></defs>
-          <path class="track" d="${route}"/>
-          <path class="draw" d="${route}"/>
-          ${nodes.map(([cx, cy, tx, ty, label], i) => `<g class="node${i ? '' : ' is-on'}"><circle class="ring" cx="${cx}" cy="${cy}" r="22"/><circle class="core" cx="${cx}" cy="${cy}" r="8"/><text x="${tx}" y="${ty}">${label}</text></g>`).join('')}
-        </svg>
-        <div class="mg-process__head"></div>
-      </div>
-    </div></div>`;
+    </div>`;
 
-  let block = null;
+  let block = null, io = null;
+  function reveal() {
+    if (!block) return;
+    const row = block.querySelector('.mg-proc-cards');
+    if (!io) io = new IntersectionObserver(entries => {
+      for (const e of entries) if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+    }, { threshold: 0.25 });
+    io.observe(row);
+  }
   function mount() {
     const host = [...document.querySelectorAll('[data-framer-name="Process"]')].find(el => el.offsetParent !== null);
     if (!host || host.querySelector(':scope > .mg-process')) return;
@@ -770,37 +1049,8 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
     block.id = 'process';
     block.innerHTML = html;
     host.appendChild(block);
-    update();
+    reveal();
   }
-
-  function update() {
-    if (!block || !block.isConnected) return;
-    const draw = block.querySelector('.draw');
-    const stepEls = block.querySelectorAll('.mg-step');
-    if (innerWidth < 810) { stepEls.forEach(s => s.classList.add('is-on')); return; }
-    const len = draw.getTotalLength();
-    const r = block.getBoundingClientRect();
-    const p = Math.min(1, Math.max(0, -r.top / (r.height - innerHeight)));
-    draw.style.strokeDasharray = len;
-    draw.style.strokeDashoffset = len * (1 - p);
-    const pt = draw.getPointAtLength(len * p);
-    const svg = block.querySelector('svg'), box = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
-    block.querySelector('.mg-process__head').style.transform = `translate(${pt.x * box.width / vb.width}px,${pt.y * box.height / vb.height}px)`;
-    let stage = 0;
-    [0, 0.45, 0.9].forEach((s, i) => { if (p >= s - 0.02) stage = i; });
-    block.querySelectorAll('.node').forEach((n, i) => n.classList.toggle('is-on', i <= stage));
-    stepEls.forEach((s, i) => s.classList.toggle('is-on', i === stage));
-    block.querySelector('[data-stage]').textContent = String(stage + 1).padStart(2, '0');
-  }
-
-  let ticking = false;
-  const requestUpdate = () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => { ticking = false; update(); });
-  };
-  addEventListener('scroll', requestUpdate, { passive: true });
-  addEventListener('resize', requestUpdate);
 
   const start = () => {
     mount();
@@ -810,24 +1060,33 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
   else addEventListener('load', start, { once: true });
 })();
 
-// Services accordion: open a card when the mouse rests on it, instead of only on click.
-// Framer opens cards from its tap gesture, so the hover replays a pointer tap on the card.
-// The short delay stops a chain of openings while cards resize under a moving cursor.
+// Services accordion: click only (no hover-open), one card open at a time.
+// Clicking a closed card opens it; any other open card is then closed by replaying a tap on it,
+// so Framer animates both the open and the close with its own variant transition.
 (() => {
-  const card = '[data-framer-name="Services"] .framer-56cFz';
-  let timer = 0;
-  addEventListener('pointerover', e => {
-    if (e.pointerType !== 'mouse') return;
-    const el = e.target.closest(card);
-    clearTimeout(timer);
-    if (!el || !/Closed/.test(el.dataset.framerName || '')) return;
-    timer = setTimeout(() => {
-      if (!el.matches(':hover') || !/Closed/.test(el.dataset.framerName || '')) return;
-      const o = { bubbles: true, pointerType: 'mouse', isPrimary: true, button: 0 };
-      el.dispatchEvent(new PointerEvent('pointerdown', o));
-      el.dispatchEvent(new PointerEvent('pointerup', o));
-      el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    }, 150);
+  const SECT = '[data-framer-name="Services"]';
+  const CARD = '.framer-56cFz';
+  const isOpen = el => /Open/.test(el.dataset.framerName || '');
+  let suppress = false;
+  function tap(el) {
+    const o = { bubbles: true, pointerType: 'mouse', isPrimary: true, button: 0 };
+    el.dispatchEvent(new PointerEvent('pointerdown', o));
+    el.dispatchEvent(new PointerEvent('pointerup', o));
+    el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  }
+  addEventListener('click', e => {
+    if (suppress) return;
+    const el = e.target.closest(SECT + ' ' + CARD);
+    if (!el) return;
+    // Let Framer toggle the clicked card first, then close any other that is still open.
+    setTimeout(() => {
+      if (!isOpen(el)) return;
+      const others = [...document.querySelectorAll(SECT + ' ' + CARD)].filter(c => c !== el && isOpen(c));
+      if (!others.length) return;
+      suppress = true;
+      others.forEach(tap);
+      setTimeout(() => { suppress = false; }, 50);
+    }, 60);
   });
 })();
 
@@ -865,36 +1124,114 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
     block.className = 'mg-works';
     block.innerHTML = html;
     cards.after(block);
-    update();
+    observe();
   }
 
-  // Each card shrinks back as the cards after it slide over it.
-  function update() {
-    if (!block || !block.isConnected) return;
-    const cards = [...block.children];
-    const progress = cards.map(card => {
-      const r = card.getBoundingClientRect(), stick = parseFloat(getComputedStyle(card).top);
-      return Math.min(1, Math.max(0, 1 - (r.top - stick) / innerHeight));
-    });
-    cards.forEach((card, i) => {
-      const depth = progress.slice(i + 1).reduce((sum, p) => sum + p, 0);
-      card.style.transform = depth ? `scale(${1 - depth * 0.04})` : '';
-      card.style.filter = depth ? `brightness(${1 - depth * 0.04})` : '';
-    });
+  // Card pop after td-signal.framer.website: each card springs up from scale(0.9)
+  // the first time it scrolls into view. Spring overshoot lives in site-works.css.
+  let io = null;
+  function observe() {
+    if (!block) return;
+    if (!io) {
+      io = new IntersectionObserver(entries => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          e.target.classList.add('mg-work--in');
+          io.unobserve(e.target);
+        }
+      }, { threshold: 0.2, rootMargin: '0px 0px -8% 0px' });
+    }
+    for (const card of block.children) io.observe(card);
   }
-
-  let ticking = false;
-  const requestUpdate = () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => { ticking = false; update(); });
-  };
-  addEventListener('scroll', requestUpdate, { passive: true });
-  addEventListener('resize', requestUpdate);
 
   const start = () => {
     mount();
     new MutationObserver(() => { if (!block || !block.isConnected) mount(); }).observe(document.body, { childList: true, subtree: true });
+  };
+  if (document.readyState === 'complete') start();
+  else addEventListener('load', start, { once: true });
+})();
+
+// Features tree: light pulses that travel along each branch from the central logo out to the feature cards.
+// Each branch path is cloned into an .mg-pulse path; the clone is styled and animated in site-features.css.
+// Framer can re-render the section, so missing pulses are added again.
+(() => {
+  function addPulses() {
+    for (const svg of document.querySelectorAll('svg.framer-9xleZ, svg.framer-x8YHN')) {
+      if (svg.querySelector('.mg-pulse')) continue;
+      const track = svg.querySelector('path[stroke="rgb(212, 212, 216)"]');
+      if (!track) continue;
+      const pulse = track.cloneNode(false);
+      pulse.removeAttribute('id');
+      pulse.setAttribute('class', 'mg-pulse');
+      pulse.setAttribute('pathLength', '1');
+      track.parentNode.appendChild(pulse);
+    }
+  }
+  const start = () => {
+    addPulses();
+    new MutationObserver(addPulses).observe(document.body, { childList: true, subtree: true });
+  };
+  if (document.readyState === 'complete') start();
+  else addEventListener('load', start, { once: true });
+})();
+
+// FAQ: only one answer open at a time. Framer toggles each row on its own, so when a closed row is
+// clicked open, replay a tap on every other open row to close it.
+// Rows are read by variant class: Framer drops data-framer-name while a row is hovered.
+(() => {
+  const row = '[data-framer-name="FAQ"] .framer-WHLkL';
+  const open = '.framer-v-pvaq0t, .framer-v-1epjw81, .framer-v-jddlaw'; // OPEN, Tablet Open, Mobile
+  addEventListener('click', e => {
+    if (!e.isTrusted) return;
+    const el = e.target.closest(row);
+    if (!el || el.matches(open)) return;
+    for (const other of document.querySelectorAll(row)) {
+      if (other === el || !other.matches(open)) continue;
+      const o = { bubbles: true, pointerType: 'mouse', isPrimary: true, button: 0 };
+      other.dispatchEvent(new PointerEvent('pointerdown', o));
+      other.dispatchEvent(new PointerEvent('pointerup', o));
+      other.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    }
+  }, true);
+})();
+
+// Trust bar after overtake-wbs.framer.website: inject a 3-avatar cluster before the headline and a vertical
+// divider before the client logo marquee. Avatars are decorative (aria-hidden). Only sibling nodes are added,
+// never moving Framer's own nodes, and Framer can re-render the row, so missing nodes are re-added.
+(() => {
+  const AVATARS = [
+    'eZ8inPIozwVXbVStRvddal5ZO84.jpg',
+    'nuSd8BM1kTHOuMIUAWaixG8WBHc.jpg',
+    'RfaecSOAwLoEpM5d0m2wamaL7Q.png',
+  ];
+  function build() {
+    const row = document.querySelector('.framer-19b0sxl');
+    if (!row) return;
+    const head = row.querySelector(':scope > .framer-zney4t');
+    const marquee = row.querySelector(':scope > .framer-662aja');
+    if (!head || !marquee) return;
+    if (!row.querySelector('.mg-trust-avatars')) {
+      const cluster = document.createElement('div');
+      cluster.className = 'mg-trust-avatars';
+      cluster.setAttribute('aria-hidden', 'true');
+      for (const name of AVATARS) {
+        const dot = document.createElement('span');
+        dot.style.backgroundImage = "url('/mirror/framerusercontent.com/images/" + name + "')";
+        cluster.appendChild(dot);
+      }
+      row.insertBefore(cluster, head);
+    }
+    if (!row.querySelector('.mg-trust-divider')) {
+      const divider = document.createElement('div');
+      divider.className = 'mg-trust-divider';
+      divider.setAttribute('aria-hidden', 'true');
+      row.insertBefore(divider, marquee);
+    }
+  }
+  const start = () => {
+    build();
+    new MutationObserver(build).observe(document.body, { childList: true, subtree: true });
   };
   if (document.readyState === 'complete') start();
   else addEventListener('load', start, { once: true });
