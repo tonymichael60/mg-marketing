@@ -742,14 +742,16 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
   .mgv-track::after { display: none; }
 }
 
-/* Process section: Groot Method stage list with a switching illustration panel. Mounted by site-process.js. */
+/* Process section (after spector.framer.website): stacked headline and one flip-in card per stage.
+   Mounted by site-process.js. */
 .mg-process-host > :not(.mg-process), [data-framer-name="Process"] > :not(.mg-process) { display: none !important; }
 .mg-process-host { display: block !important; height: auto !important; padding: 0 !important; }
 
 .mg-process {
   --mg-ink: #0b0b0c;
   --mg-muted: rgb(113, 113, 122);
-  --mg-faint: rgba(41, 44, 46, 0.42);
+  --mg-faint: rgba(41, 44, 46, 0.3);
+  --mg-line: rgba(41, 44, 46, 0.12);
   --mg-blue: #1422e3;
   --mg-ease: cubic-bezier(0.22, 1, 0.36, 1);
   width: 100%;
@@ -757,17 +759,8 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
   color: var(--mg-ink);
   font-family: Urbanist, "Urbanist Placeholder", sans-serif;
 }
-.mg-process__grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(32px, 6vw, 100px);
-  align-items: start;
-  width: 100%;
-  max-width: 1296px;
-  margin: 0 auto;
-  padding: 0 72px;
-  box-sizing: border-box;
-}
+.mg-process__wrap { width: 100%; max-width: 1296px; margin: 0 auto; padding: 0 72px; box-sizing: border-box; }
+.mg-process__top { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; }
 .mg-process__tag {
   display: inline-flex;
   align-items: center;
@@ -782,94 +775,89 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
   color: var(--mg-ink);
 }
 .mg-process__tag::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--mg-ink); }
-.mg-process h2 {
-  margin: 24px 0 0;
-  font-size: 72px;
-  line-height: 72px;
-  letter-spacing: -2.16px;
-  font-weight: 600;
-  padding-bottom: .14em;
-  /* Same dark-to-grey gradient text fill as "Measure what pays the bills". */
-  background: linear-gradient(180deg, #0b0b0c 0%, #1c1e24 40%, #c6c9cf 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-}
+.mg-process__aside { display: grid; justify-items: end; gap: 6px; text-align: right; }
+.mg-process__aside small { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--mg-muted); }
+.mg-process__aside small::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--mg-blue); box-shadow: 0 0 10px rgba(20, 34, 227, 0.6); }
+.mg-process__aside b { font-size: 18px; font-weight: 600; }
 
-/* Stage list: plain rows; the selected one sits in a raised card. */
-.mg-process__list { display: grid; gap: 6px; margin-top: clamp(32px, 5vh, 56px); }
-.mg-pstep {
-  display: flex;
-  align-items: baseline;
-  gap: 14px;
-  width: 100%;
-  padding: 18px 24px;
-  border: 0;
-  border-radius: 24px;
-  background: transparent;
-  font: inherit;
-  font-size: 36px;
-  line-height: 44px;
-  font-weight: 600;
-  letter-spacing: -0.72px;
-  text-align: left;
+/* Headline: big uppercase lines on rules, each indented further; grey until scrolled into view. */
+.mg-process__title { display: grid; margin: clamp(32px, 5vh, 56px) 0 0; }
+.mg-pline {
+  display: block;
+  padding: 0.04em 0 0.02em;
+  border-bottom: 1px solid var(--mg-line);
+  font-size: clamp(44px, 8.4vw, 120px);
+  line-height: 1;
+  letter-spacing: -0.05em;
+  font-weight: 700;
+  text-transform: uppercase;
   color: var(--mg-faint);
-  cursor: pointer;
-  transition: color 0.45s var(--mg-ease), background-color 0.45s var(--mg-ease), box-shadow 0.45s var(--mg-ease);
+  transition: color 0.9s var(--mg-ease);
 }
-.mg-pstep small { font-size: 16px; line-height: 20px; font-weight: 600; letter-spacing: 0.06em; color: var(--mg-blue); opacity: 0.6; transition: opacity 0.45s var(--mg-ease); }
-.mg-pstep:hover { color: rgba(41, 44, 46, 0.7); }
-.mg-pstep.is-on {
-  color: var(--mg-ink);
-  background-color: #f4f4f5;
-  box-shadow: inset 0 4px #fff9, inset 0 -8px #0000000d, 0 3px 3px #0000001a, 0 7.77px 2.21px #0000000f;
-}
-.mg-pstep.is-on small { opacity: 1; }
-.mg-pstep:focus-visible { outline: 2px solid var(--mg-blue); outline-offset: 3px; }
+.mg-pline:nth-child(2) { padding-left: 1.4em; }
+.mg-pline:last-child { border-bottom: 0; }
+.mg-pline.is-lit { color: var(--mg-ink); }
 
-/* Panel: illustration card (cross-fades between stages) and the stage description. */
-.mg-process__panel { display: grid; gap: 28px; }
-.mg-process__stage {
-  position: relative;
-  aspect-ratio: 1;
+/* Cards: three across on desktop; a swipeable row with arrows when they do not fit. */
+.mg-process__track {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: clamp(40px, 6vh, 72px);
+  perspective: 1600px;
+}
+.mg-pcard {
+  display: flex;
+  flex-direction: column;
+  min-height: 600px;
+  padding: 36px 32px 32px;
   border-radius: 40px;
-  overflow: hidden;
-  background:
-    radial-gradient(60% 55% at 50% 45%, rgba(20, 34, 227, 0.1) 0%, rgba(20, 34, 227, 0) 70%),
-    #f4f4f5;
+  background: #f4f4f5;
   box-shadow: inset 0 4px #fff9, inset 0 -8px #0000000d, 0 3px 3px #0000001a, 0 7.77px 2.21px #0000000f;
 }
-.mg-process__visual {
-  position: absolute;
-  inset: 0;
+.mg-pcard__head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+/* One line for every title ("Validate & Evals" is the longest) so the three cards stay aligned. */
+.mg-pcard h3 { margin: 0; font-size: clamp(28px, 2.6vw, 40px); line-height: 1.05; letter-spacing: -0.04em; font-weight: 700; white-space: nowrap; }
+.mg-pcard__num { font-size: 26px; font-weight: 500; color: var(--mg-blue); flex: none; }
+.mg-pcard__lede { position: relative; margin: 30px 0 0; padding-top: 18px; font-size: 19px; line-height: 1.35; font-weight: 500; letter-spacing: -0.01em; }
+.mg-pcard__lede::before { content: ""; position: absolute; left: 0; top: 0; width: 40px; height: 2px; border-radius: 2px; background: var(--mg-blue); }
+.mg-pcard__time { margin: 10px 0 0; font-size: 15px; color: var(--mg-muted); }
+.mg-pcard__time b { margin-left: 6px; font-weight: 600; color: var(--mg-ink); }
+.mg-pcard__visual { flex: 1; display: grid; place-items: center; min-height: 230px; padding: 24px 0; }
+.mg-pcard__visual .mgv { width: 100%; max-width: 330px; }
+.mg-pcard__points { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.mg-pcard__points li { display: flex; gap: 10px; font-size: 16px; line-height: 1.4; color: rgba(41, 44, 46, 0.86); }
+.mg-pcard__points li::before { content: "+"; flex: none; font-weight: 600; color: var(--mg-blue); }
+
+.mg-process__nav { display: flex; justify-content: center; gap: 16px; margin-top: 28px; }
+.mg-process__nav[hidden] { display: none; }
+.mg-process__arrow {
   display: grid;
   place-items: center;
-  padding: clamp(28px, 4vw, 56px);
-  opacity: 0;
-  scale: 1.04;
-  transition: opacity 0.6s var(--mg-ease), scale 0.8s var(--mg-ease);
-  pointer-events: none;
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-radius: 50%;
+  background: #f4f4f5;
+  box-shadow: inset 0 3px #fff9, inset 0 -5px #0000000d, 0 3px 3px #0000001a;
+  cursor: pointer;
+  transition: opacity 0.3s, translate 0.3s var(--mg-ease);
 }
-.mg-process__visual.is-on { opacity: 1; scale: 1; }
-/* The illustrations are sized for the smaller "What we build" cards; enlarge them to fill this card. */
-.mg-process__visual .mgv { width: 100%; max-width: 360px; zoom: 1.35; }
-.mg-process__copy { max-width: 46ch; }
-.mg-process__copy.is-on { animation: mg-pcopy-in 0.6s var(--mg-ease); }
-.mg-process__days {
-  display: inline-block;
-  padding: 6px 14px;
-  border: 1px solid rgba(41, 44, 46, 0.12);
-  border-radius: 999px;
-  font-size: 14px;
-  line-height: 20px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--mg-blue);
+.mg-process__arrow svg { width: 22px; height: 22px; fill: none; stroke: var(--mg-blue); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.mg-process__arrow:hover:not(:disabled) { translate: 0 -2px; }
+.mg-process__arrow:disabled { opacity: 0.35; cursor: default; }
+.mg-process__arrow:focus-visible { outline: 2px solid var(--mg-blue); outline-offset: 3px; }
+
+/* Flip-in: cards swing round from edge-on, one after another, when the row scrolls into view. */
+@media (prefers-reduced-motion: no-preference) {
+  .mg-pcard {
+    opacity: 0;
+    transform: rotateY(-70deg);
+    transform-origin: left center;
+    transition: opacity 0.7s var(--mg-ease) calc(var(--i) * 0.15s), transform 1.1s var(--mg-ease) calc(var(--i) * 0.15s);
+  }
+  .mg-process__track.is-in .mg-pcard { opacity: 1; transform: none; }
 }
-.mg-process__copy p { margin: 14px 0 0; color: var(--mg-muted); font-size: 18px; line-height: 28px; }
-@keyframes mg-pcopy-in { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
 
 /* 03 evals illustration: four checks in a grid and the ship decision below. */
 .mgv-evals { gap: 22px; }
@@ -889,22 +877,27 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
 }
 
 @media (max-width: 1199.98px) {
-  .mg-process__grid { padding: 0 40px; }
-  .mg-process h2 { font-size: 42px; line-height: 50px; letter-spacing: -0.96px; }
-  .mg-pstep { font-size: 27px; line-height: 36px; letter-spacing: -0.27px; padding: 16px 20px; }
+  .mg-process__wrap { padding: 0 40px; }
+  .mg-process__track {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin-left: -40px;
+    margin-right: -40px;
+    padding: 8px 40px 16px;
+    scroll-padding: 0 40px;
+  }
+  .mg-process__track::-webkit-scrollbar { display: none; }
+  .mg-pcard { flex: 0 0 min(400px, 78vw); scroll-snap-align: start; }
 }
-/* Phone: list on top, panel below. */
 @media (max-width: 809.98px) {
-  .mg-process__grid { grid-template-columns: 1fr; padding: 0 20px; gap: 28px; }
-  .mg-process h2 { font-size: 40px; line-height: 48px; letter-spacing: -1.2px; }
-  .mg-process__list { margin-top: 24px; gap: 4px; }
-  .mg-pstep { font-size: 24px; line-height: 32px; padding: 14px 18px; }
-  .mg-process__stage { aspect-ratio: 1 / 0.9; }
-  .mg-process__visual .mgv { zoom: 1; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .mg-pstep, .mg-process__visual { transition: none; }
-  .mg-process__copy.is-on { animation: none; }
+  .mg-process__wrap { padding: 0 20px; }
+  .mg-process__top { flex-direction: column; }
+  .mg-process__aside { justify-items: start; text-align: left; }
+  .mg-process__track { margin-left: -20px; margin-right: -20px; padding: 8px 20px 16px; scroll-padding: 0 20px; }
+  .mg-pcard { flex-basis: 84vw; min-height: 560px; padding: 30px 24px 26px; }
+  .mg-pline:nth-child(2) { padding-left: 0.6em; }
 }
 
 /* Services accordion: click only. The hover-open and hover lift were removed per request;
@@ -1649,10 +1642,10 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
 
     <!-- End of bodyEnd -->
 
-<svg id="site-polish-filter" aria-hidden="true" style="position:absolute;width:0;height:0"><filter id="mg-glass-distortion" x="0" y="0" width="1" height="1" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB"><feImage href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27 preserveAspectRatio=%27none%27%3E%3ClinearGradient id=%27g%27%3E%3Cstop offset=%270%27 stop-color=%27rgb(255,0,0)%27/%3E%3Cstop offset=%27.12%27 stop-color=%27rgb(128,0,0)%27/%3E%3Cstop offset=%27.88%27 stop-color=%27rgb(128,0,0)%27/%3E%3Cstop offset=%271%27 stop-color=%27rgb(0,0,0)%27/%3E%3C/linearGradient%3E%3Crect width=%27100%27 height=%27100%27 fill=%27url(%23g)%27/%3E%3C/svg%3E" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="rx"/><feImage href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27 preserveAspectRatio=%27none%27%3E%3ClinearGradient id=%27g%27 x2=%270%27 y2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27rgb(0,255,0)%27/%3E%3Cstop offset=%27.3%27 stop-color=%27rgb(0,128,0)%27/%3E%3Cstop offset=%27.7%27 stop-color=%27rgb(0,128,0)%27/%3E%3Cstop offset=%271%27 stop-color=%27rgb(0,0,0)%27/%3E%3C/linearGradient%3E%3Crect width=%27100%27 height=%27100%27 fill=%27url(%23g)%27/%3E%3C/svg%3E" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="gy"/><feComposite in="rx" in2="gy" operator="arithmetic" k2="1" k3="1" result="map"/><feDisplacementMap in="SourceGraphic" in2="map" scale="0.08" xChannelSelector="R" yChannelSelector="G"/></filter></svg><script id="site-process">// Process section (after overtake-wbs.framer.website, "Where should your next dollar work?"): a list of the
-// Groot Method stages on the left; clicking one boxes it and cross-fades its illustration and description in
-// on the right. Replaces the Framer slideshow. Framer can re-render its section, so the block is re-mounted
-// whenever it goes missing.
+<svg id="site-polish-filter" aria-hidden="true" style="position:absolute;width:0;height:0"><filter id="mg-glass-distortion" x="0" y="0" width="1" height="1" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB"><feImage href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27 preserveAspectRatio=%27none%27%3E%3ClinearGradient id=%27g%27%3E%3Cstop offset=%270%27 stop-color=%27rgb(255,0,0)%27/%3E%3Cstop offset=%27.12%27 stop-color=%27rgb(128,0,0)%27/%3E%3Cstop offset=%27.88%27 stop-color=%27rgb(128,0,0)%27/%3E%3Cstop offset=%271%27 stop-color=%27rgb(0,0,0)%27/%3E%3C/linearGradient%3E%3Crect width=%27100%27 height=%27100%27 fill=%27url(%23g)%27/%3E%3C/svg%3E" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="rx"/><feImage href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27 preserveAspectRatio=%27none%27%3E%3ClinearGradient id=%27g%27 x2=%270%27 y2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27rgb(0,255,0)%27/%3E%3Cstop offset=%27.3%27 stop-color=%27rgb(0,128,0)%27/%3E%3Cstop offset=%27.7%27 stop-color=%27rgb(0,128,0)%27/%3E%3Cstop offset=%271%27 stop-color=%27rgb(0,0,0)%27/%3E%3C/linearGradient%3E%3Crect width=%27100%27 height=%27100%27 fill=%27url(%23g)%27/%3E%3C/svg%3E" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="gy"/><feComposite in="rx" in2="gy" operator="arithmetic" k2="1" k3="1" result="map"/><feDisplacementMap in="SourceGraphic" in2="map" scale="0.08" xChannelSelector="R" yChannelSelector="G"/></filter></svg><script id="site-process">// Process section (after spector.framer.website): a large stacked headline whose lines darken as they
+// scroll into view, then one card per Groot Method stage that flips in, with arrows to page through the cards
+// when they do not all fit. Replaces the Framer slideshow. Framer can re-render its section, so the block is
+// re-mounted whenever it goes missing.
 (() => {
   const rafOnce = f => { let t = 0; return () => { if (t) return; t = 1; requestAnimationFrame(() => { t = 0; f(); }); }; };
   const icon = d => `<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
@@ -1660,7 +1653,8 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
   const steps = [
     {
       n: '01', title: 'Root', days: '3-7 days',
-      text: 'Align on problems, data reality, and success metrics. Opportunity brief, KPI model, phased roadmap, effort/cost ranges.',
+      lede: 'Align on problems, data reality, and success metrics.',
+      points: ['Opportunity brief.', 'KPI model.', 'Phased roadmap, effort/cost ranges.'],
       // Discovery: four bars fill in turn, one per deliverable.
       visual: `<div class="mgv mgv-funnel">${[
         [86, icon('<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>'), 'Problems'],
@@ -1671,7 +1665,8 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
     },
     {
       n: '02', title: 'Grow', days: '1-2 weeks',
-      text: 'We build the growth engine: funnels, campaigns, AI content, and smart automations that seamlessly tie it together.',
+      lede: 'We build the growth engine.',
+      points: ['Funnels and campaigns.', 'AI content.', 'Smart automations that tie it together.'],
       // Build: a lead travels funnel -> campaign -> automation.
       visual: `<div class="mgv mgv-flow"><div class="mgv-nodes"><span class="mgv-track"></span>
         <span class="mgv-node">${icon('<path d="M3 4h18l-7 8v6l-4 2v-8z"/>')}</span>
@@ -1681,35 +1676,58 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
     },
     {
       n: '03', title: 'Validate & Evals', days: '1 week',
-      text: 'Prove accuracy, usability, safety, and cost. Eval dashboard, acceptance thresholds, decision to iterate/ship.',
+      lede: 'Prove accuracy, usability, safety, and cost.',
+      points: ['Eval dashboard.', 'Acceptance thresholds.', 'Decision to iterate or ship.'],
       // Evals: each check ticks in turn, then the ship decision lights up.
       visual: `<div class="mgv mgv-evals"><div class="mgv-checks">${['Accuracy', 'Usability', 'Safety', 'Cost'].map(t => `<span class="mgv-chip"><i class="mgv-tick">${check}</i>${t}</span>`).join('')}</div>
         <span class="mgv-ship">${icon('<path d="M4 15l8-11 8 11"/><path d="M12 4v16"/>')}Ready to ship</span></div>`,
     },
   ];
   const esc = s => s.replace(/&/g, '&amp;');
+  const arrow = d => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
   const html = `
-    <div class="mg-process__grid">
-      <div class="mg-process__intro">
+    <div class="mg-process__wrap">
+      <div class="mg-process__top">
         <span class="mg-process__tag">Process</span>
-        <h2>From Idea<br>to Production</h2>
-        <div class="mg-process__list" role="tablist" aria-label="Groot Method stages">${steps.map((s, i) => `
-          <button type="button" class="mg-pstep${i ? '' : ' is-on'}" role="tab" id="mg-pstep-${i}" aria-controls="mg-ppanel" aria-selected="${!i}" tabindex="${i ? -1 : 0}"><small>${s.n}</small>${esc(s.title)}</button>`).join('')}
-        </div>
+        <div class="mg-process__aside"><small>The Groot Method</small><b>Root. Grow. Validate.</b></div>
       </div>
-      <div class="mg-process__panel" id="mg-ppanel" role="tabpanel" aria-labelledby="mg-pstep-0" aria-live="polite">
-        <div class="mg-process__stage">${steps.map((s, i) => `<div class="mg-process__visual${i ? '' : ' is-on'}" aria-hidden="true">${s.visual}</div>`).join('')}</div>
-        ${steps.map((s, i) => `<div class="mg-process__copy${i ? '' : ' is-on'}"${i ? ' hidden' : ''}><span class="mg-process__days">${s.days}</span><p>${s.text}</p></div>`).join('')}
+      <h2 class="mg-process__title"><span class="mg-pline">From idea</span><span class="mg-pline">to production</span></h2>
+      <div class="mg-process__track">${steps.map((s, i) => `
+        <article class="mg-pcard" style="--i:${i}">
+          <div class="mg-pcard__head"><h3>${esc(s.title)}</h3><span class="mg-pcard__num">/${s.n}</span></div>
+          <p class="mg-pcard__lede">${s.lede}</p>
+          <p class="mg-pcard__time">Timeframe <b>${s.days}</b></p>
+          <div class="mg-pcard__visual" aria-hidden="true">${s.visual}</div>
+          <ul class="mg-pcard__points">${s.points.map(t => `<li>${t}</li>`).join('')}</ul>
+        </article>`).join('')}
+      </div>
+      <div class="mg-process__nav">
+        <button type="button" class="mg-process__arrow" data-dir="-1" aria-label="Previous stage">${arrow('M19 12H5M11 6l-6 6 6 6')}</button>
+        <button type="button" class="mg-process__arrow" data-dir="1" aria-label="Next stage">${arrow('M5 12h14M13 6l6 6-6 6')}</button>
       </div>
     </div>`;
 
   let block = null;
-  function select(i) {
-    block.querySelectorAll('.mg-pstep').forEach((b, j) => { b.classList.toggle('is-on', i === j); b.setAttribute('aria-selected', i === j); b.tabIndex = i === j ? 0 : -1; });
-    block.querySelectorAll('.mg-process__visual').forEach((v, j) => v.classList.toggle('is-on', i === j));
-    block.querySelectorAll('.mg-process__copy').forEach((c, j) => { c.classList.toggle('is-on', i === j); c.hidden = i !== j; });
-    block.querySelector('.mg-process__panel').setAttribute('aria-labelledby', `mg-pstep-${i}`);
+  function update() {
+    if (!block || !block.isConnected) return;
+    // Headline lines darken once they pass 75% of the viewport height.
+    block.querySelectorAll('.mg-pline').forEach(l => l.classList.toggle('is-lit', l.getBoundingClientRect().top < innerHeight * 0.75));
+    const track = block.querySelector('.mg-process__track');
+    if (!track.classList.contains('is-in') && track.getBoundingClientRect().top < innerHeight * 0.85) track.classList.add('is-in');
+    // Arrows only when the cards overflow; each end disables at its limit.
+    const max = track.scrollWidth - track.clientWidth;
+    block.querySelector('.mg-process__nav').hidden = max < 4;
+    const [prev, next] = block.querySelectorAll('.mg-process__arrow');
+    prev.disabled = track.scrollLeft < 4;
+    next.disabled = track.scrollLeft > max - 4;
   }
+  let ticking = false;
+  const requestUpdate = () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { ticking = false; update(); });
+  };
+
   function mount() {
     const host = [...document.querySelectorAll('[data-framer-name="Process"]')].find(el => el.offsetParent !== null);
     if (!host || host.querySelector(':scope > .mg-process')) return;
@@ -1718,21 +1736,18 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
     block.className = 'mg-process';
     block.id = 'process';
     block.innerHTML = html;
-    const tabs = [...block.querySelectorAll('.mg-pstep')];
-    tabs.forEach((b, i) => {
-      b.addEventListener('click', () => select(i));
-      b.addEventListener('keydown', e => {
-        const d = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
-        if (!d) return;
-        e.preventDefault();
-        const next = (i + d + tabs.length) % tabs.length;
-        select(next);
-        tabs[next].focus();
-      });
-    });
+    const track = block.querySelector('.mg-process__track');
+    block.querySelectorAll('.mg-process__arrow').forEach(b => b.addEventListener('click', () => {
+      const card = track.querySelector('.mg-pcard');
+      track.scrollBy({ left: +b.dataset.dir * (card.offsetWidth + parseFloat(getComputedStyle(track).columnGap || 0)), behavior: 'smooth' });
+    }));
+    track.addEventListener('scroll', requestUpdate, { passive: true });
     host.appendChild(block);
+    update();
   }
 
+  addEventListener('scroll', requestUpdate, { passive: true });
+  addEventListener('resize', requestUpdate);
   const start = () => {
     mount();
     new MutationObserver(rafOnce(() => { if (!block || !block.isConnected) mount(); })).observe(document.body, { childList: true, subtree: true });
