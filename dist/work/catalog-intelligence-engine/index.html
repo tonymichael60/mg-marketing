@@ -588,6 +588,10 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
     radial-gradient(65% 80% at 100% 100%, rgba(20, 34, 227, 0.32) 0%, rgba(2, 10, 112, 0.16) 45%, transparent 75%),
     #03051a !important;
 }
+/* Framer drops the box's side padding to 12px below desktop, so text and the counter touched its edges. */
+@media (max-width: 1439.98px) {
+  .framer-1ynxxm3 { padding-left: clamp(24px, 5vw, 56px) !important; padding-right: clamp(24px, 5vw, 56px) !important; }
+}
 /* Space above the Testimonials section. */
 .framer-1aue9ps { margin-top: clamp(96px, 13vh, 170px) !important; }
 /* Features: white panel with a soft navy halo behind the central logo. */
