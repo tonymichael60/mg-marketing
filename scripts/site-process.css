@@ -1,34 +1,23 @@
-/* Process section: pinned, scroll-drawn "Groot Method" route. Mounted by site-process.js. */
+/* Process section: Groot Method stage list with a switching illustration panel. Mounted by site-process.js. */
 .mg-process-host > :not(.mg-process), [data-framer-name="Process"] > :not(.mg-process) { display: none !important; }
 .mg-process-host { display: block !important; height: auto !important; padding: 0 !important; }
 
 .mg-process {
-  --mg-ink: rgb(41, 44, 46);
+  --mg-ink: #0b0b0c;
   --mg-muted: rgb(113, 113, 122);
-  --mg-faint: rgba(41, 44, 46, 0.32);
-  --mg-line: rgba(41, 44, 46, 0.1);
-  --mg-blue: #2a35d9;
-  --mg-blue-deep: #0e15a8;
+  --mg-faint: rgba(41, 44, 46, 0.42);
+  --mg-blue: #1422e3;
   --mg-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  position: relative;
-  height: 320vh;
   width: 100%;
+  padding: clamp(72px, 10vh, 120px) 0;
   color: var(--mg-ink);
   font-family: Urbanist, "Urbanist Placeholder", sans-serif;
 }
-.mg-process__pin {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-}
 .mg-process__grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  gap: clamp(24px, 3vw, 48px);
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 100px);
+  align-items: start;
   width: 100%;
   max-width: 1296px;
   margin: 0 auto;
@@ -46,17 +35,11 @@
   font-size: 18px;
   line-height: 24px;
   font-weight: 600;
-  color: #0b0b0c;
+  color: var(--mg-ink);
 }
-.mg-process__tag::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #0b0b0c;
-}
+.mg-process__tag::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--mg-ink); }
 .mg-process h2 {
-  margin: 24px 0 14px;
+  margin: 24px 0 0;
   font-size: 72px;
   line-height: 72px;
   letter-spacing: -2.16px;
@@ -69,95 +52,113 @@
   -webkit-text-fill-color: transparent;
   color: transparent;
 }
-.mg-process__stage {
-  font-size: 18px;
-  line-height: 28px;
+
+/* Stage list: plain rows; the selected one sits in a raised card. */
+.mg-process__list { display: grid; gap: 6px; margin-top: clamp(32px, 5vh, 56px); }
+.mg-pstep {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  width: 100%;
+  padding: 18px 24px;
+  border: 0;
+  border-radius: 24px;
+  background: transparent;
+  font: inherit;
+  font-size: 36px;
+  line-height: 44px;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--mg-blue);
-  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.72px;
+  text-align: left;
+  color: var(--mg-faint);
+  cursor: pointer;
+  transition: color 0.45s var(--mg-ease), background-color 0.45s var(--mg-ease), box-shadow 0.45s var(--mg-ease);
 }
-.mg-process__steps { margin-top: 24px; display: grid; gap: 12px; }
-.mg-step {
-  padding: 20px 22px;
-  border-radius: 22px;
-  background: rgb(243, 243, 243);
-  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.05), 0 10px 24px rgba(0, 0, 0, 0.06);
-  opacity: 0.38;
-  scale: 0.97;
-  transform-origin: left;
-  transition: opacity 0.6s var(--mg-ease), scale 0.6s var(--mg-ease), box-shadow 0.6s var(--mg-ease);
+.mg-pstep small { font-size: 16px; line-height: 20px; font-weight: 600; letter-spacing: 0.06em; color: var(--mg-blue); opacity: 0.6; transition: opacity 0.45s var(--mg-ease); }
+.mg-pstep:hover { color: rgba(41, 44, 46, 0.7); }
+.mg-pstep.is-on {
+  color: var(--mg-ink);
+  background-color: #f4f4f5;
+  box-shadow: inset 0 4px #fff9, inset 0 -8px #0000000d, 0 3px 3px #0000001a, 0 7.77px 2.21px #0000000f;
 }
-/* Active step glows blue as the growing tree reaches its stage. */
-.mg-step.is-on {
-  opacity: 1;
-  scale: 1;
-  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.05), 0 12px 30px rgba(42, 53, 217, 0.32),
-    0 0 0 1px rgba(74, 92, 255, 0.5), 0 0 26px rgba(74, 92, 255, 0.5);
+.mg-pstep.is-on small { opacity: 1; }
+.mg-pstep:focus-visible { outline: 2px solid var(--mg-blue); outline-offset: 3px; }
+
+/* Panel: illustration card (cross-fades between stages) and the stage description. */
+.mg-process__panel { display: grid; gap: 28px; }
+.mg-process__stage {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 40px;
+  overflow: hidden;
+  background:
+    radial-gradient(60% 55% at 50% 45%, rgba(20, 34, 227, 0.1) 0%, rgba(20, 34, 227, 0) 70%),
+    #f4f4f5;
+  box-shadow: inset 0 4px #fff9, inset 0 -8px #0000000d, 0 3px 3px #0000001a, 0 7.77px 2.21px #0000000f;
 }
-.mg-step__head { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
-.mg-step h4 { display: flex; align-items: baseline; gap: 14px; margin: 0; font-size: 36px; line-height: 48px; font-weight: 600; letter-spacing: -0.36px; }
-.mg-step h4 small { font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: 0.14em; color: var(--mg-blue); }
-.mg-step__days {
-  flex-shrink: 0;
+.mg-process__visual {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: clamp(28px, 4vw, 56px);
+  opacity: 0;
+  scale: 1.04;
+  transition: opacity 0.6s var(--mg-ease), scale 0.8s var(--mg-ease);
+  pointer-events: none;
+}
+.mg-process__visual.is-on { opacity: 1; scale: 1; }
+/* The illustrations are sized for the smaller "What we build" cards; enlarge them to fill this card. */
+.mg-process__visual .mgv { width: 100%; max-width: 360px; zoom: 1.35; }
+.mg-process__copy { max-width: 46ch; }
+.mg-process__copy.is-on { animation: mg-pcopy-in 0.6s var(--mg-ease); }
+.mg-process__days {
+  display: inline-block;
   padding: 6px 14px;
-  border: 1px solid var(--mg-line);
+  border: 1px solid rgba(41, 44, 46, 0.12);
   border-radius: 999px;
   font-size: 14px;
   line-height: 20px;
   font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--mg-blue);
 }
-.mg-step p { margin: 6px 0 0; color: var(--mg-muted); font-size: 16px; line-height: 24px; font-weight: 400; }
+.mg-process__copy p { margin: 14px 0 0; color: var(--mg-muted); font-size: 18px; line-height: 28px; }
+@keyframes mg-pcopy-in { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: 0 0; } }
 
-.mg-process__path { position: relative; aspect-ratio: 1.05; width: min(100%, 88vh); justify-self: center; }
-.mg-process__path svg { width: 100%; height: 100%; overflow: visible; }
-.mg-process__path .track { fill: none; stroke: var(--mg-line); stroke-width: 2; stroke-dasharray: 4 8; }
-.mg-process__path .draw { fill: none; stroke: url(#mg-route-gradient); stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 6px rgba(47, 107, 255, 0.8)) drop-shadow(0 0 16px rgba(31, 79, 255, 0.55)); }
-.mg-process__path .ring { fill: rgb(243, 243, 243); stroke: rgba(41, 44, 46, 0.18); stroke-width: 1.5; transition: fill 0.6s var(--mg-ease), stroke 0.6s var(--mg-ease); }
-.mg-process__path .core { fill: #fff; transform-box: fill-box; transform-origin: center; transform: scale(0); transition: transform 0.6s var(--mg-ease); }
-.mg-process__path .node.is-on .ring { fill: var(--mg-blue); stroke: var(--mg-blue-deep); }
-.mg-process__path .node.is-on .core { transform: scale(1); }
-.mg-process__path text { fill: var(--mg-faint); font-family: inherit; font-size: 16px; font-weight: 600; letter-spacing: 0.14em; transition: fill 0.6s var(--mg-ease); }
-.mg-process__path .node.is-on text { fill: var(--mg-ink); }
-.mg-process__head {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 16px;
-  height: 16px;
-  margin: -8px 0 0 -8px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow:
-    0 0 0 3px rgba(255, 255, 255, 0.9),
-    0 0 10px 2px rgba(120, 160, 255, 0.95),
-    0 0 26px 6px rgba(47, 107, 255, 0.85),
-    0 0 52px 14px rgba(31, 79, 255, 0.7),
-    0 0 100px 30px rgba(20, 34, 227, 0.45);
+/* 03 evals illustration: four checks in a grid and the ship decision below. */
+.mgv-evals { gap: 22px; }
+.mgv-checks { display: grid; grid-template-columns: repeat(2, auto); gap: 12px; }
+.mgv-tick { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #1faa6b; box-shadow: 0 0 10px rgba(31, 170, 107, 0.45); }
+.mgv-tick svg { width: 14px; height: 14px; stroke: #fff; stroke-width: 2.6; }
+.mgv-ship { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 22px; border-radius: 14px; background: linear-gradient(180deg, #1a2496, #020a70); color: #fff; font-size: 16px; font-weight: 600; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 12px 26px rgba(2, 10, 112, 0.32); }
+.mgv-ship svg { stroke: #fff; }
+@media (prefers-reduced-motion: no-preference) {
+  .mgv-tick { animation: mgv-tick 4s var(--mg-ease) infinite; }
+  .mgv-checks .mgv-chip:nth-child(2) .mgv-tick { animation-delay: 0.3s; }
+  .mgv-checks .mgv-chip:nth-child(3) .mgv-tick { animation-delay: 0.6s; }
+  .mgv-checks .mgv-chip:nth-child(4) .mgv-tick { animation-delay: 0.9s; }
+  @keyframes mgv-tick { 0% { scale: 0; } 12%, 85% { scale: 1; } 100% { scale: 0; } }
+  .mgv-ship { animation: mgv-ship 4s var(--mg-ease) infinite; }
+  @keyframes mgv-ship { 0%, 30% { opacity: 0.35; translate: 0 6px; } 40%, 85% { opacity: 1; translate: 0 0; } 100% { opacity: 0.35; translate: 0 6px; } }
 }
 
 @media (max-width: 1199.98px) {
   .mg-process__grid { padding: 0 40px; }
   .mg-process h2 { font-size: 42px; line-height: 50px; letter-spacing: -0.96px; }
-  .mg-step h4 { font-size: 27px; line-height: 39px; letter-spacing: -0.27px; }
+  .mg-pstep { font-size: 27px; line-height: 36px; letter-spacing: -0.27px; padding: 16px 20px; }
 }
-/* Short desktop screens: fold inactive descriptions so the pinned column fits. */
-@media (min-width: 810px) and (max-height: 860px) {
-  .mg-step p { max-height: 72px; overflow: hidden; transition: max-height 0.6s var(--mg-ease), margin 0.6s var(--mg-ease); }
-  .mg-step:not(.is-on) p { max-height: 0; margin-top: 0; }
-}
-/* Phone: no pinning; steps stack, all active. */
+/* Phone: list on top, panel below. */
 @media (max-width: 809.98px) {
-  .mg-process { height: auto; }
-  .mg-process__pin { position: relative; height: auto; padding: 72px 0; }
-  .mg-process__grid { grid-template-columns: 1fr; padding: 0 20px; }
-  .mg-process__path, .mg-process__stage { display: none; }
-  .mg-step { opacity: 1; scale: 1; }
-  .mg-step__head { flex-wrap: wrap; }
+  .mg-process__grid { grid-template-columns: 1fr; padding: 0 20px; gap: 28px; }
   .mg-process h2 { font-size: 40px; line-height: 48px; letter-spacing: -1.2px; }
-  .mg-step h4 { font-size: 26px; line-height: 34px; letter-spacing: -0.26px; }
+  .mg-process__list { margin-top: 24px; gap: 4px; }
+  .mg-pstep { font-size: 24px; line-height: 32px; padding: 14px 18px; }
+  .mg-process__stage { aspect-ratio: 1 / 0.9; }
+  .mg-process__visual .mgv { zoom: 1; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mg-step, .mg-process__path * { transition: none !important; }
+  .mg-pstep, .mg-process__visual { transition: none; }
+  .mg-process__copy.is-on { animation: none; }
 }

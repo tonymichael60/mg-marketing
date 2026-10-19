@@ -286,7 +286,7 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
   background: transparent !important;
   box-shadow: none !important;
 }
-.mg-process__pin {
+.mg-process {
   background: radial-gradient(42% 40% at 72% 52%, rgba(150, 168, 245, 0.7) 0%, rgba(237, 236, 236, 0) 100%);
 }
 
