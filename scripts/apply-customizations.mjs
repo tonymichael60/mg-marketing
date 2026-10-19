@@ -168,6 +168,14 @@ for(const f of fs.readdirSync(root,{recursive:true}).filter(f=>/\.(html|mjs)$/.t
 }
 console.log(`Set contact form interest options in ${optFiles} files.`);
 
+// Load speed: Framer marks images eager when their Y position inside a component is small, so images far down
+// the page loaded up front on phones. The HTML already lazy-loads every image; make the runtime render match.
+const framerRuntime=path.join(root,'mirror/framerusercontent.com/sites/4nHYQx2yRdfCawW7aBBb5U/framer.CYMQxEW1.mjs');
+const rt=fs.readFileSync(framerRuntime,'utf8');
+if(rt.includes('loading:e.loading,width:e.pixelWidth')) fs.writeFileSync(framerRuntime,rt.replace('loading:e.loading,width:e.pixelWidth','loading:"lazy",width:e.pixelWidth'));
+else if(!rt.includes('loading:"lazy",width:e.pixelWidth')) throw new Error('Framer image loading hook not found');
+console.log('Forced lazy image loading in the Framer runtime.');
+
 // Load speed: images without a loading hint were fetched eagerly, including the hidden original
 // Framer work cards (several MB). Lazy-load them; images in the viewport still load straight away.
 let lazyImgs=0;

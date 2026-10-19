@@ -395,3 +395,15 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
   .framer-77nwem .framer-1c4hn30 { animation: mg-wcu-bob 4.4s ease-in-out infinite .8s; }
   .framer-77nwem .framer-cbrub2 { animation: mg-wcu-pop 3.6s ease-in-out infinite 1.2s; }
 }
+
+/* Phones: the liquid-glass nav and hero badge use a live backdrop blur plus an SVG displacement filter,
+   which the GPU redoes on every scroll frame. Swap for a flat translucent fill, and skip decorative loops
+   that repaint each frame (animated shadows/filters, left-animated dots). Transform-only loops stay. */
+@media (max-width: 809.98px) {
+  .framer-peFtD::before, .framer-tt1cxh-container .framer-kev61::before {
+    -webkit-backdrop-filter: none !important; backdrop-filter: none !important; filter: none !important;
+  }
+  .framer-peFtD { -webkit-backdrop-filter: blur(12px) !important; backdrop-filter: blur(12px) !important; }
+  .mgv-play, .mgv-head, .mgv-track::after, .framer-570b9w .framer-zli2me { animation: none !important; }
+  .mgv-track::after { display: none; }
+}
