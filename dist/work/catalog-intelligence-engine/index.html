@@ -1447,7 +1447,8 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
 @media (max-width: 760px) {
   .mg-iwork { height: auto !important; }
   .mg-iwork__pin { position: relative; height: auto; padding: 80px 0; }
-  .mg-iwork__track { overflow-x: auto; width: auto; transform: none !important; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 8px; }
+  /* Stretch to the screen width: a shrink-to-fit track never overflows, so it could not be swiped. */
+  .mg-iwork__track { align-self: stretch; overflow-x: auto; width: 100%; max-width: 100%; box-sizing: border-box; flex-shrink: 1; transform: none !important; touch-action: pan-x pan-y; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 8px; }
   .mg-iwork__track::-webkit-scrollbar { display: none; }
   .mg-icard { width: 82vw; scroll-snap-align: center; }
   .mg-iwork__progress { display: none; }
