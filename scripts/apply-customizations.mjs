@@ -188,6 +188,19 @@ if(rt.includes('loading:e.loading,width:e.pixelWidth')) fs.writeFileSync(framerR
 else if(!rt.includes('loading:"lazy",width:e.pixelWidth')) throw new Error('Framer image loading hook not found');
 console.log('Forced lazy image loading in the Framer runtime.');
 
+// Load speed: Framer's on-page editor bar (an iframe and about seven scripts from framer.com) and Framer
+// analytics (reporting to the original Framer project) load on every visit but serve nothing on this host.
+const editorFrom='EditorBar:D===void 0?void 0:', editorTo='EditorBar:!0?void 0:';
+const ms=fs.readFileSync(mainScript,'utf8');
+if(ms.includes(editorFrom)) fs.writeFileSync(mainScript,ms.replace(editorFrom,editorTo));
+else if(!ms.includes(editorTo)) throw new Error('Framer editor bar hook not found');
+let analyticsPages=0;
+for(const f of fs.readdirSync(root,{recursive:true}).filter(f=>f.endsWith('.html')).map(f=>path.join(root,f))) {
+  const t=fs.readFileSync(f,'utf8'), next=t.replace(/<script async src="https:\/\/events\.framer\.com\/script[^"]*"[^>]*><\/script>/g,'');
+  if(next!==t) {fs.writeFileSync(f,next);analyticsPages++;}
+}
+console.log(`Disabled the Framer editor bar and removed Framer analytics from ${analyticsPages} pages.`);
+
 // Load speed: images without a loading hint were fetched eagerly, including the hidden original
 // Framer work cards (several MB). Lazy-load them; images in the viewport still load straight away.
 let lazyImgs=0;
@@ -243,11 +256,21 @@ function visitPolish(dir) {
 visitPolish(root);
 console.log(`Applied site polish on ${polished} pages.`);
 
+// Same-origin assets: the runtime modules name fonts, images and CMS data with an absolute origin (the first
+// host the site was published on), so another host (Cloudflare) still pulled them cross-origin from it. Every
+// such URL sits in a template literal, so the origin becomes ${location.origin}: whichever host serves the page.
+let originFiles=0;
+for(const f of fs.readdirSync(root,{recursive:true}).filter(f=>f.endsWith('.mjs')).map(f=>path.join(root,f))) {
+  const t=fs.readFileSync(f,'utf8'), next=t.replace(/https?:\/\/[^/\s"'`]+\/(?=(?:mirror|m\/[0-9a-f]{10})\/)/g,'${location.origin}/');
+  if(next!==t) {fs.writeFileSync(f,next);originFiles++;}
+}
+console.log(`Made asset URLs same-origin in ${originFiles} runtime files.`);
+
 // Cache busting: /mirror/* is served immutable, so browsers keep old copies for a year. Every reference
 // is served under /m/<hash>/ instead (netlify.toml rewrites it to /mirror/), with the hash taken from the
 // mirror contents, so any change gives returning visitors fresh files. References are reset first so the
 // hash does not depend on the previous run.
-const assetRef=/(?<=["'(,\s]|https?:\/\/[^/\s"'`]+)\/(?:mirror|m\/[0-9a-f]{10})\//g;
+const assetRef=/(?<=["'(,\s]|https?:\/\/[^/\s"'`]+|\$\{location\.origin\})\/(?:mirror|m\/[0-9a-f]{10})\//g;
 const textAsset=f=>/\.(html|mjs|json|css)$/.test(f);
 const allFiles=fs.readdirSync(root,{recursive:true}).map(f=>path.join(root,f)).filter(f=>fs.statSync(f).isFile()).sort();
 for(const f of allFiles.filter(textAsset)) {
@@ -264,4 +287,7 @@ for(const f of allFiles.filter(textAsset)) {
 }
 // Netlify placeholders cannot sit before a splat, so the rewrite names the current hash exactly.
 fs.writeFileSync(path.join(root,'_redirects'),`${assetPrefix}* /mirror/:splat 200\n`);
+// Cache headers for hosts that read a _headers file (Cloudflare Pages; Netlify also takes netlify.toml):
+// asset URLs change with their content, so browsers may keep them for a year.
+fs.writeFileSync(path.join(root,'_headers'),['/m/*','/mirror/*'].map(p=>`${p}\n  Cache-Control: public, max-age=31536000, immutable\n  Access-Control-Allow-Origin: *\n`).join(''));
 console.log(`Served assets under ${assetPrefix} in ${bustFiles} files.`);
