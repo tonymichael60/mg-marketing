@@ -59,19 +59,23 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
   inset: -12px;
   border: 1px solid rgba(130, 148, 255, 0.55);
   animation: mg-halo 3.6s ease-out infinite;
+  will-change: opacity, scale;
 }
 .framer-wky74u::after {
   inset: 0;
   background: linear-gradient(110deg, rgba(255, 255, 255, 0) 42%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0) 58%) no-repeat;
   background-size: 300% 100%;
-  animation: mg-sheen 6s ease-in-out infinite;
+  animation: mg-sheen 6s linear infinite;
+  /* Own layer: each sheen frame repaints only this overlay, not the logo box and its heavy shadows. */
+  will-change: background-position;
+  transform: translateZ(0);
 }
 @keyframes mg-halo {
   0% { opacity: 0.9; scale: 0.94; }
   100% { opacity: 0; scale: 1.22; }
 }
 @keyframes mg-sheen {
-  0%, 55% { background-position: 100% 0; }
+  0%, 55% { background-position: 100% 0; animation-timing-function: cubic-bezier(0.45, 0, 0.55, 1); }
   85%, 100% { background-position: 0% 0; }
 }
 
