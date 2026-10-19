@@ -1,6 +1,7 @@
 // Process section (after spector.framer.website): a large stacked headline whose lines darken as they
-// scroll into view, then a row of Groot Method stage cards that flip in. Arrows page through the row, and
-// cards turn edge-on as they slide past either end of it. Replaces the Framer slideshow. Framer can re-render its section, so the block is
+// scroll into view, then a looping 3D carousel of Groot Method stage cards. As in the reference, the row is
+// moved in JS (arrows or drag), one card per step with a long ease-out, and each card folds up to 90 degrees on
+// the edge it is crossing, computed in the same frame as the slide so the two never drift apart. Replaces the Framer slideshow. Framer can re-render its section, so the block is
 // re-mounted whenever it goes missing.
 (() => {
   const rafOnce = f => { let t = 0; return () => { if (t) return; t = 1; requestAnimationFrame(() => { t = 0; f(); }); }; };
@@ -64,14 +65,16 @@
         <div class="mg-process__aside"><small>The Groot Method</small><b>Root. Grow. Validate. Launch. Bloom.</b></div>
       </div>
       <h2 class="mg-process__title"><span class="mg-pline">From idea</span><span class="mg-pline">to production</span></h2>
-      <div class="mg-process__track">${steps.map((s, i) => `
-        <article class="mg-pcard" style="--i:${i}">
-          <div class="mg-pcard__head"><h3>${esc(s.title)}</h3><span class="mg-pcard__num">/${s.n}</span></div>
-          <p class="mg-pcard__lede">${s.lede}</p>
-          <p class="mg-pcard__time">Timeframe <b>${s.days}</b></p>
-          <div class="mg-pcard__visual" aria-hidden="true">${s.visual}</div>
-          <ul class="mg-pcard__points">${s.points.map(t => `<li>${t}</li>`).join('')}</ul>
-        </article>`).join('')}
+      <div class="mg-process__viewport">
+        <div class="mg-process__track">${[0, 1, 2].map(copy => steps.map(s => `
+          <article class="mg-pcard"${copy === 1 ? '' : ' aria-hidden="true"'}>
+            <div class="mg-pcard__head"><h3>${esc(s.title)}</h3><span class="mg-pcard__num">/${s.n}</span></div>
+            <p class="mg-pcard__lede">${s.lede}</p>
+            <p class="mg-pcard__time">Timeframe <b>${s.days}</b></p>
+            <div class="mg-pcard__visual" aria-hidden="true">${s.visual}</div>
+            <ul class="mg-pcard__points">${s.points.map(t => `<li>${t}</li>`).join('')}</ul>
+          </article>`).join('')).join('')}
+        </div>
       </div>
       <div class="mg-process__nav">
         <button type="button" class="mg-process__arrow" data-dir="-1" aria-label="Previous stage">${arrow('M19 12H5M11 6l-6 6 6 6')}</button>
@@ -80,32 +83,59 @@
     </div>`;
 
   let block = null;
+  // Carousel state, in card steps: pos is where the row is now; the middle of three copies is "home", and
+  // the row is re-centred on it after each move so it can loop forever in both directions.
+  const N = steps.length, GAP = 8, DURATION = 1200;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const easeOutExpo = t => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
+  let pos = N, anim = null, drag = null, step = 0, cardW = 0, viewW = 0;
+
+  function layout() {
+    const vp = block.querySelector('.mg-process__viewport');
+    viewW = vp.clientWidth;
+    const visible = innerWidth >= 1200 ? 3 : innerWidth >= 810 ? 2 : 1;
+    cardW = (viewW - GAP * (visible - 1)) / visible;
+    step = cardW + GAP;
+    block.querySelectorAll('.mg-pcard').forEach(c => { c.style.width = cardW + 'px'; });
+    render();
+  }
+  function render() {
+    const track = block.querySelector('.mg-process__track');
+    track.style.transform = `translate3d(${-pos * step}px,0,0)`;
+    block.querySelectorAll('.mg-pcard').forEach((c, i) => {
+      const x = (i - pos) * step;
+      // How far past an edge the card is, as a share of one step (0 inside, 1 fully past).
+      const left = Math.min(1, Math.max(0, -x / step));
+      const right = Math.min(1, Math.max(0, (x + cardW - viewW) / step));
+      const angle = left ? -90 * left : 90 * right;
+      c.style.transformOrigin = left ? '100% 50%' : '0% 50%';
+      c.style.transform = angle ? `rotateY(${angle}deg)` : '';
+      c.style.visibility = left >= 1 || right >= 1 ? 'hidden' : '';
+    });
+  }
+  function recentre() {
+    pos = ((pos % N) + N) % N + N;
+    render();
+  }
+  function go(target) {
+    if (reduce) { pos = target; recentre(); return; }
+    const from = pos, start = performance.now();
+    anim = { target };
+    const frame = now => {
+      if (!anim || anim.target !== target) return;
+      const t = Math.min(1, (now - start) / DURATION);
+      pos = from + (target - from) * easeOutExpo(t);
+      render();
+      if (t < 1) requestAnimationFrame(frame);
+      else { anim = null; recentre(); }
+    };
+    requestAnimationFrame(frame);
+  }
+
   function update() {
     if (!block || !block.isConnected) return;
     // Headline lines darken once they pass 75% of the viewport height.
     block.querySelectorAll('.mg-pline').forEach(l => l.classList.toggle('is-lit', l.getBoundingClientRect().top < innerHeight * 0.75));
-    const track = block.querySelector('.mg-process__track');
-    if (!track.classList.contains('is-in') && track.getBoundingClientRect().top < innerHeight * 0.85) {
-      track.classList.add('is-in');
-      // Once the flip-in has played, drop its delayed transitions so the edge turn follows scrolling directly.
-      setTimeout(() => track.classList.add('is-settled'), 1800);
-    }
-    // Cards past either end of the row swing away from view (outer side receding), hinged on their inner edge.
-    const tr = track.getBoundingClientRect();
-    track.querySelectorAll('.mg-pcard').forEach(c => {
-      const r = c.getBoundingClientRect();
-      const out = r.left < tr.left - 1 ? (r.left - tr.left) / r.width : r.right > tr.right + 1 ? (r.right - tr.right) / r.width : 0;
-      const k = Math.max(-1, Math.min(1, out));
-      c.style.rotate = k ? `y ${k * 75}deg` : '';
-      c.style.opacity = k ? 1 - Math.abs(k) * 0.7 : '';
-      c.style.transformOrigin = k < 0 ? 'right center' : k > 0 ? 'left center' : '';
-    });
-    // Arrows only when the cards overflow; each end disables at its limit.
-    const max = track.scrollWidth - track.clientWidth;
-    block.querySelector('.mg-process__nav').hidden = max < 4;
-    const [prev, next] = block.querySelectorAll('.mg-process__arrow');
-    prev.disabled = track.scrollLeft < 4;
-    next.disabled = track.scrollLeft > max - 4;
   }
   let ticking = false;
   const requestUpdate = () => {
@@ -122,18 +152,47 @@
     block.className = 'mg-process';
     block.id = 'process';
     block.innerHTML = html;
-    const track = block.querySelector('.mg-process__track');
+    pos = N; anim = null;
     block.querySelectorAll('.mg-process__arrow').forEach(b => b.addEventListener('click', () => {
-      const card = track.querySelector('.mg-pcard');
-      track.scrollBy({ left: +b.dataset.dir * (card.offsetWidth + parseFloat(getComputedStyle(track).columnGap || 0)), behavior: 'smooth' });
+      // Clicks during a move stack onto its target, so quick taps advance several cards.
+      go((anim ? anim.target : Math.round(pos)) + +b.dataset.dir);
     }));
-    track.addEventListener('scroll', requestUpdate, { passive: true });
+    // Drag / swipe: the row follows the pointer, then eases to the nearest card in the swipe direction.
+    const vp = block.querySelector('.mg-process__viewport');
+    vp.addEventListener('pointerdown', e => {
+      if (e.button) return;
+      anim = null;
+      drag = { x: e.clientX, pos, last: e.clientX, t: performance.now(), v: 0, moved: false };
+    });
+    addEventListener('pointermove', e => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x;
+      if (!drag.moved && Math.abs(dx) < 6) return;
+      if (!drag.moved) { drag.moved = true; vp.setPointerCapture?.(e.pointerId); vp.classList.add('is-dragging'); }
+      const now = performance.now();
+      drag.v = (e.clientX - drag.last) / Math.max(1, now - drag.t);
+      drag.last = e.clientX; drag.t = now;
+      pos = drag.pos - dx / step;
+      render();
+    });
+    const release = () => {
+      if (!drag) return;
+      const { moved, v } = drag;
+      drag = null;
+      vp.classList.remove('is-dragging');
+      if (!moved) return;
+      // A flick moves one card in its direction; a slow drag settles on the nearest card.
+      go(Math.abs(v) > 0.3 ? (v < 0 ? Math.ceil(pos) : Math.floor(pos)) : Math.round(pos));
+    };
+    addEventListener('pointerup', release);
+    addEventListener('pointercancel', release);
     host.appendChild(block);
+    layout();
     update();
   }
 
   addEventListener('scroll', requestUpdate, { passive: true });
-  addEventListener('resize', requestUpdate);
+  addEventListener('resize', () => { if (block && block.isConnected) layout(); requestUpdate(); });
   const start = () => {
     mount();
     new MutationObserver(rafOnce(() => { if (!block || !block.isConnected) mount(); })).observe(document.body, { childList: true, subtree: true });

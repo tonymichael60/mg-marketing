@@ -1,4 +1,4 @@
-/* Process section (after spector.framer.website): stacked headline and one flip-in card per stage.
+/* Process section (after spector.framer.website): stacked headline and a looping 3D carousel of stage cards.
    Mounted by site-process.js. */
 .mg-process-host > :not(.mg-process), [data-framer-name="Process"] > :not(.mg-process) { display: none !important; }
 .mg-process-host { display: block !important; height: auto !important; padding: 0 !important; }
@@ -54,22 +54,21 @@
 .mg-pline:last-child { border-bottom: 0; }
 .mg-pline.is-lit { color: var(--mg-ink); }
 
-/* Cards: a swipeable row, three in view on desktop, with arrows to page through. */
-.mg-process__track {
-  display: flex;
-  gap: 16px;
+/* Cards: a looping 3D carousel. The viewport clips and sets the perspective; site-process.js slides the track
+   and folds each card on the edge it crosses. Vertical padding keeps the cards' ledge shadows inside the clip. */
+.mg-process__viewport {
   margin-top: clamp(40px, 6vh, 72px);
   padding: 8px 0 16px;
-  /* Horizontal scroll only: without hidden on y, a turning card made the row scroll vertically and clip. */
-  overflow: auto hidden;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  perspective: 1600px;
+  overflow: hidden;
+  perspective: 1200px;
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
 }
-.mg-process__track::-webkit-scrollbar { display: none; }
+.mg-process__viewport.is-dragging { cursor: grabbing; }
+.mg-process__track { display: flex; gap: 8px; transform-style: preserve-3d; will-change: transform; }
 .mg-pcard {
-  flex: 0 0 calc((100% - 32px) / 3);
-  scroll-snap-align: start;
+  flex: none;
   display: flex;
   flex-direction: column;
   min-height: 600px;
@@ -93,7 +92,6 @@
 .mg-pcard__points li::before { content: "+"; flex: none; font-weight: 600; color: var(--mg-blue); }
 
 .mg-process__nav { display: flex; justify-content: center; gap: 16px; margin-top: 28px; }
-.mg-process__nav[hidden] { display: none; }
 .mg-process__arrow {
   display: grid;
   place-items: center;
@@ -104,24 +102,11 @@
   background: #f4f4f5;
   box-shadow: inset 0 3px #fff9, inset 0 -5px #0000000d, 0 3px 3px #0000001a;
   cursor: pointer;
-  transition: opacity 0.3s, translate 0.3s var(--mg-ease);
+  transition: translate 0.3s var(--mg-ease);
 }
 .mg-process__arrow svg { width: 22px; height: 22px; fill: none; stroke: var(--mg-blue); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.mg-process__arrow:hover:not(:disabled) { translate: 0 -2px; }
-.mg-process__arrow:disabled { opacity: 0.35; cursor: default; }
+.mg-process__arrow:hover { translate: 0 -2px; }
 .mg-process__arrow:focus-visible { outline: 2px solid var(--mg-blue); outline-offset: 3px; }
-
-/* Flip-in: cards swing round from edge-on, one after another, when the row scrolls into view. */
-@media (prefers-reduced-motion: no-preference) {
-  .mg-pcard {
-    opacity: 0;
-    transform: rotateY(-70deg);
-    transform-origin: left center;
-    transition: opacity 0.7s var(--mg-ease) calc(var(--i) * 0.15s), transform 1.1s var(--mg-ease) calc(var(--i) * 0.15s);
-  }
-  .mg-process__track.is-in .mg-pcard { opacity: 1; transform: none; }
-  .mg-process__track.is-settled .mg-pcard { transition: none; }
-}
 
 /* 03 evals illustration: four checks in a grid and the ship decision below. */
 .mgv-evals { gap: 22px; }
@@ -158,19 +143,11 @@
 
 @media (max-width: 1199.98px) {
   .mg-process__wrap { padding: 0 40px; }
-  .mg-process__track {
-    margin-left: -40px;
-    margin-right: -40px;
-    padding: 8px 40px 16px;
-    scroll-padding: 0 40px;
-  }
-  .mg-pcard { flex: 0 0 min(400px, 78vw); }
 }
 @media (max-width: 809.98px) {
   .mg-process__wrap { padding: 0 20px; }
   .mg-process__top { flex-direction: column; }
   .mg-process__aside { justify-items: start; text-align: left; }
-  .mg-process__track { margin-left: -20px; margin-right: -20px; padding: 8px 20px 16px; scroll-padding: 0 20px; }
-  .mg-pcard { flex-basis: 84vw; min-height: 560px; padding: 30px 24px 26px; }
+  .mg-pcard { min-height: 560px; padding: 30px 24px 26px; }
   .mg-pline:nth-child(2) { padding-left: 0.6em; }
 }

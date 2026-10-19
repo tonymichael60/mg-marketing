@@ -742,7 +742,7 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
   .mgv-track::after { display: none; }
 }
 
-/* Process section (after spector.framer.website): stacked headline and one flip-in card per stage.
+/* Process section (after spector.framer.website): stacked headline and a looping 3D carousel of stage cards.
    Mounted by site-process.js. */
 .mg-process-host > :not(.mg-process), [data-framer-name="Process"] > :not(.mg-process) { display: none !important; }
 .mg-process-host { display: block !important; height: auto !important; padding: 0 !important; }
@@ -798,22 +798,21 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
 .mg-pline:last-child { border-bottom: 0; }
 .mg-pline.is-lit { color: var(--mg-ink); }
 
-/* Cards: a swipeable row, three in view on desktop, with arrows to page through. */
-.mg-process__track {
-  display: flex;
-  gap: 16px;
+/* Cards: a looping 3D carousel. The viewport clips and sets the perspective; site-process.js slides the track
+   and folds each card on the edge it crosses. Vertical padding keeps the cards' ledge shadows inside the clip. */
+.mg-process__viewport {
   margin-top: clamp(40px, 6vh, 72px);
   padding: 8px 0 16px;
-  /* Horizontal scroll only: without hidden on y, a turning card made the row scroll vertically and clip. */
-  overflow: auto hidden;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  perspective: 1600px;
+  overflow: hidden;
+  perspective: 1200px;
+  touch-action: pan-y;
+  cursor: grab;
+  user-select: none;
 }
-.mg-process__track::-webkit-scrollbar { display: none; }
+.mg-process__viewport.is-dragging { cursor: grabbing; }
+.mg-process__track { display: flex; gap: 8px; transform-style: preserve-3d; will-change: transform; }
 .mg-pcard {
-  flex: 0 0 calc((100% - 32px) / 3);
-  scroll-snap-align: start;
+  flex: none;
   display: flex;
   flex-direction: column;
   min-height: 600px;
@@ -837,7 +836,6 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
 .mg-pcard__points li::before { content: "+"; flex: none; font-weight: 600; color: var(--mg-blue); }
 
 .mg-process__nav { display: flex; justify-content: center; gap: 16px; margin-top: 28px; }
-.mg-process__nav[hidden] { display: none; }
 .mg-process__arrow {
   display: grid;
   place-items: center;
@@ -848,24 +846,11 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
   background: #f4f4f5;
   box-shadow: inset 0 3px #fff9, inset 0 -5px #0000000d, 0 3px 3px #0000001a;
   cursor: pointer;
-  transition: opacity 0.3s, translate 0.3s var(--mg-ease);
+  transition: translate 0.3s var(--mg-ease);
 }
 .mg-process__arrow svg { width: 22px; height: 22px; fill: none; stroke: var(--mg-blue); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.mg-process__arrow:hover:not(:disabled) { translate: 0 -2px; }
-.mg-process__arrow:disabled { opacity: 0.35; cursor: default; }
+.mg-process__arrow:hover { translate: 0 -2px; }
 .mg-process__arrow:focus-visible { outline: 2px solid var(--mg-blue); outline-offset: 3px; }
-
-/* Flip-in: cards swing round from edge-on, one after another, when the row scrolls into view. */
-@media (prefers-reduced-motion: no-preference) {
-  .mg-pcard {
-    opacity: 0;
-    transform: rotateY(-70deg);
-    transform-origin: left center;
-    transition: opacity 0.7s var(--mg-ease) calc(var(--i) * 0.15s), transform 1.1s var(--mg-ease) calc(var(--i) * 0.15s);
-  }
-  .mg-process__track.is-in .mg-pcard { opacity: 1; transform: none; }
-  .mg-process__track.is-settled .mg-pcard { transition: none; }
-}
 
 /* 03 evals illustration: four checks in a grid and the ship decision below. */
 .mgv-evals { gap: 22px; }
@@ -902,20 +887,12 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
 
 @media (max-width: 1199.98px) {
   .mg-process__wrap { padding: 0 40px; }
-  .mg-process__track {
-    margin-left: -40px;
-    margin-right: -40px;
-    padding: 8px 40px 16px;
-    scroll-padding: 0 40px;
-  }
-  .mg-pcard { flex: 0 0 min(400px, 78vw); }
 }
 @media (max-width: 809.98px) {
   .mg-process__wrap { padding: 0 20px; }
   .mg-process__top { flex-direction: column; }
   .mg-process__aside { justify-items: start; text-align: left; }
-  .mg-process__track { margin-left: -20px; margin-right: -20px; padding: 8px 20px 16px; scroll-padding: 0 20px; }
-  .mg-pcard { flex-basis: 84vw; min-height: 560px; padding: 30px 24px 26px; }
+  .mg-pcard { min-height: 560px; padding: 30px 24px 26px; }
   .mg-pline:nth-child(2) { padding-left: 0.6em; }
 }
 
@@ -1662,8 +1639,9 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
     <!-- End of bodyEnd -->
 
 <svg id="site-polish-filter" aria-hidden="true" style="position:absolute;width:0;height:0"><filter id="mg-glass-distortion" x="0" y="0" width="1" height="1" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB"><feImage href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27 preserveAspectRatio=%27none%27%3E%3ClinearGradient id=%27g%27%3E%3Cstop offset=%270%27 stop-color=%27rgb(255,0,0)%27/%3E%3Cstop offset=%27.12%27 stop-color=%27rgb(128,0,0)%27/%3E%3Cstop offset=%27.88%27 stop-color=%27rgb(128,0,0)%27/%3E%3Cstop offset=%271%27 stop-color=%27rgb(0,0,0)%27/%3E%3C/linearGradient%3E%3Crect width=%27100%27 height=%27100%27 fill=%27url(%23g)%27/%3E%3C/svg%3E" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="rx"/><feImage href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27 preserveAspectRatio=%27none%27%3E%3ClinearGradient id=%27g%27 x2=%270%27 y2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27rgb(0,255,0)%27/%3E%3Cstop offset=%27.3%27 stop-color=%27rgb(0,128,0)%27/%3E%3Cstop offset=%27.7%27 stop-color=%27rgb(0,128,0)%27/%3E%3Cstop offset=%271%27 stop-color=%27rgb(0,0,0)%27/%3E%3C/linearGradient%3E%3Crect width=%27100%27 height=%27100%27 fill=%27url(%23g)%27/%3E%3C/svg%3E" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="gy"/><feComposite in="rx" in2="gy" operator="arithmetic" k2="1" k3="1" result="map"/><feDisplacementMap in="SourceGraphic" in2="map" scale="0.08" xChannelSelector="R" yChannelSelector="G"/></filter></svg><script id="site-process">// Process section (after spector.framer.website): a large stacked headline whose lines darken as they
-// scroll into view, then a row of Groot Method stage cards that flip in. Arrows page through the row, and
-// cards turn edge-on as they slide past either end of it. Replaces the Framer slideshow. Framer can re-render its section, so the block is
+// scroll into view, then a looping 3D carousel of Groot Method stage cards. As in the reference, the row is
+// moved in JS (arrows or drag), one card per step with a long ease-out, and each card folds up to 90 degrees on
+// the edge it is crossing, computed in the same frame as the slide so the two never drift apart. Replaces the Framer slideshow. Framer can re-render its section, so the block is
 // re-mounted whenever it goes missing.
 (() => {
   const rafOnce = f => { let t = 0; return () => { if (t) return; t = 1; requestAnimationFrame(() => { t = 0; f(); }); }; };
@@ -1727,14 +1705,16 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
         <div class="mg-process__aside"><small>The Groot Method</small><b>Root. Grow. Validate. Launch. Bloom.</b></div>
       </div>
       <h2 class="mg-process__title"><span class="mg-pline">From idea</span><span class="mg-pline">to production</span></h2>
-      <div class="mg-process__track">${steps.map((s, i) => `
-        <article class="mg-pcard" style="--i:${i}">
-          <div class="mg-pcard__head"><h3>${esc(s.title)}</h3><span class="mg-pcard__num">/${s.n}</span></div>
-          <p class="mg-pcard__lede">${s.lede}</p>
-          <p class="mg-pcard__time">Timeframe <b>${s.days}</b></p>
-          <div class="mg-pcard__visual" aria-hidden="true">${s.visual}</div>
-          <ul class="mg-pcard__points">${s.points.map(t => `<li>${t}</li>`).join('')}</ul>
-        </article>`).join('')}
+      <div class="mg-process__viewport">
+        <div class="mg-process__track">${[0, 1, 2].map(copy => steps.map(s => `
+          <article class="mg-pcard"${copy === 1 ? '' : ' aria-hidden="true"'}>
+            <div class="mg-pcard__head"><h3>${esc(s.title)}</h3><span class="mg-pcard__num">/${s.n}</span></div>
+            <p class="mg-pcard__lede">${s.lede}</p>
+            <p class="mg-pcard__time">Timeframe <b>${s.days}</b></p>
+            <div class="mg-pcard__visual" aria-hidden="true">${s.visual}</div>
+            <ul class="mg-pcard__points">${s.points.map(t => `<li>${t}</li>`).join('')}</ul>
+          </article>`).join('')).join('')}
+        </div>
       </div>
       <div class="mg-process__nav">
         <button type="button" class="mg-process__arrow" data-dir="-1" aria-label="Previous stage">${arrow('M19 12H5M11 6l-6 6 6 6')}</button>
@@ -1743,32 +1723,59 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
     </div>`;
 
   let block = null;
+  // Carousel state, in card steps: pos is where the row is now; the middle of three copies is "home", and
+  // the row is re-centred on it after each move so it can loop forever in both directions.
+  const N = steps.length, GAP = 8, DURATION = 1200;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const easeOutExpo = t => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
+  let pos = N, anim = null, drag = null, step = 0, cardW = 0, viewW = 0;
+
+  function layout() {
+    const vp = block.querySelector('.mg-process__viewport');
+    viewW = vp.clientWidth;
+    const visible = innerWidth >= 1200 ? 3 : innerWidth >= 810 ? 2 : 1;
+    cardW = (viewW - GAP * (visible - 1)) / visible;
+    step = cardW + GAP;
+    block.querySelectorAll('.mg-pcard').forEach(c => { c.style.width = cardW + 'px'; });
+    render();
+  }
+  function render() {
+    const track = block.querySelector('.mg-process__track');
+    track.style.transform = `translate3d(${-pos * step}px,0,0)`;
+    block.querySelectorAll('.mg-pcard').forEach((c, i) => {
+      const x = (i - pos) * step;
+      // How far past an edge the card is, as a share of one step (0 inside, 1 fully past).
+      const left = Math.min(1, Math.max(0, -x / step));
+      const right = Math.min(1, Math.max(0, (x + cardW - viewW) / step));
+      const angle = left ? -90 * left : 90 * right;
+      c.style.transformOrigin = left ? '100% 50%' : '0% 50%';
+      c.style.transform = angle ? `rotateY(${angle}deg)` : '';
+      c.style.visibility = left >= 1 || right >= 1 ? 'hidden' : '';
+    });
+  }
+  function recentre() {
+    pos = ((pos % N) + N) % N + N;
+    render();
+  }
+  function go(target) {
+    if (reduce) { pos = target; recentre(); return; }
+    const from = pos, start = performance.now();
+    anim = { target };
+    const frame = now => {
+      if (!anim || anim.target !== target) return;
+      const t = Math.min(1, (now - start) / DURATION);
+      pos = from + (target - from) * easeOutExpo(t);
+      render();
+      if (t < 1) requestAnimationFrame(frame);
+      else { anim = null; recentre(); }
+    };
+    requestAnimationFrame(frame);
+  }
+
   function update() {
     if (!block || !block.isConnected) return;
     // Headline lines darken once they pass 75% of the viewport height.
     block.querySelectorAll('.mg-pline').forEach(l => l.classList.toggle('is-lit', l.getBoundingClientRect().top < innerHeight * 0.75));
-    const track = block.querySelector('.mg-process__track');
-    if (!track.classList.contains('is-in') && track.getBoundingClientRect().top < innerHeight * 0.85) {
-      track.classList.add('is-in');
-      // Once the flip-in has played, drop its delayed transitions so the edge turn follows scrolling directly.
-      setTimeout(() => track.classList.add('is-settled'), 1800);
-    }
-    // Cards past either end of the row swing away from view (outer side receding), hinged on their inner edge.
-    const tr = track.getBoundingClientRect();
-    track.querySelectorAll('.mg-pcard').forEach(c => {
-      const r = c.getBoundingClientRect();
-      const out = r.left < tr.left - 1 ? (r.left - tr.left) / r.width : r.right > tr.right + 1 ? (r.right - tr.right) / r.width : 0;
-      const k = Math.max(-1, Math.min(1, out));
-      c.style.rotate = k ? `y ${k * 75}deg` : '';
-      c.style.opacity = k ? 1 - Math.abs(k) * 0.7 : '';
-      c.style.transformOrigin = k < 0 ? 'right center' : k > 0 ? 'left center' : '';
-    });
-    // Arrows only when the cards overflow; each end disables at its limit.
-    const max = track.scrollWidth - track.clientWidth;
-    block.querySelector('.mg-process__nav').hidden = max < 4;
-    const [prev, next] = block.querySelectorAll('.mg-process__arrow');
-    prev.disabled = track.scrollLeft < 4;
-    next.disabled = track.scrollLeft > max - 4;
   }
   let ticking = false;
   const requestUpdate = () => {
@@ -1785,18 +1792,47 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
     block.className = 'mg-process';
     block.id = 'process';
     block.innerHTML = html;
-    const track = block.querySelector('.mg-process__track');
+    pos = N; anim = null;
     block.querySelectorAll('.mg-process__arrow').forEach(b => b.addEventListener('click', () => {
-      const card = track.querySelector('.mg-pcard');
-      track.scrollBy({ left: +b.dataset.dir * (card.offsetWidth + parseFloat(getComputedStyle(track).columnGap || 0)), behavior: 'smooth' });
+      // Clicks during a move stack onto its target, so quick taps advance several cards.
+      go((anim ? anim.target : Math.round(pos)) + +b.dataset.dir);
     }));
-    track.addEventListener('scroll', requestUpdate, { passive: true });
+    // Drag / swipe: the row follows the pointer, then eases to the nearest card in the swipe direction.
+    const vp = block.querySelector('.mg-process__viewport');
+    vp.addEventListener('pointerdown', e => {
+      if (e.button) return;
+      anim = null;
+      drag = { x: e.clientX, pos, last: e.clientX, t: performance.now(), v: 0, moved: false };
+    });
+    addEventListener('pointermove', e => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x;
+      if (!drag.moved && Math.abs(dx) < 6) return;
+      if (!drag.moved) { drag.moved = true; vp.setPointerCapture?.(e.pointerId); vp.classList.add('is-dragging'); }
+      const now = performance.now();
+      drag.v = (e.clientX - drag.last) / Math.max(1, now - drag.t);
+      drag.last = e.clientX; drag.t = now;
+      pos = drag.pos - dx / step;
+      render();
+    });
+    const release = () => {
+      if (!drag) return;
+      const { moved, v } = drag;
+      drag = null;
+      vp.classList.remove('is-dragging');
+      if (!moved) return;
+      // A flick moves one card in its direction; a slow drag settles on the nearest card.
+      go(Math.abs(v) > 0.3 ? (v < 0 ? Math.ceil(pos) : Math.floor(pos)) : Math.round(pos));
+    };
+    addEventListener('pointerup', release);
+    addEventListener('pointercancel', release);
     host.appendChild(block);
+    layout();
     update();
   }
 
   addEventListener('scroll', requestUpdate, { passive: true });
-  addEventListener('resize', requestUpdate);
+  addEventListener('resize', () => { if (block && block.isConnected) layout(); requestUpdate(); });
   const start = () => {
     mount();
     new MutationObserver(rafOnce(() => { if (!block || !block.isConnected) mount(); })).observe(document.body, { childList: true, subtree: true });
