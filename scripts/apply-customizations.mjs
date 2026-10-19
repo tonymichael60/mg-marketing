@@ -237,4 +237,6 @@ for(const f of allFiles.filter(textAsset)) {
   const t=fs.readFileSync(f,'utf8'), next=t.replace(assetRef,assetPrefix);
   if(next!==t) {fs.writeFileSync(f,next);bustFiles++;}
 }
+// Netlify placeholders cannot sit before a splat, so the rewrite names the current hash exactly.
+fs.writeFileSync(path.join(root,'_redirects'),`${assetPrefix}* /mirror/:splat 200\n`);
 console.log(`Served assets under ${assetPrefix} in ${bustFiles} files.`);
