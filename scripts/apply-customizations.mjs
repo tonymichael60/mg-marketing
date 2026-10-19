@@ -198,6 +198,20 @@ for(const f of fs.readdirSync(root,{recursive:true}).filter(f=>f.endsWith('.html
 }
 console.log(`Lazy-loaded ${lazyImgs} images.`);
 
+// Load speed: the hero background is the largest paint, but as a lazy image it waited for layout before
+// loading. Load it eagerly at high priority, and preload it from the top of the head so the download starts at once.
+const heroImg='qOqZWjFrFzcXBBiXFlYL0PKeHk.jpg';
+let heroPages=0;
+for(const f of fs.readdirSync(root,{recursive:true}).filter(f=>f.endsWith('.html')).map(f=>path.join(root,f))) {
+  let t=fs.readFileSync(f,'utf8').replace(/<link id="site-hero-preload"[^>]*>/,'');
+  if(!t.includes(heroImg)) continue;
+  t=t.replace(new RegExp(`<img loading="lazy"(?=[^>]*${heroImg})`,'g'),'<img loading="eager" fetchpriority="high"');
+  t=t.replace(/<head[^>]*>/,m=>`${m}<link id="site-hero-preload" rel="preload" as="image" fetchpriority="high" href="/mirror/framerusercontent.com/images/${heroImg}">`);
+  fs.writeFileSync(f,t);
+  heroPages++;
+}
+console.log(`Prioritised the hero image on ${heroPages} pages.`);
+
 // Liquid glass nav, smoother load, interactive buttons. Replaced on each run so CSS edits apply.
 const scriptsDir=path.dirname(fileURLToPath(import.meta.url));
 const polishCss=['site-polish.css','site-process.css','site-services.css','site-works.css','site-features.css','site-trust.css','site-metrics.css','site-svcindex.css','site-perf.css','site-iwork.css'].map(f=>fs.readFileSync(path.join(scriptsDir,f),'utf8')).join('\n');
