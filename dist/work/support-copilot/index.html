@@ -1459,14 +1459,26 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
 }
 @media (prefers-reduced-motion: reduce) { .mg-icard { transition: none; } }
 
-/* Card design matching the site's original cards (e.g. "Services under one roof"):
-   light grey, 40px radius, white inner top highlight, inner bottom ledge, short soft drop. */
-.mg-icard, .mg-icard--end {
-  background: #f4f4f5;
+/* Card design matching the site's original cards (e.g. the About "Mediagroots" card): light grey,
+   40px radius, white inner top highlight, inner bottom ledge, short soft drop. Shared by every custom box;
+   this file loads last, so it wins over each section's own card styles. Tinted or white boxes keep
+   their background image or colour. */
+.mg-icard, .mg-icard--end, .mg-metric, .mg-svcx__index, .mg-chapter, .mg-step, .mg-work, .mg-vs, .mg-perf__item {
+  background-color: #f4f4f5;
   border: none;
   border-radius: 40px;
   box-shadow: inset 0 4px #fff9, inset 0 -8px #0000000d, 0 3px 3px #0000001a, 0 7.77px 2.21px #0000000f;
 }
+.mg-perf__box, .framer-gtsbnt {
+  border-radius: 40px !important;
+  box-shadow: inset 0 4px #fff9, inset 0 -8px #0000000d, 0 3px 3px #0000001a, 0 7.77px 2.21px #0000000f !important;
+}
+/* Active Groot Method step keeps its blue glow on top of the card edge. */
+.mg-step.is-on {
+  box-shadow: inset 0 4px #fff9, inset 0 -8px #0000000d, 0 3px 3px #0000001a, 0 7.77px 2.21px #0000000f,
+    0 12px 30px rgba(42, 53, 217, 0.32), 0 0 0 1px rgba(74, 92, 255, 0.5), 0 0 26px rgba(74, 92, 255, 0.5);
+}
+@media (max-width: 809.98px) { .mg-work { border-radius: 40px; } }
 
 /* Card illustrations: neumorphic tiles, bars and chips in the same style as the Benefits cards. */
 .mg-icard__visual { position: absolute; left: 28px; right: 28px; top: 64px; bottom: 170px; display: flex; align-items: center; justify-content: center; z-index: 0; pointer-events: none; }
