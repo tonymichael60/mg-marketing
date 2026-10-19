@@ -1,6 +1,6 @@
 // Process section (after spector.framer.website): a large stacked headline whose lines darken as they
-// scroll into view, then one card per Groot Method stage that flips in, with arrows to page through the cards
-// when they do not all fit. Replaces the Framer slideshow. Framer can re-render its section, so the block is
+// scroll into view, then a row of Groot Method stage cards that flip in. Arrows page through the row, and
+// cards turn edge-on as they slide past either end of it. Replaces the Framer slideshow. Framer can re-render its section, so the block is
 // re-mounted whenever it goes missing.
 (() => {
   const rafOnce = f => { let t = 0; return () => { if (t) return; t = 1; requestAnimationFrame(() => { t = 0; f(); }); }; };
@@ -38,6 +38,22 @@
       visual: `<div class="mgv mgv-evals"><div class="mgv-checks">${['Accuracy', 'Usability', 'Safety', 'Cost'].map(t => `<span class="mgv-chip"><i class="mgv-tick">${check}</i>${t}</span>`).join('')}</div>
         <span class="mgv-ship">${icon('<path d="M4 15l8-11 8 11"/><path d="M12 4v16"/>')}Ready to ship</span></div>`,
     },
+    {
+      n: '04', title: 'Launch', days: '1 week',
+      lede: 'Go live with eyes on every number.',
+      points: ['Go-live checklist and QA.', 'Tracking and dashboards switched on.', 'Team handover and training.'],
+      // Go-live: the launch tile lifts while its checks light up.
+      visual: `<div class="mgv mgv-launch"><span class="mgv-node mgv-node--up">${icon('<path d="M12 3c3 2 5 5.5 5 9.5L15 16H9l-2-3.5C7 8.5 9 5 12 3z"/><circle cx="12" cy="10" r="1.6"/><path d="M9 16l-2 4 3-1M15 16l2 4-3-1"/>')}</span>
+        <div class="mgv-chips">${['QA passed', 'Tracking on', 'Live'].map(t => `<span class="mgv-chip"><i class="mgv-tick">${check}</i>${t}</span>`).join('')}</div></div>`,
+    },
+    {
+      n: '05', title: 'Bloom', days: 'Ongoing',
+      lede: 'Scale what works, cut what does not.',
+      points: ['Weekly optimisation sprints.', 'Monthly performance reviews.', 'New channels as results compound.'],
+      // Scale: growth bars rise in turn under a rising return figure.
+      visual: `<div class="mgv mgv-bloom"><span class="mgv-chip">${icon('<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>')}Return on ad spend</span>
+        <div class="mgv-cols">${[34, 48, 62, 80, 100].map(h => `<span class="mgv-col" style="height:${h}%"></span>`).join('')}</div></div>`,
+    },
   ];
   const esc = s => s.replace(/&/g, '&amp;');
   const arrow = d => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${d}"/></svg>`;
@@ -45,7 +61,7 @@
     <div class="mg-process__wrap">
       <div class="mg-process__top">
         <span class="mg-process__tag">Process</span>
-        <div class="mg-process__aside"><small>The Groot Method</small><b>Root. Grow. Validate.</b></div>
+        <div class="mg-process__aside"><small>The Groot Method</small><b>Root. Grow. Validate. Launch. Bloom.</b></div>
       </div>
       <h2 class="mg-process__title"><span class="mg-pline">From idea</span><span class="mg-pline">to production</span></h2>
       <div class="mg-process__track">${steps.map((s, i) => `
@@ -69,7 +85,21 @@
     // Headline lines darken once they pass 75% of the viewport height.
     block.querySelectorAll('.mg-pline').forEach(l => l.classList.toggle('is-lit', l.getBoundingClientRect().top < innerHeight * 0.75));
     const track = block.querySelector('.mg-process__track');
-    if (!track.classList.contains('is-in') && track.getBoundingClientRect().top < innerHeight * 0.85) track.classList.add('is-in');
+    if (!track.classList.contains('is-in') && track.getBoundingClientRect().top < innerHeight * 0.85) {
+      track.classList.add('is-in');
+      // Once the flip-in has played, drop its delayed transitions so the edge turn follows scrolling directly.
+      setTimeout(() => track.classList.add('is-settled'), 1800);
+    }
+    // Cards past either end of the row turn away from view, hinged on the edge they are leaving by.
+    const tr = track.getBoundingClientRect();
+    track.querySelectorAll('.mg-pcard').forEach(c => {
+      const r = c.getBoundingClientRect();
+      const out = r.left < tr.left - 1 ? (r.left - tr.left) / r.width : r.right > tr.right + 1 ? (r.right - tr.right) / r.width : 0;
+      const k = Math.max(-1, Math.min(1, out));
+      c.style.rotate = k ? `y ${-k * 75}deg` : '';
+      c.style.opacity = k ? 1 - Math.abs(k) * 0.7 : '';
+      c.style.transformOrigin = k < 0 ? 'right center' : k > 0 ? 'left center' : '';
+    });
     // Arrows only when the cards overflow; each end disables at its limit.
     const max = track.scrollWidth - track.clientWidth;
     block.querySelector('.mg-process__nav').hidden = max < 4;

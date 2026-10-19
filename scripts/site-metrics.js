@@ -10,8 +10,8 @@
     </article>
     <article class="mg-metric">
       <span class="mg-metric__eyebrow">Method</span>
-      <span class="mg-metric__num">3<em>stages</em></span>
-      <p class="mg-metric__desc">Root, Grow, Bloom. Every engagement follows it.</p>
+      <span class="mg-metric__num">5<em>stages</em></span>
+      <p class="mg-metric__desc">Root to Bloom. Every engagement follows it.</p>
     </article>`;
   let block = null;
   function mount() {
