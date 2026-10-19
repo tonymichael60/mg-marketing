@@ -183,9 +183,14 @@ console.log(`Set contact form interest options in ${optFiles} files.`);
 // Load speed: Framer marks images eager when their Y position inside a component is small, so images far down
 // the page loaded up front on phones. The HTML already lazy-loads every image; make the runtime render match.
 const framerRuntime=path.join(root,'mirror/framerusercontent.com/sites/4nHYQx2yRdfCawW7aBBb5U/framer.CYMQxEW1.mjs');
+// The hero background is the exception: Framer can re-create it after hydration, and a lazy copy then painted
+// seconds late, so it stays eager and high priority.
 const rt=fs.readFileSync(framerRuntime,'utf8');
-if(rt.includes('loading:e.loading,width:e.pixelWidth')) fs.writeFileSync(framerRuntime,rt.replace('loading:e.loading,width:e.pixelWidth','loading:"lazy",width:e.pixelWidth'));
-else if(!rt.includes('loading:"lazy",width:e.pixelWidth')) throw new Error('Framer image loading hook not found');
+const imgHooks=['fetchpriority:e.fetchPriority,loading:e.loading,width:e.pixelWidth','fetchpriority:e.fetchPriority,loading:"lazy",width:e.pixelWidth'];
+const imgHook='fetchpriority:String(f).includes(`qOqZWjFrFzcXBBiXFlYL0PKeHk`)?`high`:e.fetchPriority,loading:String(f).includes(`qOqZWjFrFzcXBBiXFlYL0PKeHk`)?`eager`:`lazy`,width:e.pixelWidth';
+const oldHook=imgHooks.find(h=>rt.includes(h));
+if(oldHook) fs.writeFileSync(framerRuntime,rt.replace(oldHook,imgHook));
+else if(!rt.includes(imgHook)) throw new Error('Framer image loading hook not found');
 console.log('Forced lazy image loading in the Framer runtime.');
 
 // Load speed: Framer's on-page editor bar (an iframe and about seven scripts from framer.com) and Framer
