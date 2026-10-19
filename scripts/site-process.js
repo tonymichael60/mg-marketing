@@ -67,7 +67,7 @@
       <h2 class="mg-process__title"><span class="mg-pline">From idea</span><span class="mg-pline">to production</span></h2>
       <div class="mg-process__viewport">
         <div class="mg-process__track">${[0, 1, 2].map(copy => steps.map(s => `
-          <article class="mg-pcard"${copy === 1 ? '' : ' aria-hidden="true"'}>
+          <article class="mg-pcard"${copy ? ' aria-hidden="true"' : ''}>
             <div class="mg-pcard__head"><h3>${esc(s.title)}</h3><span class="mg-pcard__num">/${s.n}</span></div>
             <p class="mg-pcard__lede">${s.lede}</p>
             <p class="mg-pcard__time">Timeframe <b>${s.days}</b></p>
@@ -83,12 +83,14 @@
     </div>`;
 
   let block = null;
-  // Carousel state, in card steps: pos is where the row is now; the middle of three copies is "home", and
-  // the row is re-centred on it after each move so it can loop forever in both directions.
+  // Carousel state, in card steps: pos is where the row is now. Each of the 3N cards (three copies) is placed
+  // on its own, wrapped round so it always sits within N steps before to 2N steps after pos. The row therefore
+  // never runs out of cards however far it moves, by quick clicks or a long drag.
   const N = steps.length, GAP = 8, DURATION = 1200;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const easeOutExpo = t => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
-  let pos = N, anim = null, drag = null, step = 0, cardW = 0, viewW = 0;
+  const M = 3 * N;
+  let pos = 0, anim = null, drag = null, step = 0, cardW = 0, viewW = 0;
 
   function layout() {
     const vp = block.querySelector('.mg-process__viewport');
@@ -96,29 +98,28 @@
     const visible = innerWidth >= 1200 ? 3 : innerWidth >= 810 ? 2 : 1;
     cardW = (viewW - GAP * (visible - 1)) / visible;
     step = cardW + GAP;
-    block.querySelectorAll('.mg-pcard').forEach(c => { c.style.width = cardW + 'px'; });
+    const cards = block.querySelectorAll('.mg-pcard');
+    cards.forEach(c => { c.style.width = cardW + 'px'; });
+    // Cards are absolutely placed, so the track takes the tallest card's height.
+    block.querySelector('.mg-process__track').style.height = Math.max(...[...cards].map(c => c.offsetHeight)) + 'px';
     render();
   }
   function render() {
-    const track = block.querySelector('.mg-process__track');
-    track.style.transform = `translate3d(${-pos * step}px,0,0)`;
     block.querySelectorAll('.mg-pcard').forEach((c, i) => {
-      const x = (i - pos) * step;
+      let rel = (((i - pos) % M) + M) % M;
+      if (rel >= 2 * N) rel -= M;
+      const x = rel * step;
       // How far past an edge the card is, as a share of one step (0 inside, 1 fully past).
       const left = Math.min(1, Math.max(0, -x / step));
       const right = Math.min(1, Math.max(0, (x + cardW - viewW) / step));
       const angle = left ? -90 * left : 90 * right;
       c.style.transformOrigin = left ? '100% 50%' : '0% 50%';
-      c.style.transform = angle ? `rotateY(${angle}deg)` : '';
+      c.style.transform = `translate3d(${x}px,0,0)${angle ? ` rotateY(${angle}deg)` : ''}`;
       c.style.visibility = left >= 1 || right >= 1 ? 'hidden' : '';
     });
   }
-  function recentre() {
-    pos = ((pos % N) + N) % N + N;
-    render();
-  }
   function go(target) {
-    if (reduce) { pos = target; recentre(); return; }
+    if (reduce) { pos = target; render(); return; }
     const from = pos, start = performance.now();
     anim = { target };
     const frame = now => {
@@ -127,7 +128,7 @@
       pos = from + (target - from) * easeOutExpo(t);
       render();
       if (t < 1) requestAnimationFrame(frame);
-      else { anim = null; recentre(); }
+      else anim = null;
     };
     requestAnimationFrame(frame);
   }
@@ -152,7 +153,7 @@
     block.className = 'mg-process';
     block.id = 'process';
     block.innerHTML = html;
-    pos = N; anim = null;
+    pos = 0; anim = null;
     block.querySelectorAll('.mg-process__arrow').forEach(b => b.addEventListener('click', () => {
       // Clicks during a move stack onto its target, so quick taps advance several cards.
       go((anim ? anim.target : Math.round(pos)) + +b.dataset.dir);
