@@ -11,7 +11,7 @@ function visit(dir) {
     if(item.isDirectory()) {visit(file);continue;}
     if(!/\.(mjs|json)$/.test(file)) continue;
     const text=fs.readFileSync(file,'utf8');
-    const next=text.replace(/(?:https?:\/\/[^\s<>"'`\\)]+)?\/mirror\//g,origin+'/mirror/');
+    const next=text.replace(/(?:https?:\/\/[^\s<>"'`\\)]+)?\/(mirror|m\/[0-9a-f]{10})\//g,(m,p)=>origin+'/'+p+'/');
     if(next!==text){fs.writeFileSync(file,next);count++;}
   }
 }

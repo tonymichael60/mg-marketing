@@ -17,3 +17,15 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
     Access-Control-Allow-Origin = "*"
+
+# Cache-busted asset URLs from the build: /m/<hash>/... serves /mirror/...
+[[redirects]]
+  from = "/m/:hash/*"
+  to = "/mirror/:splat"
+  status = 200
+
+[[headers]]
+  for = "/m/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    Access-Control-Allow-Origin = "*"

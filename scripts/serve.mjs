@@ -8,6 +8,8 @@ const types = {'.html':'text/html; charset=utf-8','.js':'text/javascript; charse
 const server = http.createServer((req,res) => {
   let pathname;
   try {pathname = decodeURIComponent(new URL(req.url,'http://localhost').pathname);} catch {res.writeHead(400).end();return;}
+  // Cache-busted asset URLs (/m/<hash>/...) map to /mirror/, like the Netlify rewrite.
+  pathname = pathname.replace(/^\/m\/[0-9a-f]{10}\//, '/mirror/');
   let file = path.resolve(root, '.' + pathname);
   if (file !== root && !file.startsWith(root + path.sep)) {res.writeHead(403).end();return;}
   if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file,'index.html');
@@ -16,7 +18,7 @@ const server = http.createServer((req,res) => {
   res.setHeader('Access-Control-Allow-Origin','*');
   // Keep the same captured files usable in a local preview after publication.
   if (/\.(mjs|json)$/.test(file)) {
-    const body=fs.readFileSync(file,'utf8').replace(/https?:\/\/[^/\s"'`]+\/mirror\//g, 'http://127.0.0.1:4173/mirror/');
+    const body=fs.readFileSync(file,'utf8').replace(/https?:\/\/[^/\s"'`]+\/(mirror|m\/[0-9a-f]{10})\//g, 'http://127.0.0.1:4173/$1/');
     res.end(body);return;
   }
   fs.createReadStream(file).pipe(res);

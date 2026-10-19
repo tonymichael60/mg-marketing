@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import crypto from 'node:crypto';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../dist');
 const style='<style id="site-branding-overrides">#__framer-badge-container,.__framer-badge{display:none!important}</style>';
@@ -216,3 +217,24 @@ function visitPolish(dir) {
 }
 visitPolish(root);
 console.log(`Applied site polish on ${polished} pages.`);
+
+// Cache busting: /mirror/* is served immutable, so browsers keep old copies for a year. Every reference
+// is served under /m/<hash>/ instead (netlify.toml rewrites it to /mirror/), with the hash taken from the
+// mirror contents, so any change gives returning visitors fresh files. References are reset first so the
+// hash does not depend on the previous run.
+const assetRef=/(?<=["'(,\s]|https?:\/\/[^/\s"'`]+)\/(?:mirror|m\/[0-9a-f]{10})\//g;
+const textAsset=f=>/\.(html|mjs|json|css)$/.test(f);
+const allFiles=fs.readdirSync(root,{recursive:true}).map(f=>path.join(root,f)).filter(f=>fs.statSync(f).isFile()).sort();
+for(const f of allFiles.filter(textAsset)) {
+  const t=fs.readFileSync(f,'utf8'), next=t.replace(assetRef,'/mirror/');
+  if(next!==t) fs.writeFileSync(f,next);
+}
+const assetHash=crypto.createHash('sha256');
+for(const f of allFiles.filter(f=>f.startsWith(path.join(root,'mirror')+path.sep))) assetHash.update(path.relative(root,f)).update(fs.readFileSync(f));
+const assetPrefix=`/m/${assetHash.digest('hex').slice(0,10)}/`;
+let bustFiles=0;
+for(const f of allFiles.filter(textAsset)) {
+  const t=fs.readFileSync(f,'utf8'), next=t.replace(assetRef,assetPrefix);
+  if(next!==t) {fs.writeFileSync(f,next);bustFiles++;}
+}
+console.log(`Served assets under ${assetPrefix} in ${bustFiles} files.`);
