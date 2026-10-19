@@ -1,0 +1,149 @@
+/* Work section (horizontal pinned scroller, ported from the reference file, light theme).
+   Mounted by site-iwork.js in place of the Statistics section. Scoped .mg-iwork to avoid the
+   Featured Works (.mg-work) styles. */
+.mg-iwork { --ink: #0b0b0c; --muted: #6a6e6e; --accent: #1422e3; --accent-2: #4b5cff; --line: rgba(41, 44, 46, .14); --ease: cubic-bezier(.22, 1, .36, 1); position: relative; width: 100%; min-width: 0; align-self: stretch; font-family: Urbanist, "Urbanist Placeholder", sans-serif; }
+.mg-iwork__pin { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+.mg-iwork__head { width: 100%; max-width: 1296px; margin: 0 auto 46px; padding: 0 clamp(16px, 4vw, 56px); box-sizing: border-box; display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; flex-wrap: wrap; }
+.mg-iwork__eyebrow { display: inline-flex; align-items: center; gap: 10px; padding: 9px 20px; border-radius: 8px; background: rgb(242, 242, 242); box-shadow: 0 3px 0 rgba(0, 0, 0, .08), 0 4px 8px rgba(0, 0, 0, .06); font-size: 18px; line-height: 24px; font-weight: 600; color: var(--ink); }
+.mg-iwork__eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ink); }
+.mg-iwork h2 {
+  margin-top: 18px; font-size: clamp(34px, 6vw, 72px); line-height: .98; letter-spacing: -.045em; font-weight: 700;
+  padding-bottom: .14em;
+  /* Same dark-to-grey gradient text fill as "Measure what pays the bills". */
+  background: linear-gradient(180deg, #0b0b0c 0%, #1c1e24 40%, #c6c9cf 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.mg-iwork h2 i {
+  font-style: normal;
+  background: linear-gradient(180deg, #4b5cff 0%, #1422e3 45%, #020a70 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.mg-iwork__lead { color: var(--muted); max-width: 40ch; font-size: clamp(16px, 1.3vw, 19px); line-height: 1.55; }
+
+/* Track starts flush at box 1 (left-aligned to the head gutter). */
+.mg-iwork__track { align-self: flex-start; flex-shrink: 0; display: flex; gap: 24px; padding: 8px clamp(16px, 4vw, 56px); width: max-content; will-change: transform; }
+.mg-icard { --rx: 0deg; --ry: 0deg; position: relative; width: clamp(290px, 34vw, 500px); aspect-ratio: 4/5; border-radius: 32px; flex-shrink: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 28px; overflow: hidden; background: #f4f4f5; transform: perspective(1000px) rotateX(var(--rx)) rotateY(var(--ry)); transition: transform .6s var(--ease); box-shadow: 0 7px 0 rgba(0, 0, 0, .05), 0 30px 64px -22px rgba(0, 0, 0, .16), 0 10px 22px -12px rgba(0, 0, 0, .08); }
+.mg-icard__art { display: none; }
+.mg-icard__glare { display: none; }
+.mg-icard__top { display: flex; justify-content: space-between; color: #9aa0ab; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; }
+.mg-icard__info { position: relative; z-index: 1; padding: 0; background: none; border: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.mg-icard__info small { display: block; color: #1422e3; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; font-weight: 600; }
+.mg-icard__info h4 { color: #0b0b0c; font-size: clamp(22px, 2vw, 30px); line-height: 1.08; letter-spacing: -.03em; font-weight: 700; margin: 10px 0 8px; }
+.mg-icard__info p { color: #6a6e6e; font-size: 14.5px; line-height: 1.5; }
+
+.mg-icard--end { background: #f4f4f5; border: 1px dashed rgba(20, 34, 227, .4); justify-content: center; align-items: flex-start; gap: 24px; box-shadow: 0 6px 0 rgba(0, 0, 0, .05), 0 26px 54px -18px rgba(0, 0, 0, .16); }
+.mg-icard--end .mg-icard__eyebrow { font-size: 13px; letter-spacing: .14em; text-transform: uppercase; font-weight: 600; color: var(--ink); }
+.mg-icard--end h4 { font-size: clamp(34px, 3.4vw, 54px); line-height: 1; letter-spacing: -.045em; font-weight: 700; color: var(--ink); }
+.mg-icard--end h4 i { font-style: normal; color: var(--accent); }
+.mg-iwork__btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border-radius: 999px; background: linear-gradient(180deg, #1a2496, #020a70); color: #fff; font-weight: 600; font-size: 16px; text-decoration: none; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .35), 0 10px 24px rgba(2, 10, 112, .3); }
+
+.mg-iwork__progress { margin: 40px auto 0; height: 2px; background: rgba(41, 44, 46, .14); border-radius: 2px; width: calc(100% - clamp(32px, 8vw, 112px)); max-width: 1296px; }
+.mg-iwork__progress i { position: relative; display: block; height: 100%; width: calc(var(--wp, 0) * 100%); border-radius: 2px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); box-shadow: 0 0 8px rgba(47, 107, 255, .8), 0 0 18px rgba(20, 34, 227, .5); }
+/* Glowing head at the growing edge. */
+.mg-iwork__progress i::after { content: ""; position: absolute; right: -5px; top: 50%; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px rgba(75, 92, 255, .35), 0 0 12px 3px rgba(47, 107, 255, .9), 0 0 26px 6px rgba(20, 34, 227, .6); }
+
+@media (max-width: 760px) {
+  .mg-iwork { height: auto !important; }
+  .mg-iwork__pin { position: relative; height: auto; padding: 80px 0; }
+  .mg-iwork__track { overflow-x: auto; width: auto; transform: none !important; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 8px; }
+  .mg-iwork__track::-webkit-scrollbar { display: none; }
+  .mg-icard { width: 82vw; scroll-snap-align: center; }
+  .mg-iwork__progress { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .mg-icard { transition: none; } }
+
+/* Card design matching the site's original cards (e.g. "Services under one roof"):
+   light grey, 40px radius, white inner top highlight, inner bottom ledge, short soft drop. */
+.mg-icard, .mg-icard--end {
+  background: #f4f4f5;
+  border: none;
+  border-radius: 40px;
+  box-shadow: inset 0 4px #fff9, inset 0 -8px #0000000d, 0 3px 3px #0000001a, 0 7.77px 2.21px #0000000f;
+}
+
+/* Card illustrations: neumorphic tiles, bars and chips in the same style as the Benefits cards. */
+.mg-icard__visual { position: absolute; left: 28px; right: 28px; top: 64px; bottom: 170px; display: flex; align-items: center; justify-content: center; z-index: 0; pointer-events: none; }
+.mgv { width: 100%; display: grid; gap: 14px; justify-items: center; }
+.mgv svg { width: 18px; height: 18px; fill: none; stroke: #111; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.mgv-chip, .mgv-node, .mgv-logo, .mgv-type, .mgv-swatches, .mgv-screen, .mgv-play {
+  background: #f8f8f9;
+  box-shadow: inset 0 2px 0 #fff, 0 3px 0 rgba(0, 0, 0, .06), 0 10px 18px -8px rgba(0, 0, 0, .18);
+}
+.mgv-chip { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px; border-radius: 11px; font-size: 14px; font-weight: 500; color: #111; white-space: nowrap; }
+.mgv-bar { display: block; height: 34px; border-radius: 10px; background: #f1f1f2; box-shadow: inset 0 2px 0 #fff, 0 3px 0 rgba(0, 0, 0, .05), 0 8px 14px -8px rgba(0, 0, 0, .14); }
+.mgv-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+
+/* 01 funnel: bars narrow like a funnel, chips name each stage. */
+.mgv-funnel { justify-items: stretch; gap: 12px; }
+.mgv-row { display: flex; align-items: center; gap: 10px; }
+
+/* 02 video: screen with play button, edit timeline, production chips. */
+.mgv-screen { position: relative; width: 100%; height: 150px; border-radius: 20px; display: grid; place-items: center; }
+.mgv-play { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: #fff; box-shadow: inset 0 2px 0 #fff, 0 4px 0 rgba(0, 0, 0, .07), 0 16px 26px -10px rgba(0, 0, 0, .3); }
+.mgv-play svg { width: 26px; height: 26px; margin-left: 4px; }
+.mgv-timeline { position: relative; display: flex; gap: 8px; width: 100%; height: 26px; }
+.mgv-clip { height: 100%; border-radius: 8px; background: #f1f1f2; box-shadow: inset 0 2px 0 #fff, 0 3px 0 rgba(0, 0, 0, .05), 0 6px 12px -8px rgba(0, 0, 0, .14); }
+.mgv-head { position: absolute; left: 41%; top: -6px; bottom: -6px; width: 2px; border-radius: 2px; background: #111; }
+.mgv-head::before { content: ""; position: absolute; top: -5px; left: -4px; width: 10px; height: 10px; border-radius: 50%; background: #111; }
+
+/* 03 automation: lead -> message -> CRM tiles on one track, middle step raised. */
+.mgv-flow { gap: 22px; }
+.mgv-nodes { position: relative; display: flex; align-items: center; justify-content: center; gap: 22px; width: 100%; }
+.mgv-track { position: absolute; left: 0; right: 0; top: 50%; height: 14px; margin-top: -7px; border-radius: 8px; background: #f1f1f2; box-shadow: inset 0 2px 0 #fff, 0 3px 0 rgba(0, 0, 0, .05); }
+.mgv-node { position: relative; width: 76px; height: 76px; border-radius: 16px; display: grid; place-items: center; }
+.mgv-node svg { width: 30px; height: 30px; }
+.mgv-node--up { width: 92px; height: 92px; border-radius: 18px; background: #fff; box-shadow: inset 0 2px 0 #fff, 0 4px 0 rgba(0, 0, 0, .07), 0 22px 30px -12px rgba(0, 0, 0, .28); }
+.mgv-node--up svg { width: 36px; height: 36px; }
+
+/* 04 brand system: logo mark, palette, type specimen, guidelines. */
+.mgv-brandgrid { display: flex; align-items: stretch; justify-content: center; gap: 14px; }
+.mgv-logo { width: 138px; height: 138px; border-radius: 22px; display: grid; place-items: center; background: #fff; }
+.mgv-logo svg { width: 70px; height: 70px; stroke-width: 5.5; }
+.mgv-brandcol { display: grid; gap: 14px; }
+.mgv-swatches { display: flex; align-items: center; gap: 8px; padding: 0 16px; height: 62px; border-radius: 16px; }
+.mgv-swatches i { width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 2px 2px rgba(255, 255, 255, .35), 0 3px 6px rgba(0, 0, 0, .18); }
+.mgv-type { display: grid; place-items: center; height: 62px; border-radius: 16px; font-size: 30px; font-weight: 700; letter-spacing: -.02em; color: #111; }
+@media (max-width: 1100px) { .mgv-chip { font-size: 13px; padding: 0 11px; } .mgv-logo { width: 116px; height: 116px; } }
+
+/* Small looping animations on the card illustrations (off for reduced motion). */
+@media (prefers-reduced-motion: no-preference) {
+  /* 01 funnel: bars fill from the left in sequence, chips nudge as their bar lands. */
+  .mgv-bar { transform-origin: left center; animation: mgv-fill 4.8s cubic-bezier(.22, 1, .36, 1) infinite; }
+  .mgv-row:nth-child(2) .mgv-bar { animation-delay: .25s; }
+  .mgv-row:nth-child(3) .mgv-bar { animation-delay: .5s; }
+  .mgv-row:nth-child(4) .mgv-bar { animation-delay: .75s; }
+  @keyframes mgv-fill { 0% { transform: scaleX(.15); } 22%, 82% { transform: scaleX(1); } 100% { transform: scaleX(.15); } }
+
+  /* 02 video: play button breathes, playhead sweeps the timeline. */
+  .mgv-play { animation: mgv-pulse 2.6s ease-in-out infinite; }
+  @keyframes mgv-pulse { 50% { transform: scale(1.08); box-shadow: inset 0 2px 0 #fff, 0 4px 0 rgba(0, 0, 0, .07), 0 18px 30px -8px rgba(20, 34, 227, .35); } }
+  .mgv-head { animation: mgv-scrub 5s linear infinite; }
+  @keyframes mgv-scrub { from { left: 2%; } to { left: 97%; } }
+
+  /* 03 automation: a lead dot travels the track, steps bob in turn. */
+  .mgv-track::after { content: ""; position: absolute; top: 50%; left: 0; width: 10px; height: 10px; margin-top: -5px; border-radius: 50%; background: #1422e3; box-shadow: 0 0 10px rgba(20, 34, 227, .7); animation: mgv-travel 3.6s ease-in-out infinite; }
+  @keyframes mgv-travel { from { left: 2%; opacity: 0; } 12% { opacity: 1; } 88% { opacity: 1; } to { left: 96%; opacity: 0; } }
+  .mgv-node { animation: mgv-bob 3.6s ease-in-out infinite; }
+  .mgv-node:nth-of-type(3) { animation-delay: .6s; }
+  .mgv-node:nth-of-type(4) { animation-delay: 1.2s; }
+  @keyframes mgv-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+  /* 04 brand: logo tile floats, swatches pop one after another. */
+  .mgv-logo { animation: mgv-bob 4s ease-in-out infinite; }
+  .mgv-swatches i { animation: mgv-pop 3s ease-in-out infinite; }
+  .mgv-swatches i:nth-child(2) { animation-delay: .3s; }
+  .mgv-swatches i:nth-child(3) { animation-delay: .6s; }
+  @keyframes mgv-pop { 0%, 60%, 100% { transform: scale(1); } 20% { transform: scale(1.18); } }
+}
+
+/* Narrower screens: cards shrink but the illustration + text still need room, so use a minimum height
+   instead of the 4:5 ratio (which made illustrations overlap the titles on tablet/phone). */
+@media (max-width: 1100px) {
+  .mg-icard { aspect-ratio: auto; min-height: 560px; width: clamp(300px, 46vw, 420px); }
+}
+@media (max-width: 760px) {
+  .mg-icard { width: 84vw; min-height: 540px; }
+  .mg-icard__visual { left: 20px; right: 20px; }
+}

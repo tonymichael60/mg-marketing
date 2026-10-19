@@ -1,134 +1,163 @@
-/* Process section: fanned deck of step cards (after td-signal.framer.website), in brand blue.
-   Mounted by site-process.js. Replaces the old pinned scroll-drawn route. */
-.mg-process-host > :not(.mg-process) { display: none !important; }
+/* Process section: pinned, scroll-drawn "Groot Method" route. Mounted by site-process.js. */
+.mg-process-host > :not(.mg-process), [data-framer-name="Process"] > :not(.mg-process) { display: none !important; }
 .mg-process-host { display: block !important; height: auto !important; padding: 0 !important; }
 
 .mg-process {
-  --mg-ink: rgb(17, 17, 19);
-  --mg-muted: rgb(97, 102, 106);
-  --mg-accent: #1422e3;
-  display: block;
+  --mg-ink: rgb(41, 44, 46);
+  --mg-muted: rgb(113, 113, 122);
+  --mg-faint: rgba(41, 44, 46, 0.32);
+  --mg-line: rgba(41, 44, 46, 0.1);
+  --mg-blue: #2a35d9;
+  --mg-blue-deep: #0e15a8;
+  --mg-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  height: 320vh;
   width: 100%;
-  padding: clamp(72px, 9vw, 130px) 0 clamp(40px, 5vw, 72px);
   color: var(--mg-ink);
   font-family: Urbanist, "Urbanist Placeholder", sans-serif;
 }
-.mg-process__inner {
+.mg-process__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+.mg-process__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(24px, 3vw, 48px);
+  align-items: center;
   width: 100%;
   max-width: 1296px;
   margin: 0 auto;
   padding: 0 72px;
   box-sizing: border-box;
 }
-.mg-process__header { position: relative; text-align: center; margin-bottom: clamp(40px, 5vw, 72px); }
-/* Old boxed "Process" badge: grey pill with a hard-drop shadow and a leading dot. */
 .mg-process__tag {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  padding: 7px 16px;
+  padding: 9px 20px;
   border-radius: 8px;
   background: rgb(242, 242, 242);
   box-shadow: 0 3px 0 rgba(0, 0, 0, 0.08), 0 4px 8px rgba(0, 0, 0, 0.06);
-  font-size: 16px;
+  font-size: 18px;
   line-height: 24px;
   font-weight: 600;
-  color: var(--mg-ink);
+  color: #0b0b0c;
 }
 .mg-process__tag::before {
   content: "";
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: var(--mg-ink);
+  background: #0b0b0c;
 }
 .mg-process h2 {
-  margin: 20px 0 0;
-  font-size: clamp(34px, 5vw, 64px);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  font-weight: 700;
+  margin: 24px 0 14px;
+  font-size: 72px;
+  line-height: 72px;
+  letter-spacing: -2.16px;
+  font-weight: 600;
+  padding-bottom: .14em;
+  /* Same dark-to-grey gradient text fill as "Measure what pays the bills". */
+  background: linear-gradient(180deg, #0b0b0c 0%, #1c1e24 40%, #c6c9cf 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
 }
-.mg-process__muted { color: var(--mg-muted); }
-
-/* Fanned deck: cards overlap and step down to the right, each slightly rotated. */
-.mg-proc-cards {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding-top: 8px;
-  /* Reserve room for the stepped-down cards so the deck never overlaps Featured Works. */
-  padding-bottom: 210px;
+.mg-process__stage {
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mg-blue);
+  font-variant-numeric: tabular-nums;
 }
-.mg-pcard {
-  flex: 0 0 auto;
-  width: clamp(230px, 22vw, 300px);
-  min-height: 340px;
-  box-sizing: border-box;
-  padding: 26px 26px 30px;
-  border-radius: 26px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
-  transform: translateY(var(--dy)) rotate(var(--rot));
-  transform-origin: center;
+.mg-process__steps { margin-top: 24px; display: grid; gap: 12px; }
+.mg-step {
+  padding: 20px 22px;
+  border-radius: 22px;
+  background: rgb(243, 243, 243);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.05), 0 10px 24px rgba(0, 0, 0, 0.06);
+  opacity: 0.38;
+  scale: 0.97;
+  transform-origin: left;
+  transition: opacity 0.6s var(--mg-ease), scale 0.6s var(--mg-ease), box-shadow 0.6s var(--mg-ease);
 }
-.mg-pcard:nth-child(1) { --dy: 0px;   --rot: -6deg; z-index: 1; background: #ffffff;  color: var(--mg-ink); }
-.mg-pcard:nth-child(2) { --dy: 60px;  --rot: -2deg; z-index: 2; background: #dbe0ff;  color: var(--mg-ink); }
-.mg-pcard:nth-child(3) { --dy: 128px; --rot: 3deg;  z-index: 3; background: var(--mg-accent); color: #fff; }
-.mg-pcard:nth-child(4) { --dy: 196px; --rot: 6deg;  z-index: 4; background: #020a70;  color: #fff; }
-.mg-pcard:not(:first-child) { margin-left: clamp(-56px, -3vw, -36px); }
+/* Active step glows blue as the growing tree reaches its stage. */
+.mg-step.is-on {
+  opacity: 1;
+  scale: 1;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.05), 0 12px 30px rgba(42, 53, 217, 0.32),
+    0 0 0 1px rgba(74, 92, 255, 0.5), 0 0 26px rgba(74, 92, 255, 0.5);
+}
+.mg-step__head { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.mg-step h4 { display: flex; align-items: baseline; gap: 14px; margin: 0; font-size: 36px; line-height: 48px; font-weight: 600; letter-spacing: -0.36px; }
+.mg-step h4 small { font-size: 14px; line-height: 20px; font-weight: 600; letter-spacing: 0.14em; color: var(--mg-blue); }
+.mg-step__days {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border: 1px solid var(--mg-line);
+  border-radius: 999px;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+.mg-step p { margin: 6px 0 0; color: var(--mg-muted); font-size: 16px; line-height: 24px; font-weight: 400; }
 
-.mg-pcard__top { display: flex; align-items: center; justify-content: space-between; }
-.mg-pcard__num { font-size: 20px; font-weight: 600; letter-spacing: 0.04em; font-variant-numeric: tabular-nums; opacity: 0.85; }
-.mg-pcard__top .mg-spark { width: 20px; height: 20px; color: currentColor; opacity: 0.85; }
-.mg-pcard__body { margin-top: auto; }
-.mg-pcard h3 { margin: 0 0 8px; font-size: 24px; line-height: 30px; font-weight: 700; letter-spacing: -0.01em; }
-.mg-pcard p { margin: 0; font-size: 16px; line-height: 23px; font-weight: 500; opacity: 0.86; }
-
-@media (prefers-reduced-motion: no-preference) {
-  .mg-pcard {
-    opacity: 0;
-    transform: translateY(34px) rotate(0deg) scale(0.96);
-    transition: opacity 0.5s ease, transform 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
-    transition-delay: calc(var(--i) * 90ms);
-  }
-  .mg-proc-cards.is-in .mg-pcard { opacity: 1; transform: translateY(var(--dy)) rotate(var(--rot)); }
-  .mg-pcard { transition-property: opacity, transform; }
-  .mg-pcard:hover {
-    transform: translateY(calc(var(--dy) - 14px)) rotate(var(--rot)) scale(1.03);
-    z-index: 9;
-    transition-delay: 0s;
-  }
+.mg-process__path { position: relative; aspect-ratio: 1.05; width: min(100%, 88vh); justify-self: center; }
+.mg-process__path svg { width: 100%; height: 100%; overflow: visible; }
+.mg-process__path .track { fill: none; stroke: var(--mg-line); stroke-width: 2; stroke-dasharray: 4 8; }
+.mg-process__path .draw { fill: none; stroke: url(#mg-route-gradient); stroke-width: 3; stroke-linecap: round; filter: drop-shadow(0 0 6px rgba(47, 107, 255, 0.8)) drop-shadow(0 0 16px rgba(31, 79, 255, 0.55)); }
+.mg-process__path .ring { fill: rgb(243, 243, 243); stroke: rgba(41, 44, 46, 0.18); stroke-width: 1.5; transition: fill 0.6s var(--mg-ease), stroke 0.6s var(--mg-ease); }
+.mg-process__path .core { fill: #fff; transform-box: fill-box; transform-origin: center; transform: scale(0); transition: transform 0.6s var(--mg-ease); }
+.mg-process__path .node.is-on .ring { fill: var(--mg-blue); stroke: var(--mg-blue-deep); }
+.mg-process__path .node.is-on .core { transform: scale(1); }
+.mg-process__path text { fill: var(--mg-faint); font-family: inherit; font-size: 16px; font-weight: 600; letter-spacing: 0.14em; transition: fill 0.6s var(--mg-ease); }
+.mg-process__path .node.is-on text { fill: var(--mg-ink); }
+.mg-process__head {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.9),
+    0 0 10px 2px rgba(120, 160, 255, 0.95),
+    0 0 26px 6px rgba(47, 107, 255, 0.85),
+    0 0 52px 14px rgba(31, 79, 255, 0.7),
+    0 0 100px 30px rgba(20, 34, 227, 0.45);
 }
 
-/* Tablet: smaller cards, gentler stair. */
 @media (max-width: 1199.98px) {
-  .mg-process__inner { padding: 0 40px; }
-  .mg-pcard { width: clamp(200px, 24vw, 260px); min-height: 300px; padding: 22px; }
-  .mg-pcard:nth-child(2) { --dy: 44px; }
-  .mg-pcard:nth-child(3) { --dy: 92px; }
-  .mg-pcard:nth-child(4) { --dy: 140px; }
-  .mg-proc-cards { padding-bottom: 150px; }
-  .mg-pcard h3 { font-size: 21px; line-height: 27px; }
-  .mg-pcard p { font-size: 15px; line-height: 21px; }
+  .mg-process__grid { padding: 0 40px; }
+  .mg-process h2 { font-size: 42px; line-height: 50px; letter-spacing: -0.96px; }
+  .mg-step h4 { font-size: 27px; line-height: 39px; letter-spacing: -0.27px; }
 }
-
-/* Phone: stack, no rotation, full width. */
+/* Short desktop screens: fold inactive descriptions so the pinned column fits. */
+@media (min-width: 810px) and (max-height: 860px) {
+  .mg-step p { max-height: 72px; overflow: hidden; transition: max-height 0.6s var(--mg-ease), margin 0.6s var(--mg-ease); }
+  .mg-step:not(.is-on) p { max-height: 0; margin-top: 0; }
+}
+/* Phone: no pinning; steps stack, all active. */
 @media (max-width: 809.98px) {
-  .mg-process__inner { padding: 0 20px; }
-  .mg-proc-cards { flex-direction: column; gap: 16px; padding-bottom: 0; }
-  .mg-pcard {
-    width: 100%;
-    min-height: 0;
-    margin-left: 0 !important;
-    --dy: 0px !important;
-    --rot: 0deg !important;
-  }
-  .mg-process h2 { font-size: 34px; }
+  .mg-process { height: auto; }
+  .mg-process__pin { position: relative; height: auto; padding: 72px 0; }
+  .mg-process__grid { grid-template-columns: 1fr; padding: 0 20px; }
+  .mg-process__path, .mg-process__stage { display: none; }
+  .mg-step { opacity: 1; scale: 1; }
+  .mg-step__head { flex-wrap: wrap; }
+  .mg-process h2 { font-size: 40px; line-height: 48px; letter-spacing: -1.2px; }
+  .mg-step h4 { font-size: 26px; line-height: 34px; letter-spacing: -0.26px; }
 }
-@media (max-width: 809.98px) and (prefers-reduced-motion: no-preference) {
-  .mg-pcard { transform: translateY(24px) scale(0.98); }
-  .mg-proc-cards.is-in .mg-pcard { transform: none; }
-  .mg-pcard:hover { transform: translateY(-4px) scale(1.01); }
+@media (prefers-reduced-motion: reduce) {
+  .mg-step, .mg-process__path * { transition: none !important; }
 }

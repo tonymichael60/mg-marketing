@@ -1,0 +1,58 @@
+/* About stat cards (after the reference site): the single quote card becomes a bare container
+   holding two stat cards. Mounted by site-metrics.js. */
+.mg-metrics-host {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  gap: 0 !important;
+}
+.mg-metrics-host > :not(.mg-metrics) { display: none !important; }
+
+.mg-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+  font-family: Urbanist, "Urbanist Placeholder", sans-serif;
+}
+.mg-metric {
+  display: flex;
+  flex-direction: column;
+  padding: 28px 26px;
+  border-radius: 28px;
+  background: #f4f4f5;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.05), 0 26px 54px -18px rgba(0, 0, 0, 0.16), 0 8px 18px -10px rgba(0, 0, 0, 0.08);
+}
+.mg-metric__eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #8a8f98;
+}
+.mg-metric__num {
+  margin: 16px 0 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  font-size: 56px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0b0b0c;
+}
+.mg-metric__num em {
+  font-style: normal;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1422e3;
+  margin-top: 6px;
+}
+.mg-metric__desc {
+  margin: 18px 0 0;
+  color: #6a6e6e;
+  font-size: 15px;
+  line-height: 22px;
+}
+@media (max-width: 809.98px) { .mg-metrics { grid-template-columns: 1fr; } }

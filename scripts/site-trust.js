@@ -2,6 +2,7 @@
 // divider before the client logo marquee. Avatars are decorative (aria-hidden). Only sibling nodes are added,
 // never moving Framer's own nodes, and Framer can re-render the row, so missing nodes are re-added.
 (() => {
+  const rafOnce = f => { let t = 0; return () => { if (t) return; t = 1; requestAnimationFrame(() => { t = 0; f(); }); }; };
   const AVATARS = [
     'eZ8inPIozwVXbVStRvddal5ZO84.jpg',
     'nuSd8BM1kTHOuMIUAWaixG8WBHc.jpg',
@@ -33,7 +34,7 @@
   }
   const start = () => {
     build();
-    new MutationObserver(build).observe(document.body, { childList: true, subtree: true });
+    new MutationObserver(rafOnce(build)).observe(document.body, { childList: true, subtree: true });
   };
   if (document.readyState === 'complete') start();
   else addEventListener('load', start, { once: true });

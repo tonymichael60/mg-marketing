@@ -1,0 +1,80 @@
+/* Services: sticky index + scroll-linked chapters (ported from the reference design, light theme).
+   Mounted by site-svcindex.js into the Services section, replacing the Framer accordion. */
+.mg-svc-host { display: block !important; background: transparent !important; box-shadow: none !important; padding: 0 0 clamp(60px, 9vw, 120px) !important; }
+.mg-svc-host > :not(.mg-svcx), .framer-7u2uc9 > :not(.mg-svcx) { display: none !important; }
+
+.mg-svcx {
+  --ink: #0b0b0c; --muted: #6a6e6e; --faint: #9aa0ab;
+  --accent: #1422e3; --accent-2: #4b5cff; --sky: #2a35d9;
+  --line: rgba(41, 44, 46, 0.12);
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  width: 100%; max-width: 1296px; margin: 0 auto; padding: 0 72px; box-sizing: border-box;
+  color: var(--ink); font-family: Urbanist, "Urbanist Placeholder", sans-serif;
+}
+/* Scrolling services marquee band (standalone, placed just above the About section). */
+.mg-svc-marquee-band { width: 100%; padding: clamp(28px, 5vh, 56px) clamp(16px, 4vw, 56px) 0; box-sizing: border-box; font-family: Urbanist, "Urbanist Placeholder", sans-serif; }
+.mg-svc-marquee { overflow: hidden; border-top: 1px solid rgba(41, 44, 46, .12); border-bottom: 1px solid rgba(41, 44, 46, .12); padding: 18px 0; -webkit-mask: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+.mg-svc-marquee__track { display: flex; width: max-content; animation: mg-svc-marq 36s linear infinite; }
+.mg-svc-marquee__track span { display: flex; align-items: center; gap: 38px; padding-right: 38px; font-size: clamp(18px, 2vw, 30px); letter-spacing: -.02em; font-weight: 500; color: #6a6e6e; white-space: nowrap; }
+.mg-svc-marquee__track span::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #1422e3; box-shadow: 0 0 12px rgba(20, 34, 227, .5); }
+@keyframes mg-svc-marq { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .mg-svc-marquee__track { animation: none; } }
+
+.mg-svcx__head { display: flex; justify-content: space-between; align-items: flex-end; gap: 40px; flex-wrap: wrap; margin-bottom: clamp(40px, 7vh, 80px); }
+/* Match the site's section eyebrow badge (grey pill, dot, soft ledge shadow). */
+.mg-svcx__eyebrow { display: inline-flex; align-items: center; gap: 10px; padding: 9px 20px; border-radius: 8px; background: rgb(242, 242, 242); box-shadow: 0 3px 0 rgba(0, 0, 0, .08), 0 4px 8px rgba(0, 0, 0, .06); font-size: 18px; line-height: 24px; font-weight: 600; letter-spacing: normal; text-transform: none; color: var(--ink); }
+.mg-svcx__eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--ink); }
+.mg-svcx h2 {
+  margin-top: 18px; font-size: clamp(34px, 5vw, 72px); line-height: .98; letter-spacing: -.04em; font-weight: 700; max-width: 14ch;
+  /* Bottom padding so the clipped gradient background still covers descenders (g, p). */
+  padding-bottom: .14em;
+  /* Dark-to-grey gradient text fill, matching the About section heading. */
+  background: linear-gradient(180deg, #0b0b0c 0%, #1c1e24 40%, #c6c9cf 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.mg-svcx h2 i { font-style: normal; -webkit-text-fill-color: transparent; color: transparent; }
+.mg-svcx h3 i { font-style: normal; color: var(--accent); }
+.mg-svcx__lead { color: var(--muted); font-size: clamp(16px, 1.3vw, 19px); max-width: 52ch; line-height: 1.55; }
+
+.mg-svcx__grid { display: grid; grid-template-columns: 300px 1fr; gap: clamp(28px, 5vw, 72px); align-items: start; }
+
+/* sticky index */
+.mg-svcx__index { position: sticky; top: 100px; padding: 22px; border-radius: 28px; background: #f4f4f5; box-shadow: 0 6px 0 rgba(0, 0, 0, .05), 0 26px 54px -18px rgba(0, 0, 0, .16), 0 8px 18px -10px rgba(0, 0, 0, .08); }
+.mg-svcx__index ol { list-style: none; display: grid; gap: 2px; position: relative; padding-left: 18px; }
+.mg-svcx__index ol::before { content: ""; position: absolute; left: 0; top: 6px; bottom: 6px; width: 2px; background: var(--line); border-radius: 2px; }
+.mg-svcx__rail { position: absolute; left: 0; top: 6px; width: 2px; height: calc(100% - 12px); background: linear-gradient(var(--accent-2), var(--accent)); border-radius: 2px; transform-origin: top; transform: scaleY(var(--sr, 0)); }
+.mg-svcx__index a { display: flex; gap: 12px; padding: 9px 10px; border-radius: 12px; font-size: 15px; color: var(--faint); cursor: pointer; transition: color .35s, background .35s, box-shadow .45s var(--ease); }
+.mg-svcx__index a span { font-size: 11px; font-weight: 700; letter-spacing: .1em; padding-top: 3px; }
+/* Active item glows blue as scrolling reaches its chapter. */
+.mg-svcx__index a.is-active { color: var(--ink); background: rgba(20, 34, 227, .1); box-shadow: inset 0 0 0 1px rgba(20, 34, 227, .35), 0 0 20px rgba(20, 34, 227, .4); }
+.mg-svcx__foot { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); font-weight: 600; }
+
+/* chapters */
+.mg-svcx__chapters { display: grid; gap: 22px; }
+.mg-chapter { padding: clamp(26px, 4vw, 48px); border-radius: 36px;
+  background:
+    radial-gradient(85% 70% at 100% 0%, rgba(20, 34, 227, .12) 0%, rgba(20, 34, 227, 0) 52%),
+    radial-gradient(80% 80% at 0% 100%, rgba(2, 10, 112, .10) 0%, rgba(2, 10, 112, 0) 55%),
+    linear-gradient(155deg, #f2f4fb 0%, #e8ebf4 100%);
+  box-shadow: 0 7px 0 rgba(0, 0, 0, .05), 0 30px 64px -20px rgba(0, 0, 0, .18), 0 10px 22px -12px rgba(0, 0, 0, .08); transform-origin: center top; will-change: transform; }
+.mg-chapter__top { display: flex; justify-content: space-between; align-items: center; gap: 14px; color: var(--faint); margin-bottom: 30px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; }
+.mg-chapter__pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(20, 34, 227, .3); color: var(--accent); background: rgba(20, 34, 227, .08); letter-spacing: .08em; }
+.mg-chapter__num { font-size: clamp(64px, 9vw, 130px); line-height: .8; font-weight: 700; letter-spacing: -.06em; -webkit-text-stroke: 1px rgba(41, 44, 46, .22); color: transparent; float: right; margin: -6px 0 10px 20px; }
+.mg-chapter h3 { font-size: clamp(28px, 3.4vw, 50px); line-height: 1; letter-spacing: -.04em; font-weight: 700; max-width: 15ch; }
+.mg-chapter > p { color: var(--muted); margin-top: 18px; max-width: 52ch; font-size: 16px; line-height: 1.55; }
+.mg-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; clear: both; }
+.mg-chips span { padding: 7px 14px; border-radius: 999px; border: 1px solid var(--line); font-size: 13px; color: var(--muted); background: #fff; }
+.mg-feats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; margin-top: 34px; border-radius: 20px; overflow: hidden; background: var(--line); border: 1px solid var(--line); }
+.mg-feat { background: #fff; padding: 22px; }
+.mg-feat b { display: block; font-weight: 600; font-size: 16px; margin-bottom: 6px; }
+.mg-feat b em { font-style: normal; font-size: 11px; letter-spacing: .1em; color: var(--accent); margin-right: 10px; font-weight: 700; }
+.mg-feat p { color: var(--muted); font-size: 14.5px; line-height: 1.5; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .mg-chapter { opacity: 0; transform: translateY(28px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+  .mg-chapter.is-in { opacity: 1; transform: none; }
+}
+
+@media (max-width: 1024px) { .mg-svcx__grid { grid-template-columns: 1fr; } .mg-svcx__index { display: none; } }
+@media (max-width: 809.98px) { .mg-svcx { padding: 0 20px; } .mg-chapter__num { font-size: 64px; } .mg-feats { grid-template-columns: 1fr; } }

@@ -136,13 +136,55 @@ for(const file of [linkComponent,...fs.readdirSync(root,{recursive:true}).filter
 }
 console.log(`Set dark blue link hover in ${linkFiles} files.`);
 
+// Hero eyebrow: rename the badge. Replaced in HTML and in the hydration module so it does not revert on hydrate.
+const heroFrom='AI-Driven Agency', heroTo='DIGITAL MARKETING & GROWTH STUDIO';
+let heroFiles=0;
+function visitHero(dir) {
+  for(const entry of fs.readdirSync(dir,{withFileTypes:true})) {
+    const file=path.join(dir,entry.name);
+    if(entry.isDirectory()) {visitHero(file);continue;}
+    if(!/\.(html|mjs)$/.test(entry.name)) continue;
+    const t=fs.readFileSync(file,'utf8');
+    if(!t.includes(heroFrom)) continue;
+    fs.writeFileSync(file,t.split(heroFrom).join(heroTo));
+    heroFiles++;
+  }
+}
+visitHero(root);
+console.log(`Set hero eyebrow text in ${heroFiles} files.`);
+
+// Contact form "You are interested in" options: replace the template's design services with ours.
+// Changed in the HTML and the hydration module so the dropdown does not revert on hydrate.
+const interests=['Performance marketing','Social media','AI video','Business automation','Brand & web','SEO & AEO','Not sure yet'];
+const oldHtmlOpts='<option value="Website Design ">Website Design</option><option value="Web Development ">Web Development</option><option value="UI/UX Design">UI/UX Design</option><option value="Framer Landing Page">Framer Landing Page</option>';
+const newHtmlOpts=interests.map(t=>`<option value="${t.replace('&','&amp;')}">${t.replace('&','&amp;')}</option>`).join('');
+const oldJsOpts='{title:`Website Design`,type:`option`,value:`Website Design `},{title:`Web Development`,type:`option`,value:`Web Development `},{title:`UI/UX Design`,type:`option`,value:`UI/UX Design`},{title:`Framer Landing Page`,type:`option`,value:`Framer Landing Page`}';
+const newJsOpts=interests.map(t=>`{title:\`${t}\`,type:\`option\`,value:\`${t}\`}`).join(',');
+let optFiles=0;
+for(const f of fs.readdirSync(root,{recursive:true}).filter(f=>/\.(html|mjs)$/.test(f)).map(f=>path.join(root,f))) {
+  const t=fs.readFileSync(f,'utf8');
+  const next=t.split(oldHtmlOpts).join(newHtmlOpts).split(oldJsOpts).join(newJsOpts);
+  if(next!==t) {fs.writeFileSync(f,next);optFiles++;}
+}
+console.log(`Set contact form interest options in ${optFiles} files.`);
+
+// Load speed: images without a loading hint were fetched eagerly, including the hidden original
+// Framer work cards (several MB). Lazy-load them; images in the viewport still load straight away.
+let lazyImgs=0;
+for(const f of fs.readdirSync(root,{recursive:true}).filter(f=>f.endsWith('.html')).map(f=>path.join(root,f))) {
+  const t=fs.readFileSync(f,'utf8');
+  const next=t.replace(/<img(?![^>]*\sloading=)([^>]*)>/g,(m,a)=>{lazyImgs++;return `<img loading="lazy"${/\sdecoding=/.test(a)?'':' decoding="async"'}${a}>`;});
+  if(next!==t) fs.writeFileSync(f,next);
+}
+console.log(`Lazy-loaded ${lazyImgs} images.`);
+
 // Liquid glass nav, smoother load, interactive buttons. Replaced on each run so CSS edits apply.
 const scriptsDir=path.dirname(fileURLToPath(import.meta.url));
-const polishCss=['site-polish.css','site-process.css','site-services.css','site-works.css','site-features.css','site-trust.css'].map(f=>fs.readFileSync(path.join(scriptsDir,f),'utf8')).join('\n');
+const polishCss=['site-polish.css','site-process.css','site-services.css','site-works.css','site-features.css','site-trust.css','site-metrics.css','site-svcindex.css','site-perf.css','site-iwork.css'].map(f=>fs.readFileSync(path.join(scriptsDir,f),'utf8')).join('\n');
 const polishStyle=`<style id="site-polish">${polishCss}</style>`;
 // Runs early in <head>, before Framer's deferred modules, so a refresh lands at the top (home).
 const headScript=`<script id="site-home">${fs.readFileSync(path.join(scriptsDir,'site-home.js'),'utf8')}</script>`;
-const processScript=`<script id="site-process">${['site-process.js','site-services.js','site-works.js','site-features.js','site-faq.js','site-trust.js'].map(f=>fs.readFileSync(path.join(scriptsDir,f),'utf8')).join('\n')}</script>`;
+const processScript=`<script id="site-process">${['site-process.js','site-services.js','site-works.js','site-features.js','site-faq.js','site-trust.js','site-metrics.js','site-svcindex.js','site-perf.js','site-iwork.js'].map(f=>fs.readFileSync(path.join(scriptsDir,f),'utf8')).join('\n')}</script>`;
 // Liquid glass lens: a displacement map that is neutral in the middle and pulls the backdrop inward near each edge,
 // so the glass bends what is behind it like Apple's Liquid Glass. Red drives x, green drives y.
 const glassFilter='<svg id="site-polish-filter" aria-hidden="true" style="position:absolute;width:0;height:0"><filter id="mg-glass-distortion" x="0" y="0" width="1" height="1" filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox" color-interpolation-filters="sRGB"><feImage href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27 preserveAspectRatio=%27none%27%3E%3ClinearGradient id=%27g%27%3E%3Cstop offset=%270%27 stop-color=%27rgb(255,0,0)%27/%3E%3Cstop offset=%27.12%27 stop-color=%27rgb(128,0,0)%27/%3E%3Cstop offset=%27.88%27 stop-color=%27rgb(128,0,0)%27/%3E%3Cstop offset=%271%27 stop-color=%27rgb(0,0,0)%27/%3E%3C/linearGradient%3E%3Crect width=%27100%27 height=%27100%27 fill=%27url(%23g)%27/%3E%3C/svg%3E" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="rx"/><feImage href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27 preserveAspectRatio=%27none%27%3E%3ClinearGradient id=%27g%27 x2=%270%27 y2=%271%27%3E%3Cstop offset=%270%27 stop-color=%27rgb(0,255,0)%27/%3E%3Cstop offset=%27.3%27 stop-color=%27rgb(0,128,0)%27/%3E%3Cstop offset=%27.7%27 stop-color=%27rgb(0,128,0)%27/%3E%3Cstop offset=%271%27 stop-color=%27rgb(0,0,0)%27/%3E%3C/linearGradient%3E%3Crect width=%27100%27 height=%27100%27 fill=%27url(%23g)%27/%3E%3C/svg%3E" x="0" y="0" width="1" height="1" preserveAspectRatio="none" result="gy"/><feComposite in="rx" in2="gy" operator="arithmetic" k2="1" k3="1" result="map"/><feDisplacementMap in="SourceGraphic" in2="map" scale="0.08" xChannelSelector="R" yChannelSelector="G"/></filter></svg>';

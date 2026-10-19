@@ -1,10 +1,11 @@
 // Featured Works: replaces the Framer project cards with stacked, sticky case-study cards.
 // Framer can re-render its section, so the block is re-mounted whenever it goes missing.
 (() => {
+  const rafOnce = f => { let t = 0; return () => { if (t) return; t = 1; requestAnimationFrame(() => { t = 0; f(); }); }; };
   const works = [
     ['./work/support-copilot', 'Support Copilot for SaaS', 'Draft replies and pulls account context; reduced first-response time by 38%.', ['AI strategy', 'AI UX flows', 'LLM agent', 'RAG'], ['SaaS'], '3mYjyBkO1taOXWFFdYdWawzYdU.svg'],
     ['./work/underwriting-risk-copilot', 'Underwriting Risk Copilot', 'Built a triage assistant to summarize claims; cut manual review time by 42%.', ['Use-case mapping', 'Prompt & UI patterns'], ['Fintech'], '9ujF8ABgoO0V5nv7UJwe1WXY2Mw.svg'],
-    ['./work/clinical-note-summarizer', 'Clinical Note Summarizer', 'Clinic-lobby assistant answering pre-visit questions; decreased front-desk calls by 28%.', ['AI strategy', 'AI UX flows', 'LLM agent', 'RAG'], ['Healthcare'], 'D3ZQRFsyC3I0z6aUqii7ffrCUo.png'],
+    ['./work/clinical-note-summarizer', 'Clinical Note Summarizer', 'Clinic-lobby assistant answering pre-visit questions; decreased front-desk calls by 28%.', ['AI strategy', 'AI UX flows', 'LLM agent', 'RAG'], ['Healthcare'], 'D3ZQRFsyC3I0z6aUqii7ffrCUo.jpg'],
     ['./work/catalog-intelligence-engine', 'Catalog Intelligence Engine', 'Launched a shopping copilot that understands attributes; raised add-to-cart by 12%.', ['Data cleaning & embeddings'], ['Ecommerce/Retail'], 'JAwg2A4GAzIyvReM0mGSgTlkV5U.jpg'],
   ];
   const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
@@ -54,7 +55,7 @@
 
   const start = () => {
     mount();
-    new MutationObserver(() => { if (!block || !block.isConnected) mount(); }).observe(document.body, { childList: true, subtree: true });
+    new MutationObserver(rafOnce(() => { if (!block || !block.isConnected) mount(); })).observe(document.body, { childList: true, subtree: true });
   };
   if (document.readyState === 'complete') start();
   else addEventListener('load', start, { once: true });

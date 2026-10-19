@@ -1,5 +1,5 @@
 /* Featured Works: stacked case-study cards (after marketinglab.framer.ai "Work That Delivers Results"). Mounted by site-works.js. */
-.mg-works-host > .framer-kxz02j { display: none !important; }
+.mg-works-host > .framer-kxz02j, #works > .framer-kxz02j { display: none !important; }
 
 .mg-works {
   --mg-ink: rgb(9, 9, 11);
@@ -99,6 +99,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: grayscale(1);
 }
 
 /* Card pop after td-signal.framer.website: each card springs up from scale(0.9) with a slight
@@ -121,8 +122,8 @@
   .mg-work__cta:hover { scale: 1.04; filter: brightness(1.2); }
   .mg-work__cta:hover svg { translate: 3px -3px; }
   .mg-work__cta:active { scale: 0.96; transition-duration: 0.1s; }
-  .mg-work__media img { transition: scale 1.2s var(--mg-ease); }
-  .mg-work:hover .mg-work__media img { scale: 1.04; }
+  .mg-work__media img { transition: scale 1.2s var(--mg-ease), filter 0.5s var(--mg-ease); }
+  .mg-work:hover .mg-work__media img { scale: 1.04; filter: grayscale(0); }
 }
 .mg-work__cta:focus-visible { outline: 2px solid var(--mg-blue); outline-offset: 3px; }
 

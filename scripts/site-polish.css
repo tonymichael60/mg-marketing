@@ -76,7 +76,12 @@
   background-color: #b9c3ff !important;
 }
 
-/* Hero "AI-Driven Agency" tag: the same liquid glass as the nav. On hover a diagonal light streak sweeps across it
+/* Hero eyebrow tag: compact (overrides the global eyebrow size bump) so the longer label stays neat. */
+.framer-tt1cxh-container .framer-ge2mpr { padding: 5px 13px !important; gap: 8px !important; }
+.framer-tt1cxh-container .framer-ge2mpr p { font-size: 13px !important; line-height: 18px !important; }
+.framer-tt1cxh-container .framer-1l3jabw { width: 16px !important; height: 16px !important; }
+
+/* Hero eyebrow tag: the same liquid glass as the nav. On hover a diagonal light streak sweeps across it
    and it lifts slightly, matching the Explore Services button. */
 .framer-tt1cxh-container .framer-kev61 {
   position: relative;
@@ -189,7 +194,7 @@
 .framer-662aja .framer-e4sd2r > div { position: relative !important; flex: none !important; overflow: hidden !important; }
 .framer-662aja .framer-e4sd2r > div img { position: absolute !important; max-width: none !important; object-fit: fill !important; }
 /* Logo wall after overtake-wbs.framer.website: calm, uniform monochrome grey wordmarks, no hover shift. */
-.framer-662aja .framer-e4sd2r > div img { filter: grayscale(1); opacity: 0.6; }
+.framer-662aja .framer-e4sd2r > div img { filter: grayscale(1) brightness(0.72); opacity: 0.85; }
 /* "Trusted by 100+ top-tier brands": plain muted sentence eyebrow (reference style), not uppercase. */
 .framer-zney4t p {
   text-transform: none;
@@ -246,8 +251,15 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
   background: radial-gradient(70% 90% at 0% 0%, rgba(20, 34, 227, 0.38) 0%, rgba(2, 10, 112, 0.18) 45%, transparent 75%), #03051a !important;
 }
 .framer-1ynxxm3 {
-  background: radial-gradient(65% 80% at 100% 100%, rgba(20, 34, 227, 0.32) 0%, rgba(2, 10, 112, 0.16) 45%, transparent 75%), #03051a !important;
+  /* Full rounded dark-blue box (Statistics is hidden, so Testimonials stands alone). */
+  border-radius: 40px !important;
+  background:
+    radial-gradient(70% 90% at 0% 0%, rgba(20, 34, 227, 0.38) 0%, rgba(2, 10, 112, 0.18) 45%, transparent 75%),
+    radial-gradient(65% 80% at 100% 100%, rgba(20, 34, 227, 0.32) 0%, rgba(2, 10, 112, 0.16) 45%, transparent 75%),
+    #03051a !important;
 }
+/* Space above the Testimonials section. */
+.framer-1aue9ps { margin-top: clamp(96px, 13vh, 170px) !important; }
 /* Features: white panel with a soft navy halo behind the central logo. */
 .framer-gtsbnt {
   background: radial-gradient(45% 40% at 50% 55%, rgba(20, 34, 227, 0.12) 0%, rgba(20, 34, 227, 0.04) 50%, transparent 75%), linear-gradient(180deg, #fff 0%, #f2f4ff 60%, #edecec 100%) !important;
@@ -262,25 +274,13 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
 .framer-2vcsc7 {
   background: radial-gradient(55% 40% at 80% 30%, rgba(150, 168, 245, 0.75) 0%, rgba(237, 236, 236, 0) 70%), radial-gradient(40% 30% at 12% 62%, rgba(170, 184, 245, 0.6) 0%, rgba(237, 236, 236, 0) 70%) !important;
 }
-/* Services: a plain white rounded card with a soft drop shadow, sitting in a soft navy halo that spreads around it.
-   The wrappers stop clipping so the shadow and halo show; the halo fades out before it reaches neighbouring content. */
+/* Services: a plain white rounded card with a soft drop shadow, on the plain page background (no halo).
+   The wrappers stop clipping so the card shadow shows. */
 .framer-7u2uc9 { overflow: visible !important; padding-bottom: 64px !important; isolation: isolate; }
-.framer-7u2uc9::before {
-  content: "";
-  position: absolute;
-  inset: -60px 0 -140px;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(34% 30% at 6% 32%, rgba(130, 150, 245, 0.65) 0%, rgba(237, 236, 236, 0) 70%),
-    radial-gradient(34% 30% at 94% 68%, rgba(120, 140, 245, 0.6) 0%, rgba(237, 236, 236, 0) 70%),
-    radial-gradient(55% 15% at 50% 82%, rgba(150, 168, 250, 0.6) 0%, rgba(237, 236, 236, 0) 70%);
-}
 .framer-87ga54 { overflow: visible !important; }
 .framer-1n5cfl9 {
-  border-radius: 40px !important;
-  background: #fff !important;
-  box-shadow: 0 36px 64px -28px rgba(0, 0, 0, 0.28), 0 12px 24px -12px rgba(0, 0, 0, 0.14) !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 .mg-process__pin {
   background: radial-gradient(42% 40% at 72% 52%, rgba(150, 168, 245, 0.7) 0%, rgba(237, 236, 236, 0) 100%);
@@ -325,3 +325,73 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
 
 /* Remove the white panel behind the "Why Choose Us" (Benefits) section. */
 .framer-1v2z8lb { background-color: transparent !important; box-shadow: none !important; }
+
+/* Section eyebrow badges (Services, Featured Works, The process, Statistics, etc.) a bit bigger. */
+.framer-ge2mpr { padding: 9px 20px !important; gap: 12px !important; }
+.framer-ge2mpr p { font-size: 18px !important; line-height: 26px !important; }
+.mg-process__tag { padding: 9px 20px !important; font-size: 18px !important; }
+
+/* "Mediagroots is a growth studio" heading: drop the baked reddish text-shadow that blurred it. */
+.framer-16ohqkq { text-shadow: none !important; }
+
+/* Unify typography: force Urbanist on all text (some elements used Inter / Fragment Mono / Figtree). */
+.framer-text, .framer-text * { font-family: "Urbanist", "Urbanist Placeholder", sans-serif !important; }
+
+/* Remove the Statistics ("230K") section; the Performance section takes its place. */
+[data-framer-name="Statistics"] { display: none !important; }
+
+/* Testimonials eyebrow: use the site's grey boxed badge instead of the dark variant. */
+.framer-1aue9ps .framer-ge2mpr { background-color: rgb(242, 242, 242) !important; box-shadow: 0 3px 0 rgba(0, 0, 0, .08), 0 4px 8px rgba(0, 0, 0, .06) !important; }
+.framer-1aue9ps .framer-ge2mpr .framer-text { --framer-text-color: #0b0b0c !important; color: #0b0b0c !important; }
+.framer-1aue9ps .framer-ge2mpr .framer-k8kp9w { background-color: #0b0b0c !important; }
+
+/* Testimonials eyebrow badge: lift it out, above the dark box onto the page background.
+   The section and box clip by default, which hid the lifted badge — let it overflow. */
+.framer-1aue9ps, .framer-1aue9ps .framer-1ynxxm3, .framer-1aue9ps .framer-t6svzz { overflow: visible !important; }
+.framer-1aue9ps .framer-14epdpl-container { transform: translateY(calc(-100% - 18px)) !important; z-index: 3; }
+
+/* Section eyebrow badges: blue glow on hover (all badges, same size). */
+.framer-ge2mpr, .mg-process__tag, .mg-perf__eyebrow, .mg-iwork__eyebrow, .mg-svcx__eyebrow { transition: filter .35s ease; }
+.framer-ge2mpr:hover, .mg-process__tag:hover, .mg-perf__eyebrow:hover, .mg-iwork__eyebrow:hover, .mg-svcx__eyebrow:hover {
+  filter: drop-shadow(0 0 8px rgba(20, 34, 227, .6)) drop-shadow(0 0 3px rgba(20, 34, 227, .5));
+}
+
+/* About Us badge: its tight wrappers clip, cutting off the hover glow — let it overflow. */
+.framer-1h0qtxc, .framer-7f3ejs { overflow: visible !important; }
+/* Features, Tools and FAQs badges: tight wrappers clip the hover glow — let it overflow. */
+.framer-1dyinjc, .framer-1nivvrz, .framer-1e53ern { overflow: visible !important; }
+
+/* FAQ badge: sit it inside the tab notch at the bottom of the Testimonials box. */
+.framer-b764se, .framer-1ntlu9c { overflow: visible !important; }
+.framer-b764se .framer-el66lg-container { transform: translateY(8px); z-index: 3; }
+
+/* Why Choose Us: small looping animations on the card illustrations. Uses the separate translate/scale
+   properties (not transform) so they stack with Framer's own inline transforms instead of replacing them. */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes mg-wcu-bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -6px; } }
+  @keyframes mg-wcu-nudge { 0%, 100% { translate: 0 0; } 50% { translate: 4px 0; } }
+  @keyframes mg-wcu-pop { 0%, 55%, 100% { scale: 1; } 25% { scale: 1.12; } }
+  @keyframes mg-wcu-glow { 0%, 100% { filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .10)); } 50% { filter: drop-shadow(0 14px 26px rgba(20, 34, 227, .28)); } }
+
+  /* Full-funnel: metric chips nudge in turn. */
+  .framer-1ui3ic4 .framer-h8kjut { animation: mg-wcu-nudge 3.2s ease-in-out infinite; }
+  .framer-1ui3ic4 [data-framer-name="Metrics 2"] .framer-h8kjut { animation-delay: .4s; }
+  .framer-1ui3ic4 [data-framer-name="Metric 3"] .framer-h8kjut { animation-delay: .8s; }
+  .framer-1ui3ic4 [data-framer-name="Metrics 4"] .framer-h8kjut { animation-delay: 1.2s; }
+
+  /* AI films: the three check tiles bob in sequence, ticks pop. */
+  .framer-c6pb9c .framer-Hnxdi { animation: mg-wcu-bob 3s ease-in-out infinite; }
+  .framer-c6pb9c .framer-sn6ucp > :nth-child(2) .framer-Hnxdi { animation-delay: .35s; }
+  .framer-c6pb9c .framer-sn6ucp > :nth-child(3) .framer-Hnxdi { animation-delay: .7s; }
+  .framer-c6pb9c .framer-Hnxdi img { animation: mg-wcu-pop 3s ease-in-out infinite; }
+  .framer-c6pb9c .framer-sn6ucp > :nth-child(2) .framer-Hnxdi img { animation-delay: .35s; }
+  .framer-c6pb9c .framer-sn6ucp > :nth-child(3) .framer-Hnxdi img { animation-delay: .7s; }
+
+  /* Lead machines: shield floats with a soft blue glow. */
+  .framer-570b9w .framer-zli2me { animation: mg-wcu-bob 4s ease-in-out infinite, mg-wcu-glow 4s ease-in-out infinite; }
+
+  /* Brands: chat bubble and phone card float out of step. */
+  .framer-77nwem .framer-1w1f8vw { animation: mg-wcu-bob 3.6s ease-in-out infinite; }
+  .framer-77nwem .framer-1c4hn30 { animation: mg-wcu-bob 4.4s ease-in-out infinite .8s; }
+  .framer-77nwem .framer-cbrub2 { animation: mg-wcu-pop 3.6s ease-in-out infinite 1.2s; }
+}
