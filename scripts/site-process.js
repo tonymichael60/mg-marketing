@@ -90,13 +90,13 @@
       // Once the flip-in has played, drop its delayed transitions so the edge turn follows scrolling directly.
       setTimeout(() => track.classList.add('is-settled'), 1800);
     }
-    // Cards past either end of the row turn away from view, hinged on the edge they are leaving by.
+    // Cards past either end of the row swing away from view (outer side receding), hinged on their inner edge.
     const tr = track.getBoundingClientRect();
     track.querySelectorAll('.mg-pcard').forEach(c => {
       const r = c.getBoundingClientRect();
       const out = r.left < tr.left - 1 ? (r.left - tr.left) / r.width : r.right > tr.right + 1 ? (r.right - tr.right) / r.width : 0;
       const k = Math.max(-1, Math.min(1, out));
-      c.style.rotate = k ? `y ${-k * 75}deg` : '';
+      c.style.rotate = k ? `y ${k * 75}deg` : '';
       c.style.opacity = k ? 1 - Math.abs(k) * 0.7 : '';
       c.style.transformOrigin = k < 0 ? 'right center' : k > 0 ? 'left center' : '';
     });
