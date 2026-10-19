@@ -154,6 +154,17 @@ function visitHero(dir) {
 visitHero(root);
 console.log(`Set hero eyebrow text in ${heroFiles} files.`);
 
+// Browser tab and share title: the template name, in the HTML head and in the runtime that resets it on hydrate.
+const titleFrom='AgenAI - AI Agency Framer Template', titleTo='MG Marketing';
+let titleFiles=0;
+for(const f of fs.readdirSync(root,{recursive:true}).filter(f=>/\.(html|mjs|json)$/.test(f)).map(f=>path.join(root,f))) {
+  const t=fs.readFileSync(f,'utf8');
+  if(!t.includes(titleFrom)) continue;
+  fs.writeFileSync(f,t.split(titleFrom).join(titleTo));
+  titleFiles++;
+}
+console.log(`Set page title in ${titleFiles} files.`);
+
 // Contact form "You are interested in" options: replace the template's design services with ours.
 // Changed in the HTML and the hydration module so the dropdown does not revert on hydrate.
 const interests=['Performance marketing','Social media','AI video','Business automation','Brand & web','SEO & AEO','Not sure yet'];
