@@ -62,18 +62,47 @@
     if (reduce) scrollTo({ top: y, behavior: 'instant' }); else glide(y, Math.min(1600, 700 + Math.abs(y - scrollY) * 0.04));
   }));
 
-  /* What we build: each card rises in once it is well into view, and its artefact animates (CSS, on .is-in). */
-  const bcards = $$('.bcard');
-  if (reduce) bcards.forEach(c => c.classList.add('is-in'));
-  else {
-    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { threshold: 0.25 });
-    bcards.forEach(c => io.observe(c));
+  /* What we build: four scenes driven by scroll progress through the section (see index.html). */
+  const build = $('.build'), wbPhoto = $('.wb-photo'), wbS1 = $('.wb-s1'), wbPanel = $('.wb-panel');
+  const wbSay = $$('.wb-say span'), wbWipe = $('.wb-wipe'), wbPale = $('.wb-pale'), wbSay2 = $('.wb-say2'), wbS4 = $('.wb-s4');
+  const wbItems = $$('.wb-item'), wbImgs = $$('.wb-stack img');
+  const seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1);
+  const smooth = t => t * t * (3 - 2 * t);
+  function buildFrame() {
+    const p = progress(build), vw = innerWidth, vh = innerHeight;
+    // 1 → 2: the panel grows from the picture's box to the whole screen.
+    const g = smooth(seg(p, 0.08, 0.2));
+    const r = wbPhoto.getBoundingClientRect();
+    const ins = [r.top, vw - r.right, vh - r.bottom, r.left].map(v => (Math.max(0, v) * (1 - g)).toFixed(1));
+    wbPanel.style.clipPath = `inset(${ins[0]}px ${ins[1]}px ${ins[2]}px ${ins[3]}px round ${(22 * (1 - g)).toFixed(1)}px)`;
+    wbPanel.style.opacity = p < 0.08 ? 0 : 1;
+    wbS1.style.opacity = 1 - seg(p, 0.16, 0.2);
+    // 2: statement lines rise in one after another, then lift away.
+    wbSay.forEach((l, i) => { const t = smooth(seg(p, 0.21 + i * 0.04, 0.27 + i * 0.04)), out = seg(p, 0.42, 0.48);
+      l.style.transform = `translateY(${(1 - t) * 110 - out * 60}%)`; l.style.opacity = t * (1 - out); });
+    // 3: a big MG mark sweeps up through the screen, tilting as it goes; pale blue spreads out behind it in a
+    // growing circle, so the colour change travels with the mark.
+    const w = seg(p, 0.44, 0.62);
+    const mh = wbWipe.offsetHeight;
+    wbWipe.style.transform = `translateY(${vh - w * (vh + mh)}px) rotate(${(w - 0.5) * -14}deg)`;
+    wbWipe.style.visibility = w > 0 && w < 1 ? 'visible' : 'hidden';
+    const c = smooth(seg(p, 0.47, 0.6));
+    wbPale.style.clipPath = `circle(${(c * 120).toFixed(1)}% at 50% ${(70 - c * 20).toFixed(1)}%)`;
+    const pale = p >= 0.53;
+    // On the pale scenes the header switches to dark text so the logo stays visible.
+    if (body.dataset.section === 'build') body.dataset.fg = pale ? 'dark' : 'light';
+    const s2 = seg(p, 0.53, 0.58) * (1 - seg(p, 0.66, 0.7));
+    wbSay2.style.opacity = s2; wbSay2.style.transform = `scale(${0.92 + 0.08 * seg(p, 0.53, 0.6)})`;
+    // 4: the systems list; the active one follows the scroll, its picture comes to the front of the stack.
+    const s4 = seg(p, 0.68, 0.73);
+    wbS4.style.opacity = s4; wbS4.style.transform = `translateY(${(1 - s4) * 40}px)`; wbS4.style.pointerEvents = s4 > 0.5 ? '' : 'none';
+    const act = Math.min(wbItems.length - 1, Math.floor(seg(p, 0.73, 0.98) * wbItems.length));
+    wbItems.forEach((it, i) => it.classList.toggle('is-on', i === act));
+    wbImgs.forEach((im, i) => { const d = i - act;
+      im.style.transform = d < 0 ? `translateX(-120%) rotate(-10deg)` : `translate(${d * 14}px, ${d * -14}px) rotate(${d * 3}deg) scale(${1 - d * 0.05})`;
+      im.style.opacity = d < 0 || d > 2 ? 0 : 1; im.style.zIndex = 10 - Math.abs(d); });
   }
-  // The light on each glass card follows the pointer.
-  bcards.forEach(c => c.addEventListener('pointermove', e => {
-    const r = c.getBoundingClientRect();
-    c.style.setProperty('--mx', `${e.clientX - r.left}px`); c.style.setProperty('--my', `${e.clientY - r.top}px`);
-  }));
+
 
   /* Rotating words */
   for (const r of $$('.rotator')) {
@@ -305,6 +334,8 @@
     mRoll.style.transform = `translateY(${-mi * mNum.offsetHeight}px)`;
     mRoll.style.transition = 'transform 0.7s cubic-bezier(0.22, 1, 0.36, 1)';
     mNum.style.opacity = clamp((ms + 0.3) * 3, 0, 1);
+
+    buildFrame();
 
     // Clients wheel: names are spokes from a hub off to the left; the centred one is level and bright.
     again = ease('clients', progress(clients) * (clientNames.length - 1), gliding ? 1 : 0.35) || again;

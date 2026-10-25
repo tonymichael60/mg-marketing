@@ -7,9 +7,9 @@
   <meta name="description" content="MediaGroots is a digital marketing and growth studio. We plant strategy, grow content and scale campaigns that turn attention into revenue.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Urbanist:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=34">
+  <link rel="stylesheet" href="styles.css?v=37">
 </head>
 <body>
   <!-- Ambient layers: drifting colour aura and film grain, tinted per section by app.js. -->
@@ -177,63 +177,34 @@
       </div>
     </section>
 
-    <!-- 7. What we build: a bento grid of editorial cards, each showing a small piece of the actual work.
-         Cards rise in as they enter and their contents animate once (bars fill, messages arrive, the chart draws). -->
+    <!-- 7. What we build (after agencefoudre.com "Nous les rendons sociaux"): a pinned sequence in four scenes.
+         1 a condensed headline beside a picture with stickers; 2 a navy panel grows out of the picture to fill the
+         screen and a statement rises line by line; 3 a giant MG mark sweeps up through the screen and wipes it to
+         pale blue, with "And grow from deep groots."; 4 the five systems: headline, a stack of pictures and a list
+         with tags, the active system following the scroll. app.js drives every scene from the section's progress. -->
     <section class="sec build" id="build" data-label="What we build" data-bg="#00498D" data-fg="light" data-aura="#7fb2ea,#000B18,#4d8fd6">
-      <header class="build__head">
-        <h2 class="build__title">What we <i>build</i></h2>
-        <p class="build__lead">Five systems we put to work for every client. Each one is measured, owned by one team, and built to compound.</p>
-      </header>
-      <div class="bento">
-        <article class="bcard bcard--wide">
-          <div class="bcard__meta"><span class="bcard__num">01</span><span>Performance</span></div>
-          <div class="art art--funnel" aria-hidden="true">
-            <div class="funnel__row"><span>Impressions</span><i style="--w:100%"></i><b>1.2M</b></div>
-            <div class="funnel__row"><span>Clicks</span><i style="--w:68%"></i><b>38.4k</b></div>
-            <div class="funnel__row"><span>Leads</span><i style="--w:42%"></i><b>2,140</b></div>
-            <div class="funnel__row"><span>Customers</span><i style="--w:22%"></i><b>312</b></div>
-            <div class="funnel__chips"><em>CPA ↓ 18%</em><em>ROAS 4.6×</em></div>
-          </div>
-          <h3>Full-funnel ad systems</h3>
-          <p>Account architecture, creative testing and retargeting built around cost per customer.</p>
-        </article>
-        <article class="bcard">
-          <div class="bcard__meta"><span class="bcard__num">02</span><span>AI Video</span></div>
-          <div class="art art--film" aria-hidden="true">
-            <div class="film__strip"><i></i><i></i><i></i><i></i></div>
-            <div class="film__bar"><span class="film__play"></span><span class="film__track"><i></i></span><span class="film__tc">00:14:22</span></div>
-          </div>
-          <h3>AI films &amp; reel engines</h3>
-          <p>Cinematic ads and a weekly flow of short-form content, produced at the speed of AI.</p>
-        </article>
-        <article class="bcard">
-          <div class="bcard__meta"><span class="bcard__num">03</span><span>Automation</span></div>
-          <div class="art art--chat" aria-hidden="true">
-            <p class="msg msg--in">Hi, what does a website redesign cost?</p>
-            <p class="msg msg--out">Thanks, Anu! Sharing our packages now. Want a call tomorrow at 11?</p>
-            <span class="chat__tag">Qualified · sent to sales · 12s</span>
-          </div>
-          <h3>Lead machines that never sleep</h3>
-          <p>Capture, qualify and follow up automatically, so no enquiry goes cold.</p>
-        </article>
-        <article class="bcard">
-          <div class="bcard__meta"><span class="bcard__num">04</span><span>Brand</span></div>
-          <div class="art art--brand" aria-hidden="true">
-            <span class="brand__type">Aa</span>
-            <div class="brand__swatches"><i style="--c:#000B18"><b>000B18</b></i><i style="--c:#0052A2"><b>0052A2</b></i><i style="--c:#7fb2ea"><b>7FB2EA</b></i><i style="--c:#f4f2ea"><b>F4F2EA</b></i></div>
-          </div>
-          <h3>Brands built as systems</h3>
-          <p>Identity, website and collateral designed to look premium everywhere they appear.</p>
-        </article>
-        <article class="bcard">
-          <div class="bcard__meta"><span class="bcard__num">05</span><span>Reporting</span></div>
-          <div class="art art--kpi" aria-hidden="true">
-            <div class="kpi__head"><span>Revenue</span><b>₹18.4L</b><em>+22%</em></div>
-            <svg class="kpi__chart" viewBox="0 0 300 90" preserveAspectRatio="none"><path class="kpi__area" d="M0 78 L30 70 L60 74 L90 58 L120 62 L150 46 L180 50 L210 34 L240 30 L270 18 L300 12 L300 90 L0 90Z"/><path class="kpi__line" pathLength="1" d="M0 78 L30 70 L60 74 L90 58 L120 62 L150 46 L180 50 L210 34 L240 30 L270 18 L300 12"/></svg>
-          </div>
-          <h3>Live KPI dashboards</h3>
-          <p>The handful of numbers your business actually runs on, always up to date.</p>
-        </article>
+      <div class="wb-pin">
+        <div class="wb-s1">
+          <h2 class="wb-big">We make<br>brands<br>grow</h2>
+          <div class="wb-faces" aria-hidden="true"><i></i><i></i><i></i><i></i><b>+100</b></div>
+          <figure class="wb-photo"><img src="assets/work-catalog.jpg" alt=""><span class="wb-sticker wb-sticker--a">📈 +38%</span><span class="wb-sticker wb-sticker--b">🌱 rooted</span></figure>
+        </div>
+        <div class="wb-panel" aria-hidden="true"></div>
+        <p class="wb-say"><span>It’s the impact</span><span>of honest strategy.</span><span>It’s aiming true.</span></p>
+        <div class="wb-pale" aria-hidden="true"></div>
+        <div class="wb-wipe" aria-hidden="true"><svg viewBox="172 333 1589 806"><path d="M172 333H291L966 750L1642 333H1761V553L966 1042L419 712V1139L172 1002Z"/><path d="M1065 1090L1322 931V1015H1624V816H1508L1706 694H1761V1139H1065Z"/></svg></div>
+        <p class="wb-say2">And grow<br>from deep<br>groots.</p>
+        <div class="wb-s4">
+          <div class="wb-s4__head"><h2 class="wb-big wb-big--ink">Think<br>better,<br><em>build</em><br>better.</h2><p>MediaGroots is a growth studio built on five systems we put to work for every client.</p></div>
+          <div class="wb-stack" aria-hidden="true"><img src="assets/work-support-copilot.svg" alt="" loading="lazy"><img src="assets/work-clinical.jpg" alt="" loading="lazy"><img src="assets/work-underwriting.svg" alt="" loading="lazy"><img src="assets/work-catalog.jpg" alt="" loading="lazy"><img src="assets/work-support-copilot.svg" alt="" loading="lazy"></div>
+          <ol class="wb-list">
+              <li class="wb-item"><h4>Full-funnel ad systems</h4><div class="wb-tags"><span>Meta &amp; Google Ads</span><span>Creative testing</span><span>Retargeting</span><span>CPA tracking</span></div></li>
+              <li class="wb-item"><h4>AI films &amp; reel engines</h4><div class="wb-tags"><span>Ad films</span><span>Weekly reels</span><span>Scripts</span><span>Edits</span></div></li>
+              <li class="wb-item"><h4>Lead machines that never sleep</h4><div class="wb-tags"><span>WhatsApp flows</span><span>CRM</span><span>Auto follow-up</span><span>AI agents</span></div></li>
+              <li class="wb-item"><h4>Brands built as systems</h4><div class="wb-tags"><span>Identity</span><span>Website</span><span>Guidelines</span><span>Collateral</span></div></li>
+              <li class="wb-item"><h4>Live KPI dashboards</h4><div class="wb-tags"><span>Revenue</span><span>CPA &amp; ROAS</span><span>Monthly reports</span><span>Attribution</span></div></li>
+          </ol>
+        </div>
       </div>
     </section>
 
@@ -280,7 +251,7 @@
     </section>
   </main>
 
-  <script src="water.js?v=34" defer></script>
-  <script src="app.js?v=34" defer></script>
+  <script src="water.js?v=37" defer></script>
+  <script src="app.js?v=37" defer></script>
 </body>
 </html>
