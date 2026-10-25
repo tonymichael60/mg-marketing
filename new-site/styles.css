@@ -507,7 +507,10 @@ body.spot-on .spot__beam, body.spot-on .spot__core { animation: spot-flicker-on 
 @media (prefers-reduced-motion: reduce) { body.spot-on .spot__beam, body.spot-on .spot__core { animation: none; } }
 
 /* A small stage spotlight icon (mount, can and lens) at the top of the beam; the lens glows when the light is on. */
-.spot__fixture { position: absolute; left: 50%; top: calc(100% - var(--spot-h, 100vh)); width: 56px; height: 56px; translate: -50% -80%; overflow: visible; }
+.spot__fixture { position: absolute; left: 50%; top: calc(100% - var(--spot-h, 100vh)); width: 56px; height: 56px; translate: -50% -80%; overflow: visible;
+  /* Hidden until the page has settled on Clients, so nothing of the light shows while the section scrolls in. */
+  opacity: 0; scale: 0.85; transition: opacity 0.35s ease, scale 0.35s ease; }
+body.spot-on .spot__fixture { opacity: 1; scale: 1; transition: opacity 0.3s ease, scale 0.4s cubic-bezier(0.34, 1.4, 0.5, 1); }
 .spot__mount { fill: none; stroke: #8a6a70; stroke-width: 3; stroke-linecap: round; }
 .spot__pivot { fill: #b8979d; }
 .spot__can { fill: #3a1e24; stroke: #8a6a70; stroke-width: 1.5; stroke-linejoin: round; }
