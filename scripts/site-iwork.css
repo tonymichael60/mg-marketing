@@ -1,6 +1,6 @@
 /* Work section (horizontal pinned scroller, ported from the reference file, light theme).
    Mounted by site-iwork.js in place of the Statistics section. Scoped .mg-iwork to avoid the
-   Featured Works styles. */
+   Featured Works (.mg-work) styles. */
 .mg-iwork { --ink: #0b0b0c; --muted: #6a6e6e; --accent: #1422e3; --accent-2: #4b5cff; --line: rgba(41, 44, 46, .14); --ease: cubic-bezier(.22, 1, .36, 1); position: relative; width: 100%; min-width: 0; align-self: stretch; font-family: Urbanist, "Urbanist Placeholder", sans-serif; }
 .mg-iwork__pin { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
 .mg-iwork__head { width: 100%; max-width: 1296px; margin: 0 auto 46px; padding: 0 clamp(16px, 4vw, 56px); box-sizing: border-box; display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; flex-wrap: wrap; }
@@ -59,7 +59,7 @@
    40px radius, white inner top highlight, inner bottom ledge, short soft drop. Shared by every custom box;
    this file loads last, so it wins over each section's own card styles. Tinted or white boxes keep
    their background image or colour. */
-.mg-icard, .mg-icard--end, .mg-metric, .mg-svcx__index, .mg-chapter, .mg-vs, .mg-perf__item {
+.mg-icard, .mg-icard--end, .mg-metric, .mg-svcx__index, .mg-chapter, .mg-work, .mg-vs, .mg-perf__item {
   background-color: #f4f4f5;
   border: none;
   border-radius: 40px;
@@ -69,6 +69,7 @@
   border-radius: 40px !important;
   box-shadow: inset 0 4px #fff9, inset 0 -8px #0000000d, 0 3px 3px #0000001a, 0 7.77px 2.21px #0000000f !important;
 }
+@media (max-width: 809.98px) { .mg-work { border-radius: 40px; } }
 
 /* Card illustrations: neumorphic tiles, bars and chips in the same style as the Benefits cards. */
 .mg-icard__visual { position: absolute; left: 28px; right: 28px; top: 64px; bottom: 170px; display: flex; align-items: center; justify-content: center; z-index: 0; pointer-events: none; }

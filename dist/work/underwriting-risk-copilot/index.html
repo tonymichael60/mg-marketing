@@ -902,150 +902,157 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
    open/close is animated by Framer's own variant transition (tuned in apply-customizations.mjs). */
 [data-framer-name="Services"] .framer-56cFz { cursor: pointer; }
 
-/* Featured Works reel (after dmcg.co): one floating project mockup at a time, gliding up as the page scrolls.
-   Mounted by site-works.js, which sets each item's position, scale and fade. */
+/* Featured Works: stacked case-study cards (after marketinglab.framer.ai "Work That Delivers Results"). Mounted by site-works.js. */
 .mg-works-host > .framer-kxz02j, #works > .framer-kxz02j { display: none !important; }
 
-.mg-reel {
-  --ink: #0b0b0c;
-  --muted: rgb(113, 113, 122);
-  --blue: #1422e3;
-  --ease: cubic-bezier(0.22, 1, 0.36, 1);
-  position: relative;
+.mg-works {
+  --mg-ink: rgb(9, 9, 11);
+  --mg-muted: rgb(113, 113, 122);
+  --mg-line: rgba(41, 44, 46, 0.14);
+  --mg-blue: #020a70;
+  --mg-ease: cubic-bezier(0.22, 1, 0.36, 1);
   width: 100%;
-  /* One step of scrolling per project, plus a screen for the pinned stage itself. */
-  height: calc((var(--n) - 1) * 70vh + 100vh);
-  color: var(--ink);
+  display: grid;
+  gap: 28px;
+  padding-bottom: 40px;
+  color: var(--mg-ink);
   font-family: Urbanist, "Urbanist Placeholder", sans-serif;
 }
-.mg-reel__stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
-.mg-reel__item {
+.mg-work {
+  position: sticky;
+  top: calc(40px + var(--i) * 18px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  min-height: 560px;
+  border-radius: 40px;
+  overflow: hidden;
+  background: rgb(243, 243, 243);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.05), 0 18px 40px rgba(0, 0, 0, 0.1);
+  transform-origin: 50% 0;
+  will-change: transform;
+}
+.mg-work__body {
+  display: flex;
+  flex-direction: column;
+  padding: 56px 48px 48px;
+}
+.mg-work h3 {
+  margin: 0;
+  font-size: 36px;
+  line-height: 48px;
+  font-weight: 600;
+  letter-spacing: -0.36px;
+}
+.mg-work__desc {
+  margin: 12px 0 0;
+  max-width: 46ch;
+  color: var(--mg-muted);
+  font-size: 18px;
+  line-height: 28px;
+}
+.mg-work__meta {
+  margin-top: 28px;
+  padding: 22px 0;
+  border-top: 1px solid var(--mg-line);
+}
+.mg-work__meta + .mg-work__meta { margin-top: 0; }
+.mg-work__meta small {
+  display: block;
+  color: var(--mg-muted);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+}
+.mg-work__tags { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 8px; }
+.mg-work__tags span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  line-height: 28px;
+  font-weight: 600;
+}
+.mg-work__tags span::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--mg-blue);
+}
+.mg-work__cta {
+  align-self: flex-start;
+  margin-top: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #1a2496, #020a70);
+  color: #fff;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), inset 0 -3px 0 rgba(0, 0, 0, 0.25), 0 10px 24px rgba(2, 10, 112, 0.3);
+}
+.mg-work__cta svg { width: 16px; height: 16px; }
+.mg-work__media { position: relative; overflow: hidden; }
+.mg-work__media img {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
-  will-change: transform, opacity;
-}
-.mg-reel__float { animation: mgr-bob 6s ease-in-out infinite; }
-@keyframes mgr-bob { 50% { translate: 0 -10px; } }
-
-/* Label and details sit to the right of the object and fade in only for the centred project. */
-.mg-reel__info {
-  position: absolute;
-  top: 50%;
-  left: calc(50% + 270px);
-  width: min(300px, calc(50% - 300px));
-  translate: 0 -50%;
-  opacity: var(--info, 0);
-  pointer-events: none;
-}
-.mg-reel__item.is-active .mg-reel__info { pointer-events: auto; }
-.mg-reel__label { display: grid; gap: 4px; }
-.mg-reel__label b { font-size: 22px; line-height: 1.15; font-weight: 700; letter-spacing: -0.02em; }
-.mg-reel__label em { font-style: normal; font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; font-weight: 600; color: var(--blue); }
-.mg-reel__info p { margin: 14px 0 18px; font-size: 15px; line-height: 1.5; color: var(--muted); }
-.mg-reel__cta {
-  display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 999px;
-  background: linear-gradient(180deg, #1a2496, #020a70); color: #fff; font-size: 14px; font-weight: 600; text-decoration: none;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 22px rgba(2, 10, 112, 0.3);
-}
-.mg-reel__cta svg { width: 14px; height: 14px; }
-.mg-reel__cta:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
-/* Counter: a small pill in the corner, above the peeking neighbours. */
-.mg-reel__count { position: absolute; left: 24px; bottom: 24px; z-index: 3; padding: 8px 14px; border-radius: 999px; background: #f4f4f5; box-shadow: inset 0 3px #fff9, inset 0 -5px #0000000d, 0 3px 3px #0000001a; font-size: 14px; font-weight: 600; letter-spacing: 0.08em; color: var(--muted); font-variant-numeric: tabular-nums; }
-.mg-reel__count b { color: var(--ink); }
-
-/* Shared mockup look: light surfaces, soft ledge, long floating shadow. */
-.mgr-obj { position: relative; font-size: 13px; color: var(--ink); }
-.mgr-obj svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.mgr-desk, .mgr-phone, .mgr-tablet, .mgr-prod {
-  background: #fff;
-  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.04), 0 2px 3px rgba(0, 0, 0, 0.06), 0 40px 80px -30px rgba(10, 20, 80, 0.35), 0 18px 36px -18px rgba(0, 0, 0, 0.18);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1);
 }
 
-/* 01 support desk window */
-.mgr-desk { width: 440px; border-radius: 22px; overflow: hidden; }
-.mgr-desk__bar { display: flex; align-items: center; gap: 6px; padding: 12px 16px; background: #f4f4f5; }
-.mgr-desk__bar i { width: 10px; height: 10px; border-radius: 50%; background: #d9d9de; }
-.mgr-desk__bar span { margin-left: 10px; font-size: 12px; color: var(--muted); }
-.mgr-desk__body { display: grid; gap: 12px; padding: 18px; }
-.mgr-msg { padding: 12px 14px; border-radius: 14px; line-height: 1.45; }
-.mgr-msg b { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
-.mgr-msg--in { background: #f4f4f5; margin-right: 60px; }
-.mgr-msg--ai { background: #eef1fc; margin-left: 40px; box-shadow: inset 0 0 0 1px rgba(20, 34, 227, 0.18); }
-.mgr-msg--ai b { color: var(--blue); }
-.mgr-ctx { display: flex; flex-wrap: wrap; gap: 6px; }
-.mgr-ctx span { padding: 4px 10px; border-radius: 999px; background: #f4f4f5; font-size: 11px; color: var(--muted); }
-.mgr-caret { display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -2px; background: var(--blue); animation: mgr-blink 1s steps(1) infinite; }
-@keyframes mgr-blink { 50% { opacity: 0; } }
-.mgr-send { justify-self: end; padding: 8px 16px; border-radius: 999px; background: var(--blue); color: #fff; font-size: 12px; font-weight: 600; }
-
-/* 02 phone with claim and risk gauge */
-.mgr-phone { width: 250px; padding: 12px; border-radius: 40px; background: #111; box-shadow: 0 40px 80px -30px rgba(10, 20, 80, 0.45), 0 18px 36px -18px rgba(0, 0, 0, 0.3); }
-.mgr-phone__notch { position: absolute; top: 20px; left: 50%; width: 76px; height: 20px; margin-left: -38px; border-radius: 999px; background: #111; z-index: 1; }
-.mgr-phone__screen { display: grid; gap: 10px; padding: 46px 18px 20px; border-radius: 30px; background: #fff; }
-.mgr-phone__screen small { color: var(--muted); font-size: 11px; }
-.mgr-phone__screen > b { font-size: 16px; }
-.mgr-gauge { position: relative; display: grid; justify-items: center; }
-.mgr-gauge svg { width: 160px; height: 92px; stroke-width: 12; }
-.mgr-gauge__track { stroke: #eceef3; }
-.mgr-gauge__fill { stroke: #1faa6b; stroke-dasharray: 157; stroke-dashoffset: 110; animation: mgr-gauge 4s var(--ease) infinite; }
-@keyframes mgr-gauge { 0%, 10% { stroke-dashoffset: 157; } 45%, 90% { stroke-dashoffset: 110; } 100% { stroke-dashoffset: 157; } }
-.mgr-gauge span { position: absolute; bottom: 4px; font-weight: 700; font-size: 14px; color: #1faa6b; }
-.mgr-phone__screen ul { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; }
-.mgr-phone__screen li { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.mgr-phone__screen li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #1faa6b; }
-.mgr-phone__btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
-.mgr-phone__btns span { padding: 10px; border-radius: 12px; text-align: center; font-weight: 600; font-size: 12px; background: #f4f4f5; }
-.mgr-phone__btns span + span { background: var(--blue); color: #fff; }
-
-/* 03 tablet with visit summary */
-.mgr-tablet { width: 420px; padding: 14px; border-radius: 30px; background: #1b1b1f; }
-.mgr-tablet__screen { display: grid; gap: 14px; padding: 20px; border-radius: 18px; background: #fff; }
-.mgr-tablet__head { display: flex; justify-content: space-between; align-items: baseline; }
-.mgr-tablet__head b { font-size: 16px; }
-.mgr-tablet__head span { font-size: 11px; color: var(--muted); }
-.mgr-pulse { width: 100%; height: 56px; stroke: var(--blue); stroke-width: 2.4; fill: none; stroke-dasharray: 420; animation: mgr-trace 3s linear infinite; }
-@keyframes mgr-trace { from { stroke-dashoffset: 420; } to { stroke-dashoffset: -420; } }
-.mgr-lines { display: grid; gap: 8px; }
-.mgr-lines i { height: 9px; border-radius: 6px; background: #eceef3; }
-.mgr-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.mgr-chips span, .mgr-prod__tags span { padding: 4px 10px; border-radius: 999px; background: #eef1fc; color: var(--blue); font-size: 11px; font-weight: 600; }
-
-/* 04 product cards fanned out, with tags and add to cart */
-.mgr-shop { width: 460px; height: 330px; }
-.mgr-prod {
-  position: absolute; top: 20px; left: calc(var(--k) * 140px); width: 180px; padding: 12px; border-radius: 20px;
-  rotate: calc((var(--k) - 1) * 6deg); translate: 0 calc(var(--k) * 10px - 10px);
-}
-.mgr-prod:nth-child(2) { z-index: 1; }
-.mgr-prod__img { height: 130px; border-radius: 14px; margin-bottom: 10px; }
-.mgr-prod__img--0 { background: linear-gradient(160deg, #c7d2ff, #6b7cf5); }
-.mgr-prod__img--1 { background: linear-gradient(160deg, #f1e7d6, #cdb898); }
-.mgr-prod__img--2 { background: linear-gradient(160deg, #3a3a42, #0e0e12); }
-.mgr-prod b { display: block; margin-bottom: 8px; font-size: 13px; }
-.mgr-prod__tags { display: flex; flex-wrap: wrap; gap: 4px; }
-.mgr-cart { position: absolute; left: 50%; bottom: 0; translate: -50% 0; display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px; background: var(--blue); color: #fff; font-weight: 600; z-index: 2; box-shadow: 0 14px 28px -10px rgba(20, 34, 227, 0.6); animation: mgr-pop 3.2s var(--ease) infinite; }
-.mgr-cart svg { stroke: #fff; }
-@keyframes mgr-pop { 0%, 60%, 100% { scale: 1; } 70% { scale: 1.08; } }
-
-@media (prefers-reduced-motion: reduce) {
-  .mg-reel__float, .mgr-caret, .mgr-gauge__fill, .mgr-pulse, .mgr-cart { animation: none; }
+/* Card pop after td-signal.framer.website: each card springs up from scale(0.9) with a slight
+   overshoot the first time it scrolls into view (site-works.js toggles .mg-work--in), staggered per card. */
+@media (prefers-reduced-motion: no-preference) {
+  .mg-work {
+    opacity: 0;
+    transform: scale(0.9);
+    transform-origin: 50% 50%;
+    transition: transform 0.62s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.42s ease-out;
+    transition-delay: calc(var(--i) * 80ms);
+  }
+  .mg-work.mg-work--in { opacity: 1; transform: none; }
 }
 
-/* Narrower screens: details go under the object instead of beside it. */
+@media (prefers-reduced-motion: no-preference) {
+  .mg-work__cta { transition: scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.25s ease; }
+  .mg-work__cta svg { transition: translate 0.35s var(--mg-ease); }
+  .mg-work__cta:hover { scale: 1.04; filter: brightness(1.2); }
+  .mg-work__cta:hover svg { translate: 3px -3px; }
+  .mg-work__cta:active { scale: 0.96; transition-duration: 0.1s; }
+  .mg-work__media img { transition: scale 1.2s var(--mg-ease), filter 0.5s var(--mg-ease); }
+  .mg-work:hover .mg-work__media img { scale: 1.04; filter: grayscale(0); }
+}
+.mg-work__cta:focus-visible { outline: 2px solid var(--mg-blue); outline-offset: 3px; }
+
 @media (max-width: 1199.98px) {
-  .mg-reel__item { grid-template-rows: auto auto; align-content: center; gap: 28px; }
-  .mg-reel__info { position: static; translate: none; width: min(420px, calc(100% - 40px)); text-align: center; }
-  .mg-reel__label { justify-items: center; }
+  .mg-work { min-height: 480px; }
+  .mg-work__body { padding: 40px 32px 32px; }
+  .mg-work h3 { font-size: 27px; line-height: 39px; letter-spacing: -0.27px; }
 }
+/* Phone: image on top, text below; compact so each card fits the screen while the cards stack. */
 @media (max-width: 809.98px) {
-  .mg-reel__float { zoom: 0.66; }
-  .mg-reel__info p { margin: 10px 0 14px; }
-  .mg-reel__label b { font-size: 20px; }
+  .mg-works { gap: 20px; }
+  .mg-work { top: calc(16px + var(--i) * 12px); grid-template-columns: 1fr; min-height: 0; border-radius: 28px; }
+  .mg-work__media { order: -1; aspect-ratio: 16 / 9; }
+  .mg-work__body { padding: 20px 20px 22px; }
+  .mg-work h3 { font-size: 24px; line-height: 30px; letter-spacing: -0.24px; }
+  .mg-work__desc { margin-top: 8px; font-size: 15px; line-height: 22px; }
+  .mg-work__meta { margin-top: 14px; padding: 12px 0; }
+  .mg-work__meta small { font-size: 13px; line-height: 18px; }
+  .mg-work__tags { gap: 4px 14px; margin-top: 4px; }
+  .mg-work__tags span { font-size: 15px; line-height: 22px; }
+  .mg-work__tags span::before { width: 8px; height: 8px; }
+  .mg-work__cta { margin-top: 6px; padding: 12px 22px; }
 }
 
-/* Remove the white panel behind the Featured Works section; the reel sits on the page background. */
+/* Remove the white panel behind the Featured Works section; cards sit on the page background. */
 .framer-rjy3eh { background-color: transparent !important; box-shadow: none !important; }
 
 /* Features tree: glowing blue branches, travelling light pulses (added by site-features.js) and a luminous centre logo. */
@@ -1393,7 +1400,7 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
 
 /* Work section (horizontal pinned scroller, ported from the reference file, light theme).
    Mounted by site-iwork.js in place of the Statistics section. Scoped .mg-iwork to avoid the
-   Featured Works styles. */
+   Featured Works (.mg-work) styles. */
 .mg-iwork { --ink: #0b0b0c; --muted: #6a6e6e; --accent: #1422e3; --accent-2: #4b5cff; --line: rgba(41, 44, 46, .14); --ease: cubic-bezier(.22, 1, .36, 1); position: relative; width: 100%; min-width: 0; align-self: stretch; font-family: Urbanist, "Urbanist Placeholder", sans-serif; }
 .mg-iwork__pin { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
 .mg-iwork__head { width: 100%; max-width: 1296px; margin: 0 auto 46px; padding: 0 clamp(16px, 4vw, 56px); box-sizing: border-box; display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; flex-wrap: wrap; }
@@ -1452,7 +1459,7 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
    40px radius, white inner top highlight, inner bottom ledge, short soft drop. Shared by every custom box;
    this file loads last, so it wins over each section's own card styles. Tinted or white boxes keep
    their background image or colour. */
-.mg-icard, .mg-icard--end, .mg-metric, .mg-svcx__index, .mg-chapter, .mg-vs, .mg-perf__item {
+.mg-icard, .mg-icard--end, .mg-metric, .mg-svcx__index, .mg-chapter, .mg-work, .mg-vs, .mg-perf__item {
   background-color: #f4f4f5;
   border: none;
   border-radius: 40px;
@@ -1462,6 +1469,7 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
   border-radius: 40px !important;
   box-shadow: inset 0 4px #fff9, inset 0 -8px #0000000d, 0 3px 3px #0000001a, 0 7.77px 2.21px #0000000f !important;
 }
+@media (max-width: 809.98px) { .mg-work { border-radius: 40px; } }
 
 /* Card illustrations: neumorphic tiles, bars and chips in the same style as the Benefits cards. */
 .mg-icard__visual { position: absolute; left: 28px; right: 28px; top: 64px; bottom: 170px; display: flex; align-items: center; justify-content: center; z-index: 0; pointer-events: none; }
@@ -1866,127 +1874,61 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
   });
 })();
 
-// Featured Works (after dmcg.co): a reel that shows one project at a time. The section pins while it scrolls,
-// and each case study's floating mockup glides up into the centre with its label and details beside it; the
-// previous and next projects peek in above and below. The mockups are built in HTML/CSS (no photos).
+// Featured Works: replaces the Framer project cards with stacked, sticky case-study cards.
 // Framer can re-render its section, so the block is re-mounted whenever it goes missing.
 (() => {
   const rafOnce = f => { let t = 0; return () => { if (t) return; t = 1; requestAnimationFrame(() => { t = 0; f(); }); }; };
-  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
-  const icon = d => `<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
-
-  // One floating object per case study.
-  const mockups = [
-    // Support Copilot: a help-desk window where the AI drafts the reply.
-    `<div class="mgr-obj mgr-desk">
-      <div class="mgr-desk__bar"><i></i><i></i><i></i><span>support.inbox</span></div>
-      <div class="mgr-desk__body">
-        <div class="mgr-msg mgr-msg--in"><b>Customer</b>My invoice shows two charges for March.</div>
-        <div class="mgr-ctx"><span>Plan · Pro</span><span>2 invoices</span><span>Refund eligible</span></div>
-        <div class="mgr-msg mgr-msg--ai"><b>${icon('<path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/>')}AI draft</b>Sorry about that. I have refunded the duplicate March charge; it will show in 3–5 days.<span class="mgr-caret"></span></div>
-        <div class="mgr-send">Send reply</div>
-      </div>
-    </div>`,
-    // Underwriting Risk Copilot: a phone with a claim summary and a risk gauge.
-    `<div class="mgr-obj mgr-phone">
-      <div class="mgr-phone__notch"></div>
-      <div class="mgr-phone__screen">
-        <small>Claim #48211</small>
-        <b>Water damage · Home</b>
-        <div class="mgr-gauge"><svg viewBox="0 0 120 70" aria-hidden="true"><path class="mgr-gauge__track" d="M10 62a50 50 0 0 1 100 0"/><path class="mgr-gauge__fill" d="M10 62a50 50 0 0 1 100 0"/></svg><span>Low risk</span></div>
-        <ul><li>Policy active</li><li>Photos match report</li><li>No prior claims</li></ul>
-        <div class="mgr-phone__btns"><span>Review</span><span>Approve</span></div>
-      </div>
-    </div>`,
-    // Clinical Note Summarizer: a tablet with a visit summary and a pulse line.
-    `<div class="mgr-obj mgr-tablet">
-      <div class="mgr-tablet__screen">
-        <div class="mgr-tablet__head"><b>Pre-visit summary</b><span>Today · 10:30</span></div>
-        <svg class="mgr-pulse" viewBox="0 0 300 60" aria-hidden="true"><path d="M0 34h70l12-22 16 44 14-30 10 8h178"/></svg>
-        <div class="mgr-lines"><i style="width:92%"></i><i style="width:78%"></i><i style="width:86%"></i><i style="width:54%"></i></div>
-        <div class="mgr-chips"><span>Allergies</span><span>Medication</span><span>Insurance</span></div>
-      </div>
-    </div>`,
-    // Catalog Intelligence Engine: product cards fanned out, attributes tagged by the AI.
-    `<div class="mgr-obj mgr-shop">
-      ${['Linen shirt', 'Canvas tote', 'Desk lamp'].map((t, i) => `<div class="mgr-prod" style="--k:${i}">
-        <div class="mgr-prod__img mgr-prod__img--${i}"></div>
-        <b>${t}</b>
-        <div class="mgr-prod__tags">${[['Cotton', 'Blue', 'Relaxed'], ['Canvas', 'Beige', 'Large'], ['Metal', 'Black', 'Dimmable']][i].map(a => `<span>${a}</span>`).join('')}</div>
-      </div>`).join('')}
-      <div class="mgr-cart">${icon('<path d="M3 4h2.2l2.3 10.5h10.3L20 7H6.4"/><circle cx="9.5" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/>')}Add to cart</div>
-    </div>`,
-  ];
   const works = [
-    ['./work/support-copilot', 'Support Copilot for SaaS', 'Draft replies and pulls account context; reduced first-response time by 38%.', 'AI strategy · LLM agent', 'SaaS'],
-    ['./work/underwriting-risk-copilot', 'Underwriting Risk Copilot', 'Built a triage assistant to summarize claims; cut manual review time by 42%.', 'Use-case mapping · Prompt & UI', 'Fintech'],
-    ['./work/clinical-note-summarizer', 'Clinical Note Summarizer', 'Clinic-lobby assistant answering pre-visit questions; decreased front-desk calls by 28%.', 'AI UX flows · RAG', 'Healthcare'],
-    ['./work/catalog-intelligence-engine', 'Catalog Intelligence Engine', 'Launched a shopping copilot that understands attributes; raised add-to-cart by 12%.', 'Data cleaning & embeddings', 'Ecommerce'],
+    ['./work/support-copilot', 'Support Copilot for SaaS', 'Draft replies and pulls account context; reduced first-response time by 38%.', ['AI strategy', 'AI UX flows', 'LLM agent', 'RAG'], ['SaaS'], '3mYjyBkO1taOXWFFdYdWawzYdU.svg'],
+    ['./work/underwriting-risk-copilot', 'Underwriting Risk Copilot', 'Built a triage assistant to summarize claims; cut manual review time by 42%.', ['Use-case mapping', 'Prompt & UI patterns'], ['Fintech'], '9ujF8ABgoO0V5nv7UJwe1WXY2Mw.svg'],
+    ['./work/clinical-note-summarizer', 'Clinical Note Summarizer', 'Clinic-lobby assistant answering pre-visit questions; decreased front-desk calls by 28%.', ['AI strategy', 'AI UX flows', 'LLM agent', 'RAG'], ['Healthcare'], 'D3ZQRFsyC3I0z6aUqii7ffrCUo.jpg'],
+    ['./work/catalog-intelligence-engine', 'Catalog Intelligence Engine', 'Launched a shopping copilot that understands attributes; raised add-to-cart by 12%.', ['Data cleaning & embeddings'], ['Ecommerce/Retail'], 'JAwg2A4GAzIyvReM0mGSgTlkV5U.jpg'],
   ];
-  const N = works.length;
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const tags = list => `<div class="mg-work__tags">${list.map(t => `<span>${esc(t)}</span>`).join('')}</div>`;
   const arrow = '<svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 12 12 4M5.5 4H12v6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const html = `
-    <div class="mg-reel__stage">
-      ${works.map(([href, title, desc, services, industry], i) => `
-      <article class="mg-reel__item" aria-label="${esc(title)}">
-        <div class="mg-reel__float">${mockups[i]}</div>
-        <div class="mg-reel__info">
-          <span class="mg-reel__label"><b>${esc(title)}</b><em>${esc(services)} · ${esc(industry)}</em></span>
-          <p>${esc(desc)}</p>
-          <a class="mg-reel__cta" href="${href}">View Case Study ${arrow}</a>
-        </div>
-      </article>`).join('')}
-      <div class="mg-reel__count"><b data-reel-n>01</b> / ${String(N).padStart(2, '0')}</div>
-    </div>`;
+  const html = works.map(([href, title, desc, deliverables, industry, image], i) => `
+    <article class="mg-work" style="--i:${i}">
+      <div class="mg-work__body">
+        <h3>${esc(title)}</h3>
+        <p class="mg-work__desc">${esc(desc)}</p>
+        <div class="mg-work__meta"><small>Deliverables:</small>${tags(deliverables)}</div>
+        <div class="mg-work__meta"><small>Industry:</small>${tags(industry)}</div>
+        <a class="mg-work__cta" href="${href}">View Case Study ${arrow}</a>
+      </div>
+      <div class="mg-work__media"><img src="/m/695a11918a/framerusercontent.com/images/${image}" alt="${esc(title)}" loading="lazy" decoding="async"></div>
+    </article>`).join('');
 
-  let block = null, shown = 0, ticking = false;
-  // Scroll position in project steps (0 = first project centred). The reel eases towards it each frame,
-  // so even a jumpy wheel or a fling glides like dmcg.co.
-  function target() {
-    const r = block.getBoundingClientRect();
-    const span = r.height - innerHeight;
-    return span > 0 ? Math.min(N - 1, Math.max(0, (-r.top / span) * (N - 1))) : 0;
-  }
-  function paint() {
-    const items = block.querySelectorAll('.mg-reel__item');
-    items.forEach((it, i) => {
-      const d = i - shown, a = Math.min(1, Math.abs(d));
-      // Neighbours sit above/below the centre, smaller and paler; the info only shows for the centred one.
-      it.style.transform = `translate3d(0,${d * 58}vh,0) scale(${1 - a * 0.3})`;
-      it.style.opacity = Math.abs(d) > 1.6 ? 0 : 1 - a * 0.55;
-      it.style.setProperty('--info', Math.max(0, 1 - Math.abs(d) * 2.5));
-      it.classList.toggle('is-active', Math.abs(d) < 0.5);
-      it.querySelector('.mg-reel__cta').tabIndex = Math.abs(d) < 0.5 ? 0 : -1;
-    });
-    block.querySelector('[data-reel-n]').textContent = String(Math.round(shown) + 1).padStart(2, '0');
-  }
-  function frame() {
-    ticking = false;
-    if (!block || !block.isConnected) return;
-    const t = target();
-    shown += (t - shown) * 0.14;
-    if (Math.abs(t - shown) < 0.001) shown = t;
-    paint();
-    if (shown !== t) request();
-  }
-  const request = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
-
+  let block = null;
   function mount() {
     const host = document.querySelector('#works');
     const cards = host && host.querySelector(':scope > .framer-kxz02j');
-    if (!cards || host.querySelector(':scope > .mg-reel')) return;
+    if (!cards || host.querySelector(':scope > .mg-works')) return;
     host.classList.add('mg-works-host');
     block = document.createElement('div');
-    block.className = 'mg-reel';
-    block.style.setProperty('--n', N);
+    block.className = 'mg-works';
     block.innerHTML = html;
     cards.after(block);
-    shown = target();
-    paint();
+    observe();
   }
 
-  addEventListener('scroll', request, { passive: true });
-  addEventListener('resize', request);
+  // Card pop after td-signal.framer.website: each card springs up from scale(0.9)
+  // the first time it scrolls into view. Spring overshoot lives in site-works.css.
+  let io = null;
+  function observe() {
+    if (!block) return;
+    if (!io) {
+      io = new IntersectionObserver(entries => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          e.target.classList.add('mg-work--in');
+          io.unobserve(e.target);
+        }
+      }, { threshold: 0.2, rootMargin: '0px 0px -8% 0px' });
+    }
+    for (const card of block.children) io.observe(card);
+  }
+
   const start = () => {
     mount();
     new MutationObserver(rafOnce(() => { if (!block || !block.isConnected) mount(); })).observe(document.body, { childList: true, subtree: true });
