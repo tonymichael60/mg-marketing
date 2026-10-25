@@ -111,8 +111,10 @@
   const clients = $('.clients'), clientNames = $$('.clients__names a'), clientLogos = $$('.clients__logos img');
   const method = $('.method'), methodTitle = $('.method__title'), mFrames = $$('.frame'), mTexts = $$('.method__text'), mRoll = $('.method__num-roll'), mNum = $('.method__num');
   const build = $('.build'), buildRow = $('.build__row'), cards = $$('.card');
+  let svcHalf = null;
+  addEventListener('resize', () => { svcHalf = null; });
   const eased = { svc: 0, clients: 0, method: -0.6 };
-  const ease = (key, target) => { eased[key] = reduce ? target : eased[key] + (target - eased[key]) * 0.14; if (Math.abs(target - eased[key]) < 0.001) eased[key] = target; return eased[key] !== target; };
+  const ease = (key, target, k = 0.14) => { eased[key] = reduce ? target : eased[key] + (target - eased[key]) * k; if (Math.abs(target - eased[key]) < 0.001) eased[key] = target; return eased[key] !== target; };
 
   // Clicking a client name rolls the wheel to it.
   clientNames.forEach((a, i) => a.addEventListener('click', e => {
@@ -133,12 +135,15 @@
     for (const el of $$('[data-reveal]:not(.is-in)')) if (el.getBoundingClientRect().top < innerHeight * 0.88) el.classList.add('is-in');
 
     // Services: the list slides up; the centred discipline is full strength, its group label lit.
-    again = ease('svc', progress(svc) * (svcItems.length - 1)) || again;
+    // Services track the scroll closely (light smoothing only), so the list never trails behind the page.
+    again = ease('svc', progress(svc) * (svcItems.length - 1), 0.45) || again;
+    // Item heights are measured once (and again after a resize), never while the items are being moved.
+    if (!svcHalf) svcHalf = svcItems.map(li => li.offsetHeight / 2);
     const step = innerWidth < 760 ? 52 : Math.min(120, innerWidth * 0.075);
     let svcActive = 0;
     svcItems.forEach((li, i) => {
       const d = i - eased.svc, a = Math.abs(d);
-      li.style.transform = `translate3d(0, calc(-50% + ${d * step}px), 0)`;
+      li.style.transform = `translate3d(0, ${(d * step - svcHalf[i]).toFixed(1)}px, 0)`;
       li.style.opacity = a > 3.5 ? 0 : String(Math.max(0.12, 1 - a * 0.32));
       if (a < 0.5) svcActive = i;
     });
