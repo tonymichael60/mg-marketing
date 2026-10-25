@@ -217,6 +217,10 @@ h1, h2, h3, p { margin: 0; }
 @keyframes wb-bob { 50% { translate: 0 -10px; } }
 /* Scene 2: the navy panel grows from the picture's box to the full screen (clip-path set by app.js). */
 .wb-panel { position: absolute; inset: 0; background: var(--navy); clip-path: inset(50% 50% 50% 50% round 22px); }
+/* The picture's zoom-and-dissolve: a copy of the photo cut into tiles that grows from the photo's box towards the
+   full screen while the tiles drift apart, turn and fade at staggered moments, revealing the navy panel. */
+.wb-zoom { position: absolute; left: 0; top: 0; transform-origin: 50% 50%; pointer-events: none; visibility: hidden; will-change: transform; }
+.wb-zoom i { position: absolute; background-repeat: no-repeat; will-change: transform, opacity; }
 .wb-say, .wb-say2 { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; margin: 0; pointer-events: none;
   font-family: "Anton", "Urbanist", sans-serif; text-transform: uppercase; font-size: clamp(44px, 6vw, 104px); line-height: 0.95; color: #fff; }
 .wb-say span { display: block; overflow: hidden; }

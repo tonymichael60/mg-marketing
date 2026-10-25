@@ -68,14 +68,56 @@
   const wbItems = $$('.wb-item'), wbImgs = $$('.wb-stack img');
   const seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1);
   const smooth = t => t * t * (3 - 2 * t);
+  // Tiles for the zoom-and-dissolve: built once (and on resize) to reproduce the photo exactly (object-fit: cover).
+  const wbZoom = $('.wb-zoom'), wbImg = $('.wb-photo img');
+  let zoomTiles = [], zoomSize = '';
+  function buildTiles(w, h) {
+    const iw = wbImg.naturalWidth, ih = wbImg.naturalHeight;
+    if (!iw) return;
+    const cols = innerWidth < 760 ? 6 : 9, rows = Math.round(cols * h / w), tw = w / cols, th = h / rows;
+    const c = Math.max(w / iw, h / ih), bw = iw * c, bh = ih * c, ox = (w - bw) / 2, oy = (h - bh) / 2;
+    let rnd = 7;
+    const rand = () => (rnd = (rnd * 9301 + 49297) % 233280) / 233280;
+    wbZoom.innerHTML = '';
+    zoomTiles = [];
+    for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
+      const t = document.createElement('i');
+      Object.assign(t.style, { left: `${x * tw}px`, top: `${y * th}px`, width: `${tw + 0.6}px`, height: `${th + 0.6}px`,
+        backgroundImage: `url("${wbImg.currentSrc || wbImg.src}")`, backgroundSize: `${bw}px ${bh}px`, backgroundPosition: `${ox - x * tw}px ${oy - y * th}px` });
+      wbZoom.appendChild(t);
+      // Tiles further from the centre break away first; each drifts outwards with a little spin.
+      const dx = (x + 0.5) / cols - 0.5, dy = (y + 0.5) / rows - 0.5, d = Math.hypot(dx, dy);
+      zoomTiles.push({ el: t, start: 0.15 + (0.7 - d) / 0.7 * 0.3 + rand() * 0.15, dx: dx * 260 + (rand() - 0.5) * 120, dy: dy * 260 + (rand() - 0.5) * 120, rot: (rand() - 0.5) * 50 });
+    }
+    wbZoom.style.width = `${w}px`; wbZoom.style.height = `${h}px`;
+  }
+  function zoomFrame(g, r, vw, vh) {
+    const show = g > 0.001 && g < 0.999;
+    wbZoom.style.visibility = show ? 'visible' : 'hidden';
+    wbImg.style.visibility = g > 0.001 ? 'hidden' : '';
+    if (!show) return;
+    const size = `${Math.round(r.width)}x${Math.round(r.height)}x${wbImg.naturalWidth}`;
+    if (size !== zoomSize) { zoomSize = size; buildTiles(r.width, r.height); }
+    // Grow from the photo's box (scale 1) to a little beyond the screen, moving to the centre.
+    const S = Math.max(vw / r.width, vh / r.height) * 1.08, z = Math.min(1, g * 1.25);
+    const cx = vw / 2 - (r.left + r.width / 2), cy = vh / 2 - (r.top + r.height / 2);
+    wbZoom.style.transform = `translate(${r.left + cx * z}px, ${r.top + cy * z}px) scale(${1 + (S - 1) * z})`;
+    for (const t of zoomTiles) {
+      const k = smooth(clamp((g - t.start) / 0.35, 0, 1));
+      t.el.style.opacity = 1 - k;
+      t.el.style.transform = k ? `translate(${t.dx * k}px, ${t.dy * k}px) rotate(${t.rot * k}deg) scale(${1 - 0.35 * k})` : '';
+    }
+  }
   function buildFrame() {
     const p = progress(build), vw = innerWidth, vh = innerHeight;
-    // 1 → 2: the panel grows from the picture's box to the whole screen.
-    const g = smooth(seg(p, 0.08, 0.2));
+    // 1 → 2: the picture zooms up towards the full screen and breaks into tiles that drift apart and fade,
+    // dissolving into the navy panel that grows behind it.
+    const g = smooth(seg(p, 0.08, 0.22));
     const r = wbPhoto.getBoundingClientRect();
     const ins = [r.top, vw - r.right, vh - r.bottom, r.left].map(v => (Math.max(0, v) * (1 - g)).toFixed(1));
     wbPanel.style.clipPath = `inset(${ins[0]}px ${ins[1]}px ${ins[2]}px ${ins[3]}px round ${(22 * (1 - g)).toFixed(1)}px)`;
     wbPanel.style.opacity = p < 0.08 ? 0 : 1;
+    zoomFrame(g, r, vw, vh);
     wbS1.style.opacity = 1 - seg(p, 0.16, 0.2);
     // 2: statement lines rise in one after another, then lift away.
     wbSay.forEach((l, i) => { const t = smooth(seg(p, 0.21 + i * 0.04, 0.27 + i * 0.04)), out = seg(p, 0.42, 0.48);
