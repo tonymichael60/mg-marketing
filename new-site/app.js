@@ -242,8 +242,24 @@
     requestAnimationFrame(smoothFrame);
   }
   const stopSmooth = () => { smoothTarget = null; };
+  // Hero → About: the first downward gesture on the hero glides straight to About, so it lands centred. The rest
+  // of that gesture (trackpad inertia) is swallowed; a new gesture scrolls on normally.
+  const about = $('#manifesto');
+  let lastWheel = 0, swallow = false;
   addEventListener('wheel', e => {
-    if (e.ctrlKey || Math.abs(e.deltaY) < 2 || reduce || !menu.hidden || gliding) return;
+    if (e.ctrlKey || Math.abs(e.deltaY) < 2 || !menu.hidden) return;
+    const now = performance.now(), sameGesture = now - lastWheel < 180;
+    lastWheel = now;
+    if (gliding || (swallow && sameGesture)) { e.preventDefault(); return; }
+    swallow = false;
+    const aboutTop = secTop(about);
+    if (e.deltaY > 0 && (smoothTarget ?? scrollY) < aboutTop - 4) {
+      e.preventDefault();
+      if (reduce) scrollTo({ top: aboutTop, behavior: 'instant' }); else glide(aboutTop, 1000);
+      swallow = true;
+      return;
+    }
+    if (reduce) return;
     e.preventDefault();
     smoothTo((smoothTarget ?? scrollY) + (e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY));
   }, { passive: false });
