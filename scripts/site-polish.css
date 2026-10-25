@@ -412,3 +412,25 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
   .mgv-play, .mgv-head, .mgv-track::after, .framer-570b9w .framer-zli2me { animation: none !important; }
   .mgv-track::after { display: none; }
 }
+
+/* Ambient page background: the plain grey read as empty, so a fixed layer behind all content carries soft
+   blue glows (drifting slowly) and a faint dot grid. The page root and the FAQ container painted solid grey
+   over it, so they are made transparent; the body keeps the grey base colour. */
+.framer-qZQ5t, .framer-1ntlu9c { background-color: transparent !important; }
+body::before, body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+body::before {
+  inset: -10%;
+  background:
+    radial-gradient(38% 34% at 86% 14%, rgba(20, 34, 227, 0.11) 0%, rgba(20, 34, 227, 0) 70%),
+    radial-gradient(44% 40% at 8% 82%, rgba(75, 92, 255, 0.10) 0%, rgba(75, 92, 255, 0) 70%),
+    radial-gradient(30% 26% at 52% 48%, rgba(150, 168, 245, 0.14) 0%, rgba(150, 168, 245, 0) 70%);
+}
+body::after {
+  background: radial-gradient(rgba(11, 11, 12, 0.10) 1px, transparent 1.5px) 0 0 / 28px 28px;
+  -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 45%, #000 20%, transparent 85%);
+  mask-image: radial-gradient(ellipse 85% 75% at 50% 45%, #000 20%, transparent 85%);
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 810px) {
+  body::before { animation: mg-ambient 38s ease-in-out infinite alternate; }
+  @keyframes mg-ambient { to { translate: -4% 5%; } }
+}

@@ -28,6 +28,24 @@
       ${feats}
     </article>`;
   }
+  // Discipline list (after fromanother.love "They trust us"): big names with a small icon tile, lit as they
+  // scroll in; hovering one blurs the rest, and clicking jumps to that discipline's chapter.
+  const tileIcons = [
+    '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+    '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8"/>',
+    '<path d="M8 5.5v13l11-6.5z"/>',
+    '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+    '<path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18"/>',
+    '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/>',
+    '<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>',
+    '<path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10z"/>',
+  ];
+  function listHTML() {
+    return `<div class="mg-svclist">
+      <div class="mg-svclist__side"><small>Our disciplines</small><em>We work across</em></div>
+      <ol class="mg-svclist__rows">${data.map((d, i) => `<li><a class="mg-svclist__row" href="#" style="--k:${i}"><span class="mg-svclist__tile" aria-hidden="true"><svg viewBox="0 0 24 24">${tileIcons[i]}</svg></span><span class="mg-svclist__name">${esc(d.tag)}</span></a></li>`).join('')}</ol>
+    </div>`;
+  }
   function buildHTML() {
     const items = data.map(d => `<li><a><span>${d.n}</span>${esc(d.tag)}</a></li>`).join('');
     const chapters = data.map(chapterHTML).join('');
@@ -39,6 +57,7 @@
         </div>
         <p class="mg-svcx__lead">Think of us as your in-house growth team, without the overhead. Eight disciplines working to one plan, led by performance, content and automation.</p>
       </div>
+      ${listHTML()}
       <div class="mg-svcx__grid">
         <aside class="mg-svcx__index">
           <ol><i class="mg-svcx__rail"></i>${items}</ol>
@@ -59,6 +78,8 @@
     chapters.forEach((c, i) => { if (c.getBoundingClientRect().top < innerHeight * .5) idx = i; });
     links.forEach((a, i) => a.classList.toggle('is-active', i === idx));
     if (count) count.textContent = String(idx + 1).padStart(2, '0') + ' / 08';
+    // Discipline list rows light up once they pass 80% of the viewport height.
+    ctx.rows.forEach(row => row.classList.toggle('is-lit', row.getBoundingClientRect().top < innerHeight * .8));
     if (!reduce) chapters.forEach(c => {
       if (!c.classList.contains('is-in')) return;
       const b = c.getBoundingClientRect(), p = clamp(-b.top / b.height, 0, 1);
@@ -78,7 +99,14 @@
     host.appendChild(block);
     const chapters = [...block.querySelectorAll('.mg-chapter')];
     const links = [...block.querySelectorAll('.mg-svcx__index a')];
-    ctx = { wrap: block.querySelector('.mg-svcx__chapters'), rail: block.querySelector('.mg-svcx__rail'), links, chapters, count: block.querySelector('.mg-svcx__count') };
+    const rows = [...block.querySelectorAll('.mg-svclist__row')];
+    ctx = { wrap: block.querySelector('.mg-svcx__chapters'), rail: block.querySelector('.mg-svcx__rail'), links, chapters, rows, count: block.querySelector('.mg-svcx__count') };
+    const list = block.querySelector('.mg-svclist__rows');
+    rows.forEach((row, i) => {
+      row.addEventListener('click', e => { e.preventDefault(); chapters[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); });
+      row.addEventListener('pointerenter', e => { if (e.pointerType !== 'mouse') return; list.classList.add('has-focus'); row.classList.add('is-focus'); });
+      row.addEventListener('pointerleave', () => { list.classList.remove('has-focus'); row.classList.remove('is-focus'); });
+    });
     links.forEach((a, i) => a.addEventListener('click', e => { e.preventDefault(); chapters[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }));
     if (!io) io = new IntersectionObserver((es, o) => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); o.unobserve(e.target); } }), { threshold: .12, rootMargin: '0px 0px -8% 0px' });
     chapters.forEach(c => io.observe(c));

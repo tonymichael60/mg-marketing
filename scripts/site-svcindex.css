@@ -78,3 +78,66 @@
 
 @media (max-width: 1024px) { .mg-svcx__grid { grid-template-columns: 1fr; } .mg-svcx__index { display: none; } }
 @media (max-width: 809.98px) { .mg-svcx { padding: 0 20px; } .mg-chapter__num { font-size: 64px; } .mg-feats { grid-template-columns: 1fr; } }
+
+/* Discipline list (after fromanother.love "They trust us"): a navy panel with big uppercase names, each with
+   an icon tile and an underline. Rows start dim and light up as they scroll in; hovering one focuses it and
+   blurs the others. Uses the Testimonials box's navy so the two dark panels match. */
+.mg-svclist {
+  display: grid;
+  grid-template-columns: minmax(0, 0.45fr) minmax(0, 1.55fr);
+  gap: 40px;
+  margin: clamp(40px, 6vh, 72px) 0 clamp(48px, 7vh, 88px);
+  padding: clamp(48px, 7vw, 96px) clamp(24px, 5vw, 72px);
+  border-radius: 40px;
+  background:
+    radial-gradient(70% 90% at 0% 0%, rgba(20, 34, 227, 0.38) 0%, rgba(2, 10, 112, 0.18) 45%, transparent 75%),
+    radial-gradient(65% 80% at 100% 100%, rgba(20, 34, 227, 0.32) 0%, rgba(2, 10, 112, 0.16) 45%, transparent 75%),
+    #03051a;
+  color: #f4f5ff;
+}
+.mg-svclist__side { display: grid; align-content: center; gap: 10px; }
+.mg-svclist__side small { display: flex; align-items: center; gap: 10px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(244, 245, 255, 0.55); }
+.mg-svclist__side small::before { content: ""; width: 28px; height: 1px; background: currentColor; }
+.mg-svclist__side em { font-style: italic; font-weight: 500; font-size: 22px; color: rgba(244, 245, 255, 0.85); }
+.mg-svclist__rows { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.mg-svclist__row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0.22;
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--k) * 0.06s), filter 0.4s ease;
+}
+.mg-svclist__row.is-lit { opacity: 1; }
+.mg-svclist__rows.has-focus .mg-svclist__row:not(.is-focus) { opacity: 0.2; filter: blur(4px); transition-delay: 0s; }
+.mg-svclist__row:focus-visible { outline: 2px solid #8fa0ff; outline-offset: 6px; border-radius: 8px; }
+.mg-svclist__tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: clamp(48px, 5vw, 76px);
+  aspect-ratio: 5 / 4;
+  border-radius: 10px;
+  background: linear-gradient(150deg, hsl(calc(232 + var(--k) * 6) 85% 62%), hsl(calc(236 + var(--k) * 6) 90% 30%));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 24px -10px rgba(20, 34, 227, 0.7);
+}
+.mg-svclist__tile svg { width: 42%; height: 42%; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.mg-svclist__name {
+  padding-bottom: 4px;
+  border-bottom: 2px solid rgba(244, 245, 255, 0.6);
+  font-size: clamp(22px, 3.3vw, 48px); /* one line per name, like the reference */
+  white-space: nowrap;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+@media (max-width: 809.98px) {
+  .mg-svclist { grid-template-columns: 1fr; gap: 24px; }
+  .mg-svclist__row { gap: 12px; }
+  .mg-svclist__name { white-space: normal; font-size: 26px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mg-svclist__row { transition: none; }
+}
