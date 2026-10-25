@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Urbanist:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=62">
+  <link rel="stylesheet" href="styles.css?v=63">
 </head>
 <body>
   <!-- Ambient layers: drifting colour aura and film grain, tinted per section by app.js. -->
@@ -18,25 +18,12 @@
   <div class="grain" aria-hidden="true"></div>
 
   <header class="top">
+    <button class="top__menu" type="button" aria-expanded="false" aria-controls="menu"><span></span>Menu</button>
     <a class="top__logo" href="#home" aria-label="MediaGroots home">
       <svg viewBox="172 333 1589 806" aria-hidden="true"><path d="M172 333H291L966 750L1642 333H1761V553L966 1042L419 712V1139L172 1002Z"/><path d="M1065 1090L1322 931V1015H1624V816H1508L1706 694H1761V1139H1065Z"/></svg>
       <span>media<em>groots</em></span>
     </a>
-    <!-- Liquid glass navigation: a frosted pill with a glass bubble that slides to the active or hovered link. -->
-    <nav class="glassnav" aria-label="Sections">
-      <span class="glassnav__light" aria-hidden="true"></span>
-      <span class="glassnav__bubble" aria-hidden="true"></span>
-      <a href="#home" data-for="home manifesto">Home</a>
-      <a href="#services" data-for="services build">Services</a>
-      <a href="#work" data-for="work">Work</a>
-      <a href="#method" data-for="method">Method</a>
-      <a href="#clients" data-for="clients measure">Clients</a>
-      <a href="#contact" data-for="faq contact">Contact</a>
-    </nav>
-    <div class="top__end">
-      <a class="top__chat" href="#contact">Let’s chat <span aria-hidden="true">→</span></a>
-      <button class="top__menu" type="button" aria-expanded="false" aria-controls="menu"><span></span>Menu</button>
-    </div>
+    <a class="top__chat" href="#contact">Let’s chat <span aria-hidden="true">→</span></a>
   </header>
 
   <nav class="menu" id="menu" aria-label="Main" hidden>
@@ -253,7 +240,7 @@
     </section>
   </main>
 
-  <script src="water.js?v=62" defer></script>
-  <script src="app.js?v=62" defer></script>
+  <script src="water.js?v=63" defer></script>
+  <script src="app.js?v=63" defer></script>
 </body>
 </html>

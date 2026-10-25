@@ -56,9 +56,10 @@ h1, h2, h3, p { margin: 0; }
 
 /* Header */
 .top { position: fixed; inset: 0 0 auto; z-index: 40; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 18px var(--pad); }
-.top__logo { justify-self: start; }
-.top__end { grid-column: 3; justify-self: end; display: flex; align-items: center; gap: 24px; }
-.top__end .top__menu { display: none; }
+/* Header: Menu on the left, logo in the centre, Let's chat on the right. */
+.top__menu { justify-self: start; }
+.top__logo { justify-self: center; }
+.top__chat { justify-self: end; }
 .top__menu { display: inline-flex; align-items: center; gap: 12px; padding: 0; border: 0; background: none; color: inherit; font: 500 15px var(--sans); cursor: pointer; }
 .top__menu span, .top__menu span::before { display: block; width: 18px; height: 1.5px; background: currentColor; transition: transform 0.4s var(--ease); }
 .top__menu span { position: relative; }
@@ -316,6 +317,7 @@ h1, h2, h3, p { margin: 0; }
   .top__chat { font-size: 14px; }
   .hero__line--in2 { padding-left: 0.5em; } .hero__line--in1 { padding-left: 0.25em; }
   .hero__meta { flex-direction: column; align-items: flex-start; bottom: 90px; }
+  .hero__scroll { display: none; }
   .services__pin { grid-template-columns: 1fr; grid-template-rows: auto 1fr; padding-top: 110px; }
   .services__groups { grid-auto-flow: column; justify-content: start; gap: 18px; }
   .services__group { font-size: 16px; } .services__group.is-on span { font-size: 22px; }
@@ -406,76 +408,10 @@ body[data-section="clients"] .light { opacity: 1; }
 /* Clients note sits below the logo so it stays clear of the beam. */
 @media (min-width: 761px) { .clients__note { top: 74%; } }
 
-/* Liquid glass navigation bar: a thick clear pill that blurs and brightens the page behind it. Light catches a
-   gradient rim (bright top-left, glinting bottom-right), a curved sheen sits across the top, a soft light
-   follows the pointer through the glass, and a glass droplet slides to the active or hovered link. */
-.glassnav {
-  --nx: 50%; --nl: 0;
-  position: relative; display: flex; align-items: center; gap: 2px; padding: 6px;
-  border-radius: 999px;
-  /* A faint dark tint under the glass keeps the white links readable over light content. */
-  background:
-    radial-gradient(120% 140% at 50% 120%, rgba(120, 170, 255, 0.16), transparent 60%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03)), rgba(6, 14, 32, 0.3);
-  -webkit-backdrop-filter: blur(20px) saturate(200%) brightness(1.05);
-  backdrop-filter: blur(20px) saturate(200%) brightness(1.05);
-  box-shadow:
-    inset 0 1px 1px rgba(255, 255, 255, 0.5),
-    inset 0 -6px 14px -8px rgba(255, 255, 255, 0.28),
-    inset 0 10px 18px -12px rgba(255, 255, 255, 0.35),
-    0 1px 2px rgba(0, 0, 0, 0.25),
-    0 16px 40px -14px rgba(0, 0, 0, 0.55);
-  isolation: isolate;
-}
-/* Curved specular sheen across the top half of the glass. */
-.glassnav::before {
-  content: ""; position: absolute; inset: 2px 10px 52%; border-radius: 999px 999px 40% 40% / 999px 999px 100% 100%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0)); pointer-events: none; z-index: -1;
-}
-/* Gradient rim: a 1px edge that is bright where light hits (top left, bottom right) and nearly clear elsewhere. */
-.glassnav::after {
-  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
-  background: linear-gradient(120deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.12) 30%, rgba(255, 255, 255, 0.05) 60%, rgba(190, 215, 255, 0.6) 100%);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-}
-/* Light that follows the pointer through the glass. */
-.glassnav__light {
-  position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 0; opacity: var(--nl);
-  background: radial-gradient(90px 60px at var(--nx) 50%, rgba(255, 255, 255, 0.22), transparent 70%);
-  transition: opacity 0.4s;
-}
-.glassnav a {
-  position: relative; z-index: 1; padding: 9px 18px; border-radius: 999px;
-  font-size: 14px; font-weight: 500; letter-spacing: 0.01em; text-decoration: none; color: rgba(255, 255, 255, 0.78);
-  transition: color 0.3s var(--ease), text-shadow 0.3s var(--ease);
-}
-.glassnav a:hover, .glassnav a.is-on { color: #fff; text-shadow: 0 0 12px rgba(255, 255, 255, 0.45); }
-.glassnav a:focus-visible { outline: 2px solid rgba(255, 255, 255, 0.8); outline-offset: 2px; }
-/* The droplet: a lens of brighter glass with a highlight at the top and a light pooled along its bottom edge. */
-.glassnav__bubble {
-  position: absolute; left: 0; top: 6px; bottom: 6px; width: 0; border-radius: 999px; z-index: 0; pointer-events: none;
-  background: radial-gradient(80% 120% at 50% 110%, rgba(170, 205, 255, 0.35), transparent 60%), linear-gradient(180deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.1));
-  -webkit-backdrop-filter: blur(4px) saturate(160%) brightness(1.15);
-  backdrop-filter: blur(4px) saturate(160%) brightness(1.15);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.85), inset 0 -3px 8px rgba(255, 255, 255, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.25), 0 6px 16px -4px rgba(0, 0, 0, 0.35), 0 0 18px rgba(150, 190, 255, 0.25);
-  transition: transform 0.6s cubic-bezier(0.34, 1.4, 0.5, 1), width 0.6s cubic-bezier(0.34, 1.4, 0.5, 1), opacity 0.3s;
-  opacity: 0;
-}
-.glassnav__bubble::before { content: ""; position: absolute; left: 18%; right: 18%; top: 2px; height: 38%; border-radius: 999px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0)); }
-.glassnav__bubble.is-moving { animation: glass-squish 0.6s var(--ease); }
-@keyframes glass-squish { 35% { scale: 1.12 0.8; } 65% { scale: 0.96 1.06; } }
-/* Narrow screens: the bar is replaced by the Menu button. */
+/* Phones: the header gets its own frosted strip so it never collides with content scrolling under it. */
 @media (max-width: 900px) {
-  .glassnav { display: none; }
-  /* Phones: the header gets its own frosted strip so it never collides with content scrolling under it. */
   .top { background: linear-gradient(180deg, rgba(0, 11, 24, 0.5), rgba(0, 11, 24, 0.2)); -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%); box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.1); }
-  .top { grid-template-columns: 1fr auto; }
-  .top__end { grid-column: 2; }
-  .top__end .top__menu { display: inline-flex; }
-  .top__end { gap: 18px; }
 }
-@media (prefers-reduced-motion: reduce) { .glassnav__bubble { transition: none; } .glassnav__bubble.is-moving { animation: none; } }
 
 /* Under the logo: a faint pool of light on the floor, and a soft dark shadow beneath it. */
 .spot::before, .spot::after { content: ""; position: absolute; left: 50%; translate: -50% 0; pointer-events: none; border-radius: 50%; }
@@ -517,5 +453,3 @@ body.spot-on .spot__fixture { opacity: 1; scale: 1; transition: opacity 0.3s eas
 .spot__fin { fill: none; stroke: #5a3a40; stroke-width: 1.5; stroke-linecap: round; }
 .spot__lens { fill: #4a2a30; stroke: #8a6a70; stroke-width: 1.2; transition: fill 0.3s ease; }
 body.spot-on .spot__lens { fill: #fff6ef; filter: drop-shadow(0 0 8px rgba(255, 238, 228, 0.9)); transition: fill 0.3s ease 0.3s; }
-/* Over pale sections the glass takes a deeper blue tint so the white links stay readable. */
-body[data-fg="dark"] .glassnav { background: radial-gradient(120% 140% at 50% 120%, rgba(120, 170, 255, 0.2), transparent 60%), linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.02)), rgba(0, 38, 77, 0.55); }
