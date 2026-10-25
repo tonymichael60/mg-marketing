@@ -21,12 +21,21 @@
     if (i === activeSection) return;
     activeSection = i;
     const s = sections[i];
-    body.style.setProperty('--bg', s.dataset.bg);
     body.dataset.fg = s.dataset.fg;
     const [a1, a2, a3] = s.dataset.aura.split(',');
     body.style.setProperty('--a1', a1); body.style.setProperty('--a2', a2); body.style.setProperty('--a3', a3);
     indexItems.forEach((li, j) => li.classList.toggle('is-on', j === i));
   }
+
+  // Page gradient: each section's palette colour sits at that section's top; blends run between them.
+  function paintBg() {
+    const H = document.documentElement.scrollHeight;
+    const stops = sections.map(s => `${s.dataset.bg} ${Math.round(s.getBoundingClientRect().top + scrollY)}px`);
+    document.documentElement.style.backgroundImage = `linear-gradient(180deg, ${stops.join(', ')}, ${sections.at(-1).dataset.bg} ${H}px)`;
+  }
+  paintBg();
+  addEventListener('resize', paintBg);
+  addEventListener('load', paintBg);
 
   /* Rotating words */
   for (const r of $$('.rotator')) {
@@ -69,26 +78,6 @@
     scrollTo({ top: scrollY + r.top + span * i / (clientNames.length - 1), behavior: reduce ? 'auto' : 'smooth' });
   }));
 
-  /* Water ripple on the work images: the noise drifts slowly all the time; a project change sends a big
-     wave that settles over about a second, and the pointer stirs the surface while it moves over an image.
-     Runs only while the work section is on screen. */
-  const waterNoise = $('#water-noise'), waterMap = $('#water-map'), workMedia = $('.work__media');
-  let wave = 0, stir = 0, lastWork = -1, waterOn = false, waterT = 0;
-  workMedia.addEventListener('pointermove', () => { stir = Math.min(1, stir + 0.08); });
-  function water(now) {
-    if (!waterOn) return;
-    waterT = now / 1000;
-    wave *= 0.94; stir *= 0.96;
-    const bx = 0.008 + Math.sin(waterT * 0.6) * 0.0015, by = 0.02 + Math.cos(waterT * 0.45) * 0.004;
-    waterNoise.setAttribute('baseFrequency', `${bx.toFixed(4)} ${by.toFixed(4)}`);
-    waterMap.setAttribute('scale', (10 + wave * 50 + stir * 22).toFixed(1));
-    requestAnimationFrame(water);
-  }
-  if (!reduce) new IntersectionObserver(([e]) => {
-    if (e.isIntersecting && !waterOn) { waterOn = true; requestAnimationFrame(water); }
-    else if (!e.isIntersecting) waterOn = false;
-  }).observe(work);
-
   function frame() {
     ticking = false;
     let again = false;
@@ -115,7 +104,7 @@
     // Featured work: one project per quarter of the scroll.
     const wi = Math.min(workSets[0].length - 1, Math.floor(progress(work) * workSets[0].length));
     workSets.forEach(set => set.forEach((el, i) => el.classList.toggle('is-on', i === wi)));
-    if (wi !== lastWork) { if (lastWork !== -1) wave = 1; lastWork = wi; }
+    window.mgWater?.show(wi);
 
     // Method: s runs from -0.6 (heading only) to the last stage. Each stage's panels drift from below the
     // screen to above it while d = s - i goes from -0.8 to 1; the echo panel moves faster and further right.
