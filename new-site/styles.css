@@ -94,8 +94,9 @@ h1, h2, h3, p { margin: 0; }
 
 /* Sections */
 .sec { position: relative; min-height: 100vh; padding: 120px var(--pad); }
-[data-reveal] { opacity: 0; transform: translateY(40px); filter: blur(8px); transition: opacity 1s var(--ease), transform 1.1s var(--ease), filter 1s var(--ease); }
-[data-reveal].is-in { opacity: 1; transform: none; filter: none; }
+/* Reveal: fade and rise only (a blur here repainted the large type every frame and stuttered mid-scroll). */
+[data-reveal] { opacity: 0; transform: translateY(40px); transition: opacity 0.9s var(--ease), transform 1s var(--ease); }
+[data-reveal].is-in { opacity: 1; transform: none; }
 
 /* 1. Hero */
 .hero { display: grid; place-content: center; padding-top: 140px; }

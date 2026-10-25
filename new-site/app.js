@@ -209,6 +209,9 @@
     const l0 = fromSec.id === 'clients' ? 1 : 0, l1 = toSec.id === 'clients' ? 1 : 0;
     html.style.transition = 'none'; light.style.transition = 'none';
     if (dest >= 0) setSection(dest, true);
+    // Content of the destination starts revealing as the glide starts, so it settles together with the scroll
+    // instead of fading in after the page has stopped.
+    if (dest >= 0) $$('[data-reveal]', sections[dest]).forEach(el => el.classList.add('is-in'));
     gliding = { dest };
     const step = now => {
       const k = Math.min(1, (now - start) / duration), e = easeInOut(k);
