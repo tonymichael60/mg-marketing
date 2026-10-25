@@ -100,7 +100,7 @@
     wbItems.forEach((it, i) => it.classList.toggle('is-on', i === act));
     wbImgs.forEach((im, i) => { const d = i - act;
       im.style.transform = d < 0 ? `translateX(-120%) rotate(-10deg)` : `translate(${d * 14}px, ${d * -14}px) rotate(${d * 3}deg) scale(${1 - d * 0.05})`;
-      im.style.opacity = d < 0 || d > 2 ? 0 : 1; im.style.zIndex = 10 - Math.abs(d); });
+      im.style.opacity = d < 0 || d > 2 ? 0 : 1; im.style.zIndex = 10 - Math.abs(d); im.classList.toggle('is-on', d === 0); });
   }
 
 
@@ -146,11 +146,15 @@
     work: () => Array.from({ length: workCount }, (_, i) => (i + 0.5) / workCount),
     method: () => { const n = $$('.method__text').length; return [0, ...Array.from({ length: n }, (_, i) => (i + 0.6) / (n - 0.4))]; },
     clients: () => $$('.clients__names a').map((_, i, a) => i / (a.length - 1)),
+    // What we build: the opening, the statement, "deep groots", then each of the five systems (see buildFrame).
+    build: () => [0, 0.33, 0.6, ...$$('.wb-item').map((_, i, a) => 0.73 + (i + 0.5) * 0.25 / a.length)],
   };
+  // Sections where one gesture moves one stop; everywhere else the page scrolls normally.
+  const stepped = () => [work, build];
   const secTop = sec => sec.getBoundingClientRect().top + scrollY;
   function stops() {
     const out = [];
-    for (const sec of [work]) {
+    for (const sec of stepped()) {
       const top = secTop(sec), span = sec.offsetHeight - innerHeight;
       const steps = pinnedStops[sec.id];
       if (steps) out.push(...steps().map(p => top + span * p));
@@ -162,16 +166,19 @@
     }
     return [...new Set(out.map(Math.round))].sort((x, y) => x - y);
   }
-  // The page scrolls normally everywhere except while Work is pinned: there one gesture moves one project, and
-  // past the first or last project the page goes back to normal scrolling.
+  // Inside a stepped section one gesture moves one stop; past its first or last stop (and everywhere else) the
+  // page scrolls normally.
   function inFreeZone(y, dir) {
-    const top = secTop(work), span = work.offsetHeight - innerHeight;
-    if (y < top - 4 || y > top + span + 4) return true;
-    const first = top + span * 0.5 / workCount, last = top + span * (workCount - 0.5) / workCount;
-    return dir > 0 ? y >= last - 4 : y <= first + 4;
+    for (const sec of stepped()) {
+      const top = secTop(sec), span = sec.offsetHeight - innerHeight;
+      if (y < top - 4 || y > top + span + 4) continue;
+      const pts = pinnedStops[sec.id]().map(p => top + span * p), first = pts[0], last = pts.at(-1);
+      return dir > 0 ? y >= last - 4 : y <= first + 4;
+    }
+    return true;
   }
   let gliding = null, stepLock = 0;
-  // A gesture is a run of wheel events less than 120ms apart. Only the gesture that started a Work step may
+  // A gesture is a run of wheel events less than 180ms apart. Only the gesture that started a Work step may
   // stretch its hold; a new gesture during the hold is ignored but does not extend it, so scrolling never sticks.
   let lastWheel = 0, sameGesture = false, holdGesture = false;
   const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -244,11 +251,20 @@
   const stopSmooth = () => { smoothTarget = null; };
   addEventListener('wheel', e => {
     if (e.ctrlKey || Math.abs(e.deltaY) < 2) return;
-    const now = performance.now(); sameGesture = now - lastWheel < 120; lastWheel = now;
+    const now = performance.now(); sameGesture = now - lastWheel < 180; lastWheel = now;
     if (pageStep(e.deltaY > 0 ? 1 : -1)) { e.preventDefault(); return; }
     if (reduce || !menu.hidden) return;
     e.preventDefault();
-    smoothTo((smoothTarget ?? scrollY) + (e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY));
+    const from = smoothTarget ?? scrollY;
+    let to = from + (e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY);
+    // Normal scrolling stops exactly at a stepped section's first stop (going down) or last stop (going up), so
+    // its first scene is never skipped; the next gesture then steps.
+    for (const sec of stepped()) {
+      const top = secTop(sec), span = sec.offsetHeight - innerHeight, pts = pinnedStops[sec.id]().map(q => Math.round(top + span * q));
+      if (to > from && from < pts[0] - 1 && to > pts[0]) { to = pts[0]; holdGesture = true; stepLock = performance.now() + 500; }
+      if (to < from && from > pts.at(-1) + 1 && to < pts.at(-1)) { to = pts.at(-1); holdGesture = true; stepLock = performance.now() + 500; }
+    }
+    smoothTo(to);
   }, { passive: false });
   let touchY = null, touchUsed = false, touchFree = false;
   addEventListener('touchstart', e => { touchY = e.touches[0].clientY; touchUsed = false; touchFree = false; }, { passive: true });

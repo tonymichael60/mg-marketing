@@ -230,7 +230,9 @@ h1, h2, h3, p { margin: 0; }
 .wb-big--ink { color: var(--blue); font-size: clamp(52px, 6vw, 104px); }
 .wb-s4__head p { max-width: 30ch; margin-top: 22px; font-size: 16px; line-height: 1.5; color: rgba(0, 38, 77, 0.75); }
 .wb-stack { position: relative; aspect-ratio: 4 / 5; width: 100%; max-width: 380px; justify-self: center; }
-.wb-stack img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 22px; box-shadow: 0 30px 60px -24px rgba(0, 38, 77, 0.55); transition: transform 0.8s var(--ease), opacity 0.6s; }
+.wb-stack img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 22px; box-shadow: 0 30px 60px -24px rgba(0, 38, 77, 0.55); transition: transform 0.8s var(--ease), opacity 0.6s, filter 0.7s var(--ease); filter: grayscale(1) brightness(0.92); }
+/* Only the picture in front (the active system) is in colour; the others and the one leaving are black and white. */
+.wb-stack img.is-on { filter: none; }
 .wb-list { margin: 0; padding: 0; list-style: none; display: grid; gap: 14px; }
 .wb-item h4 { margin: 0; font-family: "Anton", "Urbanist", sans-serif; font-weight: 400; text-transform: uppercase; font-size: clamp(22px, 2vw, 32px); line-height: 1; color: rgba(0, 82, 162, 0.35); transition: color 0.4s; }
 .wb-tags { display: flex; flex-wrap: wrap; gap: 6px; max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.6s var(--ease), opacity 0.4s, margin 0.6s var(--ease); }
