@@ -459,7 +459,7 @@ body[data-section="clients"] .light { opacity: 1; }
 .spot::before { bottom: -46px; width: 140%; height: 70px; background: radial-gradient(closest-side, rgba(255, 238, 232, 0.14), rgba(255, 238, 232, 0)); }
 .spot::after { bottom: -18px; width: 70%; height: 26px; background: radial-gradient(closest-side, rgba(10, 2, 6, 0.55), rgba(10, 2, 6, 0)); }
 
-/* Spotlight switch: off until Clients is the active section. Turning on, the lamp flickers to life, then the
+/* Spotlight switch: off until the page has settled on Clients (body.spot-on, set by app.js). Turning on, the lamp flickers to life, then the
    beam pours down from it, the floor glow comes up and the logo lights; leaving, the beam pulls back up into
    the lamp and the lamp fades out. */
 .spot__beam, .spot__core, .spot__dust { transform-origin: 50% 0; scale: 1 0; opacity: 0;
@@ -469,11 +469,26 @@ body[data-section="clients"] .light { opacity: 1; }
 .clients__logos img { transition: opacity 0.5s, transform 0.6s var(--ease), filter 0.6s ease; }
 .clients__logos img.is-on { opacity: 0.12; filter: brightness(0) invert(1); }
 
-body[data-section="clients"] .spot__lamp { opacity: 1; box-shadow: 0 0 30px 8px rgba(255, 240, 230, 0.35); animation: spot-flicker 0.6s steps(1) both; transition: none; }
-body[data-section="clients"] .spot__beam, body[data-section="clients"] .spot__core, body[data-section="clients"] .spot__dust {
+body.spot-on .spot__lamp { opacity: 1; box-shadow: 0 0 30px 8px rgba(255, 240, 230, 0.35); animation: spot-flicker 0.6s steps(1) both; transition: none; }
+body.spot-on .spot__beam, body.spot-on .spot__core, body.spot-on .spot__dust {
   scale: 1 1; opacity: 1; transition: scale 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.55s, opacity 0.5s ease 0.55s; }
-body[data-section="clients"] .spot__dust { opacity: 0.55; }
-body[data-section="clients"] .spot::before, body[data-section="clients"] .spot::after { opacity: 1; transition: opacity 0.8s ease 1.1s; }
-body[data-section="clients"] .clients__logos img.is-on { opacity: 1; filter: brightness(0) invert(1) drop-shadow(0 0 18px rgba(255, 244, 236, 0.55)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.6)); transition: opacity 0.6s ease 0.9s, transform 0.6s var(--ease), filter 0.8s ease 0.9s; }
+body.spot-on .spot__dust { opacity: 0.55; }
+body.spot-on .spot::before, body.spot-on .spot::after { opacity: 1; transition: opacity 0.8s ease 1.1s; }
+body.spot-on .clients__logos img.is-on { opacity: 1; filter: brightness(0) invert(1) drop-shadow(0 0 18px rgba(255, 244, 236, 0.55)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.6)); transition: opacity 0.6s ease 0.9s, transform 0.6s var(--ease), filter 0.8s ease 0.9s; }
 @keyframes spot-flicker { 0% { opacity: 0; } 12% { opacity: 1; } 22% { opacity: 0.15; } 36% { opacity: 0.9; } 46% { opacity: 0.3; } 60%, 100% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .spot__lamp { animation: none !important; } }
+
+/* Switching on glitches: once the beam has poured down it stutters a few times, and the logo jitters with a
+   split-colour flicker before it settles. */
+body.spot-on .spot__beam, body.spot-on .spot__core { animation: spot-glitch 0.9s steps(1) 1.1s both; }
+body.spot-on .clients__logos img.is-on { animation: logo-glitch 0.7s steps(1) 1.2s both; }
+@keyframes spot-glitch { 0% { opacity: 1; } 10% { opacity: 0.15; } 18% { opacity: 0.95; } 26% { opacity: 0.05; } 34% { opacity: 0.8; } 44% { opacity: 0.3; } 52%, 100% { opacity: 1; } }
+@keyframes logo-glitch {
+  0% { translate: 0 0; opacity: 1; }
+  12% { translate: -6px 1px; opacity: 0.4; filter: brightness(0) invert(1) drop-shadow(5px 0 0 rgba(255, 60, 90, 0.8)) drop-shadow(-5px 0 0 rgba(80, 200, 255, 0.8)); }
+  24% { translate: 4px -2px; opacity: 1; }
+  36% { translate: 0 0; opacity: 0.2; }
+  48% { translate: -3px 0; opacity: 1; filter: brightness(0) invert(1) drop-shadow(-4px 0 0 rgba(255, 60, 90, 0.7)) drop-shadow(4px 0 0 rgba(80, 200, 255, 0.7)); }
+  60%, 100% { translate: 0 0; opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) { body.spot-on .spot__beam, body.spot-on .spot__core, body.spot-on .clients__logos img.is-on { animation: none; } }

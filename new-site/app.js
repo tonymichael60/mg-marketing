@@ -222,7 +222,7 @@
       // Update the pinned animations in this same frame, so they never trail the scroll by a frame.
       frame();
       if (k < 1) requestAnimationFrame(step);
-      else { gliding = null; html.style.transition = ''; light.style.transition = ''; light.style.opacity = ''; }
+      else { gliding = null; html.style.transition = ''; light.style.transition = ''; light.style.opacity = ''; frame(); }
     };
     requestAnimationFrame(step);
   }
@@ -277,9 +277,25 @@
       swallow = true; swallowDir = dir;
       return;
     }
+    // Method → Clients: scrolling down stops at Bloom (the end of Method) and holds for the rest of that gesture;
+    // the next fresh scroll glides to the start of Clients.
+    const y = smoothTarget ?? scrollY, dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+    const bloom = Math.round(secTop(method) + method.offsetHeight - innerHeight), clientsTop = Math.round(secTop(clients));
+    if (dir > 0 && Math.abs(y - bloom) < 6 && !sameGesture) {
+      e.preventDefault();
+      if (reduce) scrollTo({ top: clientsTop, behavior: 'instant' }); else glide(clientsTop, 1100);
+      swallow = true; swallowDir = dir;
+      return;
+    }
+    if (dir > 0 && y < bloom - 1 && y + dy > bloom) {
+      e.preventDefault();
+      if (reduce) scrollTo({ top: bloom, behavior: 'instant' }); else smoothTo(bloom);
+      swallow = true; swallowDir = dir;
+      return;
+    }
     if (reduce) return;
     e.preventDefault();
-    smoothTo((smoothTarget ?? scrollY) + (e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY));
+    smoothTo(y + dy);
   }, { passive: false });
   const clients = $('.clients'), clientNames = $$('.clients__names a'), clientLogos = $$('.clients__logos img');
   const method = $('.method'), methodTitle = $('.method__title'), mFrames = $$('.frame'), mTexts = $$('.method__text'), mRoll = $('.method__num-roll'), mNum = $('.method__num');
@@ -361,6 +377,9 @@
       n.style.transform = `rotate(${d * 13}deg)`;
       n.style.opacity = a > 4 ? 0 : String(Math.max(0.12, 1 - a * (d < 0 ? 0.22 : 0.3)));
     });
+    // The spotlight only switches on once the page has settled on Clients (pinned, not mid-glide).
+    const cr = clients.getBoundingClientRect();
+    body.classList.toggle('spot-on', !gliding && cr.top <= 2 && cr.bottom >= innerHeight - 2);
     const ci = Math.round(eased.clients);
     clientLogos.forEach((img, i) => img.classList.toggle('is-on', i === ci));
 
