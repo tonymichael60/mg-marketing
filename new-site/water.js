@@ -1,6 +1,7 @@
 // Water effect for the Featured Work images: a WebGL canvas draws the current project image through a
 // moving liquid surface (smooth noise displacement plus a light caustic sheen). Changing project melts the
-// old image into the new one through the same surface; the pointer leaves a ripple ring as it moves.
+// old image into the new one through the same surface; the pointer leaves a ripple ring as it moves. The image
+// is black and white until hovered, then fades to its original colour (and back when the pointer leaves).
 // Exposes window.mgWater = { show(index) }. If WebGL is unavailable the plain <img> elements stay visible.
 (() => {
   const host = document.querySelector('.work__media');
@@ -17,7 +18,7 @@
 varying vec2 vUv;
 uniform sampler2D uA, uB;
 uniform vec2 uResA, uResB, uCanvas, uMouse;
-uniform float uTime, uMix, uWave, uStir;
+uniform float uTime, uMix, uWave, uStir, uColor;
 // Smooth value noise (bilinear with smoothstep), cheap and free of pixel stepping.
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float noise(vec2 p) {
@@ -48,6 +49,7 @@ void main() {
   vec4 a = texture2D(uA, cover(uv + offset + flow * uMix * 0.15, uResA));
   vec4 b = texture2D(uB, cover(uv + offset - flow * (1.0 - uMix) * 0.15, uResB));
   vec4 col = mix(b, a, edge);
+  col.rgb = mix(vec3(dot(col.rgb, vec3(0.299, 0.587, 0.114))), col.rgb, uColor);
   // Caustic sheen: soft light bands that move with the flow.
   float caustic = pow(fbm(uv * 6.0 + flow * 4.0 + t * 1.5), 3.0);
   col.rgb += caustic * 0.18;
@@ -66,7 +68,7 @@ void main() {
   gl.enableVertexAttribArray(loc);
   gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   const u = {};
-  for (const n of ['uA', 'uB', 'uResA', 'uResB', 'uCanvas', 'uMouse', 'uTime', 'uMix', 'uWave', 'uStir']) u[n] = gl.getUniformLocation(prog, n);
+  for (const n of ['uA', 'uB', 'uResA', 'uResB', 'uCanvas', 'uMouse', 'uTime', 'uMix', 'uWave', 'uStir', 'uColor']) u[n] = gl.getUniformLocation(prog, n);
   gl.uniform1i(u.uA, 0);
   gl.uniform1i(u.uB, 1);
 
@@ -91,7 +93,7 @@ void main() {
     });
   }
 
-  let from = 0, to = 0, mix = 1, wave = 0, stir = 0, mouse = [0.5, 0.5], running = false, transStart = 0;
+  let from = 0, to = 0, mix = 1, wave = 0, stir = 0, colour = 0, hovered = false, mouse = [0.5, 0.5], running = false, transStart = 0;
   const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   function resize() {
     const r = host.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
@@ -107,6 +109,8 @@ void main() {
       if (k >= 1) { from = to; mix = 1; wave = 0; }
     }
     stir *= 0.965;
+    colour += ((hovered ? 1 : 0) - colour) * 0.09;
+    gl.uniform1f(u.uColor, colour);
     // Bind "from" to unit 0 and "to" to unit 1; the shader shows A where the edge has not yet passed.
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, textures[from]);
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, textures[to]);
@@ -133,6 +137,8 @@ void main() {
       else if (!e.isIntersecting) running = false;
     }).observe(host);
   });
+  host.addEventListener('pointerenter', () => { hovered = true; });
+  host.addEventListener('pointerleave', () => { hovered = false; });
   host.addEventListener('pointermove', e => {
     const r = host.getBoundingClientRect();
     mouse = [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height];
