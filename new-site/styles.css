@@ -312,3 +312,11 @@ h1, h2, h3, p { margin: 0; }
 .light::after { content: ""; position: absolute; inset: 0;
   background: radial-gradient(120% 95% at 50% 50%, rgba(12, 2, 6, 0) 55%, rgba(12, 2, 6, 0.5) 100%); }
 body[data-section="clients"] .light { opacity: 1; }
+
+/* Results rows slide in one after another on arrival. */
+.measure__list li[data-reveal] { transform: translateX(-60px); transition: opacity 0.9s var(--ease), transform 1s var(--ease), filter 0.9s var(--ease); }
+.measure__list li[data-reveal].is-in { transform: none; }
+.measure__list li:nth-child(2) { transition-delay: 0.15s; }
+.measure__list li:nth-child(3) { transition-delay: 0.3s; }
+.measure__list li:nth-child(4) { transition-delay: 0.45s; }
+.measure__list.has-focus li { transition-delay: 0s; }

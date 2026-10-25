@@ -134,7 +134,7 @@
     if (!menu.hidden) return false;
     // While a step is held, events that keep arriving (a long flick or trackpad inertia) extend the hold, so one
     // gesture can never move two steps.
-    if (gliding || performance.now() < stepLock) { stepLock = Math.max(stepLock, performance.now() + 220); return true; }
+    if (gliding || performance.now() < stepLock) { stepLock = Math.max(stepLock, performance.now() + 300); return true; }
     const y = scrollY;
     if (inFreeZone(y, dir)) return false;
     const list = stops();
@@ -150,13 +150,14 @@
      of a section stops exactly at that start and holds for a moment (the rest of the gesture, including trackpad
      inertia, is ignored). The next gesture scrolls on normally. */
   const PAUSE = 700;
-  let pauseUntil = 0, pausedAt = null, lastWheel = 0;
+  let pauseUntil = 0, pauseHold = 0, pausedAt = null, lastWheel = 0;
   function sectionPause(e) {
     const now = performance.now(), gap = now - lastWheel;
     lastWheel = now;
     if (now < pauseUntil) {
       // Still inside the gesture that hit the boundary: keep holding while its events keep arriving.
-      if (gap < 120) pauseUntil = now + 220;
+      // The hold counts from the end of the gesture: continuing events push it out by the full pause.
+      if (gap < 120) pauseUntil = Math.max(pauseUntil, now + pauseHold);
       return true;
     }
     const y = scrollY, dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
@@ -165,7 +166,10 @@
     if (hit === undefined || hit === pausedAt) return false;
     pausedAt = hit;
     scrollTo({ top: hit, behavior: 'instant' });
-    pauseUntil = now + PAUSE;
+    // A section can ask for a longer hold (data-pause, in ms), e.g. Results, which is easy to scroll past.
+    const sec = sections.find(s2 => Math.round(secTop(s2)) === hit);
+    pauseHold = +sec?.dataset.pause || PAUSE;
+    pauseUntil = now + pauseHold;
     return true;
   }
   addEventListener('scroll', () => { if (pausedAt !== null && Math.abs(scrollY - pausedAt) > innerHeight * 0.5) pausedAt = null; }, { passive: true });
@@ -216,7 +220,10 @@
     if (!gliding) sections.forEach((s, i) => { const r = s.getBoundingClientRect(); if (r.top <= mid && r.bottom > mid) setSection(i); });
 
     // Reveals
-    for (const el of $$('[data-reveal]:not(.is-in)')) if (el.getBoundingClientRect().top < innerHeight * 0.88) el.classList.add('is-in');
+    for (const el of $$('[data-reveal]:not(.is-in)')) if (!el.closest('.measure__list') && el.getBoundingClientRect().top < innerHeight * 0.88) el.classList.add('is-in');
+    // Results rows come in one after another once the section has arrived (top in the upper third), so the
+    // stop there is noticed.
+    if (measure.getBoundingClientRect().top < innerHeight * 0.35) $$('li', measure).forEach(li => li.classList.add('is-in'));
 
     // Services: the list slides up; the centred discipline is full strength, its group label lit.
     // Services track the scroll closely (light smoothing only), so the list never trails behind the page.
