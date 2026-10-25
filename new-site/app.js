@@ -127,8 +127,9 @@
     const r = wbPhoto.getBoundingClientRect();
     const ins = [r.top, vw - r.right, vh - r.bottom, r.left].map(v => (Math.max(0, v) * (1 - g)).toFixed(1));
     wbPanel.style.clipPath = `inset(${ins[0]}px ${ins[1]}px ${ins[2]}px ${ins[3]}px round ${(22 * (1 - g)).toFixed(1)}px)`;
-    wbPanel.style.opacity = p < 0.08 ? 0 : 1;
     zoomFrame(g, r, vw, vh);
+    // The navy panel sits above the photo, so it only appears once the tiles have taken the photo's place.
+    wbPanel.style.opacity = g > 0.001 && (zoomTiles.length || g > 0.5) ? 1 : 0;
     wbS1.style.opacity = 1 - seg(p, 0.16, 0.2);
     // 2: statement lines rise in one after another, then lift away.
     wbSay.forEach((l, i) => { const t = smooth(seg(p, 0.21 + i * 0.04, 0.27 + i * 0.04)), out = seg(p, 0.42, 0.48);
