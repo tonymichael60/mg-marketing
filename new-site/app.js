@@ -138,11 +138,14 @@
     // 4: the systems list; the active one follows the scroll, its picture comes to the front of the stack.
     const s4 = seg(p, 0.68, 0.73);
     wbS4.style.opacity = s4; wbS4.style.transform = `translateY(${(1 - s4) * 40}px)`; wbS4.style.pointerEvents = s4 > 0.5 ? '' : 'none';
-    const act = Math.min(wbItems.length - 1, Math.floor(seg(p, 0.73, 0.98) * wbItems.length));
+    // Continuous position through the five systems (a = 0..4): the stack moves with the scroll itself (no CSS
+    // transitions to lag behind), the front picture is in colour and fades to black and white as it leaves.
+    const a = seg(p, 0.74, 0.97) * (wbItems.length - 1), act = Math.round(a);
     wbItems.forEach((it, i) => it.classList.toggle('is-on', i === act));
-    wbImgs.forEach((im, i) => { const d = i - act;
-      im.style.transform = d < 0 ? `translateX(-120%) rotate(-10deg)` : `translate(${d * 14}px, ${d * -14}px) rotate(${d * 3}deg) scale(${1 - d * 0.05})`;
-      im.style.opacity = d < 0 || d > 2 ? 0 : 1; im.style.zIndex = 10 - Math.abs(d); im.classList.toggle('is-on', d === 0); });
+    wbImgs.forEach((im, i) => { const d = i - a;
+      if (d < 0) { im.style.transform = `translate(${d * 55}%, ${d * -30}px) rotate(${d * 10}deg) scale(${1 + d * 0.08})`; im.style.opacity = clamp(1 + d * 2, 0, 1); im.style.zIndex = 20; }
+      else { im.style.transform = `translate(${d * 14}px, ${d * -14}px) rotate(${d * 3}deg) scale(${1 - d * 0.05})`; im.style.opacity = clamp(3 - d, 0, 1); im.style.zIndex = 10 - Math.round(d * 2); }
+      im.style.filter = `grayscale(${clamp(Math.abs(d) * 1.6, 0, 1).toFixed(2)}) brightness(${(1 - clamp(Math.abs(d), 0, 1) * 0.08).toFixed(3)})`; });
   }
 
 
@@ -188,11 +191,9 @@
     work: () => Array.from({ length: workCount }, (_, i) => (i + 0.5) / workCount),
     method: () => { const n = $$('.method__text').length; return [0, ...Array.from({ length: n }, (_, i) => (i + 0.6) / (n - 0.4))]; },
     clients: () => $$('.clients__names a').map((_, i, a) => i / (a.length - 1)),
-    // What we build: the opening, the statement, "deep groots", then each of the five systems (see buildFrame).
-    build: () => [0, 0.33, 0.6, ...$$('.wb-item').map((_, i, a) => 0.73 + (i + 0.5) * 0.25 / a.length)],
   };
   // Sections where one gesture moves one stop; everywhere else the page scrolls normally.
-  const stepped = () => [work, build];
+  const stepped = () => [work];
   const secTop = sec => sec.getBoundingClientRect().top + scrollY;
   function stops() {
     const out = [];
