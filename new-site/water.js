@@ -109,6 +109,8 @@ void main() {
       if (k >= 1) { from = to; mix = 1; wave = 0; }
     }
     stir *= 0.965;
+    if (pointer) { const r = host.getBoundingClientRect(); hovered = pointer[0] >= r.left && pointer[0] <= r.right && pointer[1] >= r.top && pointer[1] <= r.bottom; }
+    else hovered = false;
     colour += ((hovered ? 1 : 0) - colour) * 0.09;
     gl.uniform1f(u.uColor, colour);
     // Bind "from" to unit 0 and "to" to unit 1; the shader shows A where the edge has not yet passed.
@@ -137,8 +139,13 @@ void main() {
       else if (!e.isIntersecting) running = false;
     }).observe(host);
   });
-  host.addEventListener('pointerenter', () => { hovered = true; });
-  host.addEventListener('pointerleave', () => { hovered = false; });
+  // Hover is decided every frame from the last known pointer position, not from enter/leave events: those do
+  // not fire when the page scrolls the image under a resting cursor (Safari), which left the image grey.
+  let pointer = null;
+  addEventListener('pointermove', e => { if (e.pointerType === 'mouse') pointer = [e.clientX, e.clientY]; }, { passive: true });
+  addEventListener('pointerdown', e => { pointer = [e.clientX, e.clientY]; }, { passive: true });
+  addEventListener('pointerup', e => { if (e.pointerType !== 'mouse') pointer = null; }, { passive: true });
+  document.addEventListener('mouseleave', () => { pointer = null; });
   host.addEventListener('pointermove', e => {
     const r = host.getBoundingClientRect();
     mouse = [(e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height];

@@ -70,6 +70,44 @@
   /* Pinned sections */
   const svc = $('.services'), svcItems = $$('.services__list li'), svcGroups = $$('.services__group');
   const work = $('.work'), workSets = ['.work__titles h3', '.work__media img', '.work__tags ul', '.work__thumbs li'].map(s => $$(s));
+
+  /* Work stepping: while the Work section is pinned, one scroll gesture (wheel, trackpad or swipe) moves
+     exactly one project and waits for the water transition to finish. Before the first project and after
+     the last one, scrolling carries on normally. */
+  const workCount = workSets[0].length;
+  const workSpan = () => work.offsetHeight - innerHeight;
+  const workTop = () => work.getBoundingClientRect().top + scrollY;
+  // Each project owns an equal slice of the section's scroll; it is shown from the middle of its slice.
+  const workY = i => workTop() + workSpan() * (i + 0.5) / workCount;
+  const workIndex = () => Math.min(workCount - 1, Math.floor(progress(work) * workCount));
+  const workPinned = () => { const r = work.getBoundingClientRect(); return r.top <= 1 && r.bottom >= innerHeight - 1; };
+  let stepLock = 0;
+  // Returns true when the gesture was used to step (so the page should not scroll by itself).
+  function workStep(dir) {
+    if (!workPinned()) return false;
+    const i = workIndex(), next = i + dir;
+    if (next < 0 || next >= workCount) return false;
+    if (performance.now() < stepLock) return true;
+    stepLock = performance.now() + 1300;
+    scrollTo({ top: workY(next), behavior: reduce ? 'auto' : 'smooth' });
+    return true;
+  }
+  addEventListener('wheel', e => {
+    if (Math.abs(e.deltaY) < 2) return;
+    if (workStep(e.deltaY > 0 ? 1 : -1)) e.preventDefault();
+  }, { passive: false });
+  let touchY = null, touchUsed = false;
+  addEventListener('touchstart', e => { touchY = e.touches[0].clientY; touchUsed = false; }, { passive: true });
+  addEventListener('touchmove', e => {
+    if (touchY === null) return;
+    const dy = touchY - e.touches[0].clientY;
+    if (!workPinned()) return;
+    const dir = dy > 0 ? 1 : -1, next = workIndex() + dir;
+    if (next < 0 || next >= workCount) return;
+    e.preventDefault();
+    if (!touchUsed && Math.abs(dy) > 30) { touchUsed = true; workStep(dir); }
+  }, { passive: false });
+  addEventListener('touchend', () => { touchY = null; });
   const clients = $('.clients'), clientNames = $$('.clients__names a'), clientLogos = $$('.clients__logos img');
   const method = $('.method'), methodTitle = $('.method__title'), mFrames = $$('.frame'), mTexts = $$('.method__text'), mRoll = $('.method__num-roll'), mNum = $('.method__num');
   const build = $('.build'), buildRow = $('.build__row'), cards = $$('.card');
