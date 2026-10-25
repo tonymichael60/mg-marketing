@@ -193,7 +193,7 @@ h1, h2, h3, p { margin: 0; }
 .clients__pin { position: sticky; top: 0; height: 100vh; overflow: hidden; }
 .clients__names { position: absolute; left: 24%; top: 50%; width: 0; height: 0; }
 .clients__names a { position: absolute; left: 0; top: 0; translate: 0 -50%; white-space: nowrap; font-size: clamp(36px, 5vw, 76px); line-height: 1.1; font-weight: 700; letter-spacing: -0.045em; text-decoration: none; will-change: transform, opacity; }
-.clients__logos { position: absolute; left: 62%; top: 50%; width: 280px; height: 170px; translate: 0 -50%; --spot-h: calc(50vh + 85px); /* beam reaches from the screen top to the logo */ }
+.clients__logos { position: absolute; left: 62%; top: 50%; width: 280px; height: 170px; translate: 0 -50%; --spot-h: calc(50vh + 85px - 120px); /* beam from a lamp below the nav bar down to the logo */ }
 .clients__logos img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transform: translateY(14px); transition: opacity 0.5s, transform 0.6s var(--ease); }
 .clients__logos img.is-on { opacity: 0.9; transform: none; }
 .clients__note { position: absolute; right: var(--pad); top: 50%; translate: 0 -50%; width: min(300px, 22vw); font-size: 16px; line-height: 1.55; color: var(--muted); }
@@ -327,7 +327,7 @@ h1, h2, h3, p { margin: 0; }
   .frame--main { left: 24%; width: 46vw; } .frame--echo { left: 58%; width: 32vw; }
   .clients__names { left: 8%; top: 38%; }
   .clients__names a { font-size: 32px; }
-  .clients__logos { left: var(--pad); top: auto; bottom: 170px; translate: none; width: 190px; height: 110px; --spot-h: calc(100vh - 170px); }
+  .clients__logos { left: var(--pad); top: auto; bottom: 170px; translate: none; width: 190px; height: 110px; --spot-h: calc(100vh - 170px - 110px); }
   .clients__note { top: auto; bottom: 60px; left: var(--pad); width: auto; translate: none; }
   .measure, .faq, .contact { grid-template-columns: 1fr; }
   .faq__title { position: static; }
@@ -487,3 +487,12 @@ body.spot-on .spot__beam, body.spot-on .spot__core, body.spot-on .clients__logos
   30% { opacity: 0.55; } 33% { opacity: 1; } 52% { opacity: 0.7; } 55%, 100% { opacity: 1; } }
 @keyframes spot-flicker-idle { 0%, 90%, 100% { opacity: 1; } 91% { opacity: 0.6; } 92% { opacity: 1; } 93.5% { opacity: 0.78; } 95% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { body.spot-on .spot__beam, body.spot-on .spot__core, body.spot-on .clients__logos img.is-on { animation: none; } }
+
+/* The lamp fixture: a small spotlight housing hanging above the lens, always visible (dark when off), so the
+   light has a source on screen. */
+.spot__fixture { position: absolute; left: 50%; top: calc(100% - var(--spot-h, 100vh)); width: 58px; height: 40px; translate: -50% -100%;
+  border-radius: 14px 14px 6px 6px; background: linear-gradient(90deg, #2a1418, #6a4a50 45%, #3a1e24 70%, #1c0c10);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 6px 14px rgba(0, 0, 0, 0.5); }
+.spot__fixture::before { content: ""; position: absolute; left: 50%; bottom: 100%; width: 2px; height: 60px; translate: -50% 0; background: linear-gradient(transparent, #4a2a30); }
+.spot__fixture::after { content: ""; position: absolute; left: -4px; right: -4px; bottom: -4px; height: 8px; border-radius: 50%; background: linear-gradient(#5a3a40, #241014); }
+body.spot-on .spot__fixture::after { background: linear-gradient(#fff6ef, #f3d6cc); box-shadow: 0 0 22px 6px rgba(255, 238, 228, 0.55); transition: background 0.3s ease 0.3s, box-shadow 0.3s ease 0.3s; }
