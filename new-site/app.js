@@ -23,24 +23,12 @@
     const s = sections[i];
     body.dataset.fg = s.dataset.fg;
     body.dataset.section = s.id;
+    document.documentElement.style.backgroundColor = s.dataset.bg;
     const [a1, a2, a3] = s.dataset.aura.split(',');
     body.style.setProperty('--a1', a1); body.style.setProperty('--a2', a2); body.style.setProperty('--a3', a3);
     indexItems.forEach((li, j) => li.classList.toggle('is-on', j === i));
   }
 
-  // Page gradient: each section holds its own colour from its top until the last 30% of a screen above its
-  // bottom, then blends into the next section's colour.
-  function paintBg() {
-    const H = document.documentElement.scrollHeight, blend = innerHeight * 0.3;
-    const stops = sections.flatMap(s => {
-      const r = s.getBoundingClientRect(), top = Math.round(r.top + scrollY), hold = Math.round(Math.max(top, r.bottom + scrollY - blend));
-      return [`${s.dataset.bg} ${top}px`, `${s.dataset.bg} ${hold}px`];
-    });
-    document.documentElement.style.backgroundImage = `linear-gradient(180deg, ${stops.join(', ')}, ${sections.at(-1).dataset.bg} ${H}px)`;
-  }
-  paintBg();
-  addEventListener('resize', paintBg);
-  addEventListener('load', paintBg);
 
   /* Rotating words */
   for (const r of $$('.rotator')) {
@@ -69,25 +57,29 @@
 
   /* Pinned sections */
   const svc = $('.services'), svcItems = $$('.services__list li'), svcGroups = $$('.services__group');
+  const build = $('.build'), buildRow = $('.build__row'), cards = $$('.card');
   const work = $('.work'), workSets = ['.work__titles h3', '.work__media img', '.work__tags ul', '.work__thumbs li'].map(s => $$(s));
 
-  /* Page stepping: one scroll gesture (wheel, trackpad, swipe or key) moves to the next stop and waits for the
-     move to finish. Stops are each section's top, every step inside the pinned sections (services, projects,
-     method stages, clients, card rows), and about a screen at a time through sections taller than the screen.
-     Stops are worked out on each gesture, so they stay right after resizes or opened FAQ answers. */
+  /* Page stepping: one scroll gesture (wheel, trackpad, swipe or key) glides to the next stop with our own eased
+     scroll, so the pinned animations and the background colour change move in step with it. Stops are each
+     section's top, every step in the pinned sections (projects, method stages, clients), and about a screen at
+     a time through sections taller than the screen. Services scroll freely between their first and last
+     discipline; What we build is a single glide from the first card to the last. Stops are worked out on each
+     gesture, so they stay right after resizes or opened FAQ answers. */
   const workCount = workSets[0].length;
   const pinnedStops = {
-    // Each value lists progress points (0..1 through the section's scroll span) where a step is centred.
-    services: () => $$('.services__list li').map((_, i, a) => i / (a.length - 1)),
+    // Progress points (0..1 through the section's scroll span) where the page settles.
+    services: () => [0, 1],
     work: () => Array.from({ length: workCount }, (_, i) => (i + 0.5) / workCount),
     method: () => { const n = $$('.method__text').length; return [0, ...Array.from({ length: n }, (_, i) => (i + 0.6) / (n - 0.4))]; },
     clients: () => $$('.clients__names a').map((_, i, a) => i / (a.length - 1)),
-    build: () => [0, 0.33, 0.66, 1],
+    build: () => [0, 1],
   };
+  const secTop = sec => sec.getBoundingClientRect().top + scrollY;
   function stops() {
     const out = [];
     for (const sec of sections) {
-      const top = sec.getBoundingClientRect().top + scrollY, h = sec.offsetHeight, span = h - innerHeight;
+      const top = secTop(sec), span = sec.offsetHeight - innerHeight;
       const steps = pinnedStops[sec.id];
       if (steps) out.push(...steps().map(p => top + span * p));
       else {
@@ -99,29 +91,56 @@
     out.push(document.documentElement.scrollHeight - innerHeight);
     return [...new Set(out.map(Math.round))].sort((x, y) => x - y);
   }
-  let stepLock = 0;
+  // Inside Services (between its first and last discipline) the page scrolls normally.
+  function inFreeZone(y, dir) {
+    const top = secTop(svc), end = top + svc.offsetHeight - innerHeight;
+    return dir > 0 ? y >= top - 4 && y < end - 4 : y > top + 4 && y <= end + 4;
+  }
+  let gliding = null, stepLock = 0;
+  const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  function glide(target, duration) {
+    const from = scrollY, start = performance.now();
+    // The background and section state switch to the destination as the glide starts, so the colour fades
+    // across the move instead of a band of the next colour creeping in at the edge.
+    const dest = sections.findIndex(s => { const t = secTop(s); return target + innerHeight / 2 >= t && target + innerHeight / 2 < t + s.offsetHeight; });
+    if (dest >= 0) setSection(dest);
+    gliding = { dest };
+    const step = now => {
+      const k = Math.min(1, (now - start) / duration);
+      scrollTo({ top: from + (target - from) * easeInOut(k), behavior: 'instant' });
+      if (k < 1) requestAnimationFrame(step); else gliding = null;
+    };
+    requestAnimationFrame(step);
+    // Swallow the rest of the gesture (trackpad inertia keeps sending wheel events after the glide).
+    stepLock = performance.now() + duration + 350;
+  }
   function pageStep(dir) {
     if (!menu.hidden) return false;
-    if (performance.now() < stepLock) return true;
-    const y = scrollY, list = stops();
+    if (gliding || performance.now() < stepLock) return true;
+    const y = scrollY;
+    if (inFreeZone(y, dir)) return false;
+    const list = stops();
     const target = dir > 0 ? list.find(v => v > y + 4) : [...list].reverse().find(v => v < y - 4);
     if (target === undefined) return false;
-    // Hold long enough for the Work water transition when landing on a project.
-    stepLock = performance.now() + 1150;
-    scrollTo({ top: target, behavior: reduce ? 'auto' : 'smooth' });
+    if (reduce) { scrollTo({ top: target, behavior: 'instant' }); return true; }
+    // The card row in What we build gets a longer glide so the cards can be seen passing.
+    const long = [secTop(build), secTop(build) + build.offsetHeight - innerHeight].some(v => Math.abs(v - y) < 6) && Math.abs(target - y) > innerHeight * 1.5;
+    glide(target, long ? 2200 : Math.min(1300, 700 + Math.abs(target - y) * 0.25));
     return true;
   }
   addEventListener('wheel', e => {
     if (e.ctrlKey || Math.abs(e.deltaY) < 2) return;
     if (pageStep(e.deltaY > 0 ? 1 : -1)) e.preventDefault();
   }, { passive: false });
-  let touchY = null, touchUsed = false;
-  addEventListener('touchstart', e => { touchY = e.touches[0].clientY; touchUsed = false; }, { passive: true });
+  let touchY = null, touchUsed = false, touchFree = false;
+  addEventListener('touchstart', e => { touchY = e.touches[0].clientY; touchUsed = false; touchFree = false; }, { passive: true });
   addEventListener('touchmove', e => {
-    if (touchY === null || !menu.hidden) return;
-    const dy = touchY - e.touches[0].clientY;
+    if (touchY === null || !menu.hidden || touchFree) return;
+    const dy = touchY - e.touches[0].clientY, dir = dy > 0 ? 1 : -1;
+    if (!touchUsed && Math.abs(dy) < 8) return;
+    if (!touchUsed && !gliding && inFreeZone(scrollY, dir)) { touchFree = true; return; }
     e.preventDefault();
-    if (!touchUsed && Math.abs(dy) > 30) { touchUsed = true; pageStep(dy > 0 ? 1 : -1); }
+    if (!touchUsed && Math.abs(dy) > 30) { touchUsed = true; pageStep(dir); }
   }, { passive: false });
   addEventListener('touchend', () => { touchY = null; });
   addEventListener('keydown', e => {
@@ -131,7 +150,6 @@
   });
   const clients = $('.clients'), clientNames = $$('.clients__names a'), clientLogos = $$('.clients__logos img');
   const method = $('.method'), methodTitle = $('.method__title'), mFrames = $$('.frame'), mTexts = $$('.method__text'), mRoll = $('.method__num-roll'), mNum = $('.method__num');
-  const build = $('.build'), buildRow = $('.build__row'), cards = $$('.card');
   let svcHalf = null;
   addEventListener('resize', () => { svcHalf = null; });
   const eased = { svc: 0, clients: 0, method: -0.6 };
@@ -141,7 +159,8 @@
   clientNames.forEach((a, i) => a.addEventListener('click', e => {
     e.preventDefault();
     const r = clients.getBoundingClientRect(), span = r.height - innerHeight;
-    scrollTo({ top: scrollY + r.top + span * i / (clientNames.length - 1), behavior: reduce ? 'auto' : 'smooth' });
+    const target = scrollY + r.top + span * i / (clientNames.length - 1);
+    if (reduce) scrollTo({ top: target, behavior: 'instant' }); else glide(target, 900);
   }));
 
   function frame() {
@@ -150,7 +169,7 @@
 
     // Active section: the one under the middle of the screen.
     const mid = innerHeight * 0.5;
-    sections.forEach((s, i) => { const r = s.getBoundingClientRect(); if (r.top <= mid && r.bottom > mid) setSection(i); });
+    if (!gliding) sections.forEach((s, i) => { const r = s.getBoundingClientRect(); if (r.top <= mid && r.bottom > mid) setSection(i); });
 
     // Reveals
     for (const el of $$('[data-reveal]:not(.is-in)')) if (el.getBoundingClientRect().top < innerHeight * 0.88) el.classList.add('is-in');
@@ -177,7 +196,7 @@
 
     // Method: s runs from -0.6 (heading only) to the last stage. Each stage's panels drift from below the
     // screen to above it while d = s - i goes from -0.8 to 1; the echo panel moves faster and further right.
-    again = ease('method', progress(method) * (mTexts.length - 0.4) - 0.6) || again;
+    again = ease('method', progress(method) * (mTexts.length - 0.4) - 0.6, 0.35) || again;
     const ms = eased.method, vh = innerHeight;
     methodTitle.style.opacity = clamp(-ms * 2.2, 0, 1);
     methodTitle.style.transform = `translateY(${Math.min(0, ms + 0.45) * -60}px)`;
@@ -196,7 +215,7 @@
     mNum.style.opacity = clamp((ms + 0.3) * 3, 0, 1);
 
     // Clients wheel: names are spokes from a hub off to the left; the centred one is level and bright.
-    again = ease('clients', progress(clients) * (clientNames.length - 1)) || again;
+    again = ease('clients', progress(clients) * (clientNames.length - 1), 0.35) || again;
     const radius = innerWidth < 760 ? 240 : Math.max(420, innerWidth * 0.34);
     clientNames.forEach((n, i) => {
       const d = i - eased.clients, a = Math.abs(d);

@@ -22,10 +22,10 @@ body[data-fg="dark"] {
   --accent: #1422e3;
 }
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-/* Page background: app.js paints one gradient on <html> through the palette, a stop at each section's top,
-   so colour flows continuously down the page (#000B18 > #00172D > #00264D > #02386E > #00498D > #0052A2). */
-html { background-color: #000B18; }
+/* No CSS smooth scrolling: app.js runs its own eased glides between stops. */
+/* Page background: app.js sets <html> to the active section's colour and it fades over 1s, so colour flows
+   section to section (#000B18 > #00172D > #00264D > #02386E > #00498D > #0052A2). */
+html { background-color: #000B18; transition: background-color 1s cubic-bezier(0.22, 1, 0.36, 1); }
 body {
   margin: 0;
   background: transparent;
