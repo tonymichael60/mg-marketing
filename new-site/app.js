@@ -57,8 +57,9 @@
   const svc = $('.services'), svcItems = $$('.services__list li'), svcGroups = $$('.services__group');
   const work = $('.work'), workSets = ['.work__titles h3', '.work__media img', '.work__tags ul', '.work__thumbs li'].map(s => $$(s));
   const clients = $('.clients'), clientNames = $$('.clients__names a'), clientLogos = $$('.clients__logos img');
+  const method = $('.method'), methodTitle = $('.method__title'), mFrames = $$('.frame'), mTexts = $$('.method__text'), mRoll = $('.method__num-roll'), mNum = $('.method__num');
   const build = $('.build'), buildRow = $('.build__row'), cards = $$('.card');
-  const eased = { svc: 0, clients: 0 };
+  const eased = { svc: 0, clients: 0, method: -0.6 };
   const ease = (key, target) => { eased[key] = reduce ? target : eased[key] + (target - eased[key]) * 0.14; if (Math.abs(target - eased[key]) < 0.001) eased[key] = target; return eased[key] !== target; };
 
   // Clicking a client name rolls the wheel to it.
@@ -115,6 +116,26 @@
     const wi = Math.min(workSets[0].length - 1, Math.floor(progress(work) * workSets[0].length));
     workSets.forEach(set => set.forEach((el, i) => el.classList.toggle('is-on', i === wi)));
     if (wi !== lastWork) { if (lastWork !== -1) wave = 1; lastWork = wi; }
+
+    // Method: s runs from -0.6 (heading only) to the last stage. Each stage's panels drift from below the
+    // screen to above it while d = s - i goes from -0.8 to 1; the echo panel moves faster and further right.
+    again = ease('method', progress(method) * (mTexts.length - 0.4) - 0.6) || again;
+    const ms = eased.method, vh = innerHeight;
+    methodTitle.style.opacity = clamp(-ms * 2.2, 0, 1);
+    methodTitle.style.transform = `translateY(${Math.min(0, ms + 0.45) * -60}px)`;
+    // At d = 0 the main panel is centred (lower on phones, under the text); the echo trails below it.
+    const centre = innerWidth < 760 ? 0.66 : 0.5;
+    mFrames.forEach(f => {
+      const d = ms - +f.dataset.i, echo = f.classList.contains('frame--echo');
+      const y = vh * (centre + (echo ? 0.22 : 0)) - f.offsetHeight / 2 - d * vh * (echo ? 1.25 : 0.95);
+      f.style.transform = `translate3d(0, ${y}px, 0)`;
+      f.style.visibility = d < -1.2 || d > 1.5 ? 'hidden' : '';
+    });
+    mTexts.forEach((t, i) => { const d = ms - i; t.style.opacity = clamp(1 - Math.abs(d) * 2.2, 0, 1); t.style.transform = `translateY(${-d * 30}px)`; });
+    const mi = clamp(Math.round(ms), 0, mTexts.length - 1);
+    mRoll.style.transform = `translateY(${-mi * mNum.offsetHeight}px)`;
+    mRoll.style.transition = 'transform 0.7s cubic-bezier(0.22, 1, 0.36, 1)';
+    mNum.style.opacity = clamp((ms + 0.3) * 3, 0, 1);
 
     // Clients wheel: names are spokes from a hub off to the left; the centred one is level and bright.
     again = ease('clients', progress(clients) * (clientNames.length - 1)) || again;

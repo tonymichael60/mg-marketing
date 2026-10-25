@@ -119,15 +119,31 @@
       </div>
     </section>
 
-    <!-- 5. Method: numbered chapters. -->
-    <section class="sec method" id="method" data-label="Method" data-bg="#0a1240" data-fg="light" data-aura="#2f6bff,#00e0c6,#4b5cff">
-      <h2 class="method__title" data-reveal>Driven by<br><i>deep groots</i></h2>
-      <div class="method__chapters">
-        <article class="chapter" data-reveal><span class="chapter__num">01</span><div><h3>Root</h3><small>3–7 days</small><p>Align on problems, data reality and success metrics. Opportunity brief, KPI model, phased roadmap, effort and cost ranges.</p></div></article>
-        <article class="chapter" data-reveal><span class="chapter__num">02</span><div><h3>Grow</h3><small>1–2 weeks</small><p>We build the growth engine: funnels, campaigns, AI content and smart automations that tie it together.</p></div></article>
-        <article class="chapter" data-reveal><span class="chapter__num">03</span><div><h3>Validate</h3><small>1 week</small><p>Prove accuracy, usability, safety and cost. Eval dashboard, acceptance thresholds, a clear decision to iterate or ship.</p></div></article>
-        <article class="chapter" data-reveal><span class="chapter__num">04</span><div><h3>Launch</h3><small>1 week</small><p>Go live with eyes on every number. Go-live checklist and QA, tracking and dashboards switched on, team handover.</p></div></article>
-        <article class="chapter" data-reveal><span class="chapter__num">05</span><div><h3>Bloom</h3><small>Ongoing</small><p>Scale what works, cut what does not. Weekly optimisation sprints, monthly performance reviews, new channels as results compound.</p></div></article>
+    <!-- 5. Method (after fromanother.love "Our team"): the screen pins; the heading comes first, then each stage
+         brings in a big number, two drifting panels and its text. -->
+    <section class="sec method" id="method" data-label="Method" data-bg="#0a1240" data-fg="light" data-aura="#2f6bff,#00e0c6,#4b5cff" style="--n:5">
+      <div class="method__pin">
+        <h2 class="method__title">Driven by<br><i>deep groots</i></h2>
+        <div class="method__frames" aria-hidden="true">
+          <figure class="frame frame--main frame--root" data-i="0"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M12 10v11M12 14l-5 5M12 14l5 5M12 18l-3 3M12 18l3 3"/></svg><figcaption><i>Root</i></figcaption></figure>
+          <figure class="frame frame--echo frame--root" data-i="0"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M12 10v11M12 14l-5 5M12 14l5 5M12 18l-3 3M12 18l3 3"/></svg></figure>
+          <figure class="frame frame--main frame--grow" data-i="1"><svg viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 13c-4 0-6-3-6-7 4 0 6 3 6 7zM12 11c0-4 2-7 6-7 0 4-2 7-6 7z"/></svg><figcaption><i>Grow</i></figcaption></figure>
+          <figure class="frame frame--echo frame--grow" data-i="1"><svg viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 13c-4 0-6-3-6-7 4 0 6 3 6 7zM12 11c0-4 2-7 6-7 0 4-2 7-6 7z"/></svg></figure>
+          <figure class="frame frame--main frame--validate" data-i="2"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg><figcaption><i>Validate</i></figcaption></figure>
+          <figure class="frame frame--echo frame--validate" data-i="2"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg></figure>
+          <figure class="frame frame--main frame--launch" data-i="3"><svg viewBox="0 0 24 24"><path d="M12 3c3 2 5 5.5 5 9.5L15 16H9l-2-3.5C7 8.5 9 5 12 3z"/><path d="M9 16l-2 4 3-1M15 16l2 4-3-1"/></svg><figcaption><i>Launch</i></figcaption></figure>
+          <figure class="frame frame--echo frame--launch" data-i="3"><svg viewBox="0 0 24 24"><path d="M12 3c3 2 5 5.5 5 9.5L15 16H9l-2-3.5C7 8.5 9 5 12 3z"/><path d="M9 16l-2 4 3-1M15 16l2 4-3-1"/></svg></figure>
+          <figure class="frame frame--main frame--bloom" data-i="4"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><path d="M12 9.5C12 6 10 4 12 2c2 2 0 4 0 7.5zM14.5 12c3.5 0 5.5-2 7.5 0-2 2-4 0-7.5 0zM12 14.5c0 3.5 2 5.5 0 7.5-2-2 0-4 0-7.5zM9.5 12C6 12 4 14 2 12c2-2 4 0 7.5 0z"/></svg><figcaption><i>Bloom</i></figcaption></figure>
+          <figure class="frame frame--echo frame--bloom" data-i="4"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><path d="M12 9.5C12 6 10 4 12 2c2 2 0 4 0 7.5zM14.5 12c3.5 0 5.5-2 7.5 0-2 2-4 0-7.5 0zM12 14.5c0 3.5 2 5.5 0 7.5-2-2 0-4 0-7.5zM9.5 12C6 12 4 14 2 12c2-2 4 0 7.5 0z"/></svg></figure>
+        </div>
+        <div class="method__texts">
+          <article class="method__text" data-i="0"><h3>Root</h3><small>3–7 days</small><p>Align on problems, data reality and success metrics. Opportunity brief, KPI model, phased roadmap, effort and cost ranges.</p></article>
+          <article class="method__text" data-i="1"><h3>Grow</h3><small>1–2 weeks</small><p>We build the growth engine: funnels, campaigns, AI content and smart automations that tie it together.</p></article>
+          <article class="method__text" data-i="2"><h3>Validate</h3><small>1 week</small><p>Prove accuracy, usability, safety and cost. Eval dashboard, acceptance thresholds, a clear decision to iterate or ship.</p></article>
+          <article class="method__text" data-i="3"><h3>Launch</h3><small>1 week</small><p>Go live with eyes on every number. Go-live checklist and QA, tracking and dashboards switched on, team handover.</p></article>
+          <article class="method__text" data-i="4"><h3>Bloom</h3><small>Ongoing</small><p>Scale what works, cut what does not. Weekly optimisation sprints, monthly performance reviews, new channels as results compound.</p></article>
+        </div>
+        <div class="method__num" aria-hidden="true"><div class="method__num-roll"><span>01</span><span>02</span><span>03</span><span>04</span><span>05</span></div></div>
       </div>
     </section>
 

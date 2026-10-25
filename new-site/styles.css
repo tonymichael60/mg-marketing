@@ -150,16 +150,32 @@ h1, h2, h3, p { margin: 0; }
 .work__thumbs li.is-on { opacity: 1; transform: translateX(-8px); }
 .work__thumbs img { width: 100%; height: 100%; object-fit: cover; }
 
-/* 5. Method */
-.method { padding-left: calc(var(--pad) + 120px); }
-.method__title { font-size: clamp(48px, 7vw, 112px); line-height: 0.95; font-weight: 700; letter-spacing: -0.05em; margin-bottom: 80px; }
-.method__chapters { display: grid; gap: 80px; }
-.chapter { display: grid; grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr); gap: 40px; align-items: end; border-top: 1px solid var(--line); padding-top: 28px; }
-.chapter:nth-child(even) { margin-left: 18%; }
-.chapter__num { font-size: clamp(80px, 13vw, 200px); line-height: 0.8; font-weight: 700; letter-spacing: -0.06em; }
-.chapter h3 { font-size: 32px; font-weight: 600; letter-spacing: -0.03em; }
-.chapter small { display: inline-block; margin: 8px 0 14px; padding: 4px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
-.chapter p { max-width: 42ch; font-size: 17px; line-height: 1.6; color: var(--muted); }
+/* 5. Method (after fromanother.love "Our team"): pinned stage driven by app.js. Panels drift upward past
+   each other, the big number rolls to the current stage, and each stage's text fades in on the right. */
+.method { height: calc((var(--n) + 0.6) * 100vh); padding: 0; }
+.method__pin { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.method__title { position: absolute; left: 50%; top: 50%; translate: -50% -50%; text-align: center; font-size: clamp(44px, 6vw, 96px); line-height: 0.98; font-weight: 700; letter-spacing: -0.05em; will-change: opacity, transform; }
+.method__frames { position: absolute; inset: 0; }
+.frame { position: absolute; top: 0; margin: 0; display: grid; place-items: center; overflow: hidden; will-change: transform, opacity; }
+.frame::after { content: ""; position: absolute; inset: 0; opacity: 0.18; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+.frame svg { width: 34%; fill: none; stroke: rgba(255, 255, 255, 0.92); stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
+.frame figcaption { position: absolute; left: 18px; bottom: 14px; font-size: 22px; color: rgba(255, 255, 255, 0.9); }
+.frame--main { left: 40%; width: min(300px, 22vw); aspect-ratio: 4 / 5; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.6); }
+.frame--echo { left: 60%; width: min(240px, 17vw); aspect-ratio: 1; filter: blur(3px) saturate(0.7); opacity: 0.45; }
+.frame--root { background: radial-gradient(circle at 30% 25%, #00e0c6, transparent 55%), linear-gradient(160deg, #0b4a5a, #031820); }
+.frame--grow { background: radial-gradient(circle at 70% 30%, #7dff9a, transparent 50%), linear-gradient(160deg, #1d5a3a, #04160c); }
+.frame--validate { background: radial-gradient(circle at 40% 70%, #9fb0ff, transparent 55%), linear-gradient(160deg, #1422e3, #050b2e); }
+.frame--launch { background: radial-gradient(circle at 60% 25%, #ffb36b, transparent 50%), linear-gradient(160deg, #7a2b16, #1a0905); }
+.frame--bloom { background: radial-gradient(circle at 35% 30%, #ff8ad8, transparent 52%), linear-gradient(160deg, #5b1a6e, #14051c); }
+.method__texts { position: absolute; right: var(--pad); top: 16vh; z-index: 2; width: min(320px, 24vw); }
+.method__text { position: absolute; inset: 0 0 auto; opacity: 0; will-change: opacity, transform; }
+.method__text h3 { font-size: 30px; font-weight: 600; letter-spacing: -0.03em; }
+.method__text small { display: inline-block; margin: 8px 0 14px; padding: 4px 12px; border: 1px solid var(--line); border-radius: 999px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.method__text p { font-size: 16px; line-height: 1.6; color: var(--muted); }
+.method__num { position: absolute; left: calc(var(--pad) + 120px); bottom: 6vh; height: clamp(90px, 14vw, 210px); overflow: hidden; font-size: clamp(90px, 14vw, 210px); line-height: 1; font-weight: 700; letter-spacing: -0.06em; }
+.method__num-roll { display: grid; will-change: transform; }
+.method__num-roll span { height: clamp(90px, 14vw, 210px); }
 
 /* 6. Clients wheel */
 .clients { height: calc(5 * 42vh + 100vh); padding: 0; }
@@ -233,7 +249,8 @@ h1, h2, h3, p { margin: 0; }
 /* Tablet and phone */
 @media (max-width: 1024px) {
   .index { display: none; }
-  .services__pin, .work__pin, .method, .measure, .faq, .contact { padding-left: var(--pad); }
+  .services__pin, .work__pin, .measure, .faq, .contact { padding-left: var(--pad); }
+  .method__num { left: var(--pad); }
   .build__title { left: var(--pad); }
   .work__pin { grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); grid-template-rows: auto auto; align-content: center; }
   .work__titles, .work__tags { height: 22vh; }
@@ -253,7 +270,9 @@ h1, h2, h3, p { margin: 0; }
   .services__list li { font-size: 34px; }
   .work__pin { grid-template-columns: 1fr; gap: 16px; padding-top: 90px; }
   .work__titles { height: 16vh; } .work__media { height: 38vh; grid-row: auto; } .work__tags { height: 20vh; }
-  .chapter { grid-template-columns: 1fr; gap: 10px; } .chapter:nth-child(even) { margin-left: 0; }
+  .method__texts { left: var(--pad); right: var(--pad); top: 92px; width: auto; }
+  .method__text h3 { font-size: 24px; } .method__text p { font-size: 14px; }
+  .frame--main { left: 24%; width: 46vw; } .frame--echo { left: 58%; width: 32vw; }
   .clients__names { left: 8%; top: 38%; }
   .clients__names a { font-size: 32px; }
   .clients__logos { left: var(--pad); top: auto; bottom: 170px; translate: none; width: 140px; height: 80px; }
