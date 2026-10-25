@@ -102,9 +102,8 @@
     return dir > 0 ? y >= last - 4 : y <= first + 4;
   }
   let gliding = null, stepLock = 0;
-  // A gesture is a run of wheel events less than 120ms apart. Only the gesture that started a stop (a section
-  // pause or a Work step) may stretch it; a new gesture during the stop is ignored but does not extend it, so
-  // continuous scrolling can never get stuck.
+  // A gesture is a run of wheel events less than 120ms apart. Only the gesture that started a Work step may
+  // stretch its hold; a new gesture during the hold is ignored but does not extend it, so scrolling never sticks.
   let lastWheel = 0, sameGesture = false, holdGesture = false;
   const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   function glide(target, duration) {
@@ -156,34 +155,6 @@
     glide(target, long ? 2200 : Math.min(1300, 700 + Math.abs(target - y) * 0.25));
     return true;
   }
-  /* Section pause: with normal scrolling, a wheel or trackpad gesture that would carry the page past the start
-     of a section stops exactly at that start and holds for a moment (the rest of the gesture, including trackpad
-     inertia, is ignored). The next gesture scrolls on normally. */
-  const PAUSE = 700;
-  let pauseUntil = 0, pauseHold = 0, pausedAt = null;
-  function sectionPause(e) {
-    const now = performance.now();
-    if (now < pauseUntil) {
-      // Still inside the gesture that hit the boundary: keep holding while its events keep arriving.
-      // The hold counts from the end of the gesture: continuing events push it out by the full pause.
-      if (holdGesture && sameGesture) pauseUntil = Math.max(pauseUntil, now + pauseHold); else holdGesture = false;
-      return true;
-    }
-    const y = smoothTarget ?? scrollY, dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
-    // Sections marked data-pause="0" (Services) scroll through with no stop.
-    const tops = sections.filter(sec => sec.dataset.pause !== '0').map(sec => Math.round(secTop(sec))).filter(t => t > 0);
-    const hit = dy > 0 ? tops.find(t => t > y + 1 && t <= y + dy) : [...tops].reverse().find(t => t < y - 1 && t >= y + dy);
-    if (hit === undefined || hit === pausedAt) return false;
-    pausedAt = hit;
-    smoothTo(hit);
-    // A section can ask for a longer hold (data-pause, in ms), e.g. Results, which is easy to scroll past.
-    const sec = sections.find(s2 => Math.round(secTop(s2)) === hit);
-    pauseHold = +sec?.dataset.pause || PAUSE;
-    pauseUntil = now + pauseHold;
-    holdGesture = true;
-    return true;
-  }
-  addEventListener('scroll', () => { if (pausedAt !== null && Math.abs(scrollY - pausedAt) > innerHeight * 0.5) pausedAt = null; }, { passive: true });
 
   /* Smooth wheel: a mouse wheel moves the page in ~100px jumps, which made the big Services type jump. Normal
      wheel scrolling instead sets a target and the page eases towards it each frame (as on fromanother.love).
@@ -207,12 +178,9 @@
   addEventListener('wheel', e => {
     if (e.ctrlKey || Math.abs(e.deltaY) < 2) return;
     const now = performance.now(); sameGesture = now - lastWheel < 120; lastWheel = now;
-    // A pause in progress holds everything, including the Work steps.
-    if (performance.now() < pauseUntil && sectionPause(e)) { e.preventDefault(); return; }
     if (pageStep(e.deltaY > 0 ? 1 : -1)) { e.preventDefault(); return; }
     if (reduce || !menu.hidden) return;
     e.preventDefault();
-    if (sectionPause(e)) return;
     smoothTo((smoothTarget ?? scrollY) + (e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY));
   }, { passive: false });
   let touchY = null, touchUsed = false, touchFree = false;
