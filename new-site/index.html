@@ -15,6 +15,13 @@
   <!-- Ambient layers: drifting colour aura and film grain, tinted per section by app.js. -->
   <div class="aura" aria-hidden="true"><i></i><i></i><i></i></div>
   <div class="grain" aria-hidden="true"></div>
+  <!-- Water filter for the work images: turbulence noise displaces the picture; app.js animates it. -->
+  <svg class="water-defs" aria-hidden="true" width="0" height="0">
+    <filter id="water" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+      <feTurbulence id="water-noise" type="fractalNoise" baseFrequency="0.008 0.02" numOctaves="1" seed="7" result="noise"/>
+      <feDisplacementMap id="water-map" in="SourceGraphic" in2="noise" scale="8" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
 
   <header class="top">
     <button class="top__menu" type="button" aria-expanded="false" aria-controls="menu"><span></span>Menu</button>
