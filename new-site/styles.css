@@ -42,10 +42,10 @@ h1, h2, h3, p { margin: 0; }
 
 /* Ambient aura: three soft colour fields drifting behind everything, tinted by the active section. */
 .aura { position: fixed; inset: 0; z-index: -2; pointer-events: none; overflow: hidden; }
-.aura i { position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; opacity: 0.55; will-change: transform; }
+.aura i { position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; opacity: 0.7; will-change: transform; }
 .aura i:nth-child(1) { left: -18vmax; top: -12vmax; background: radial-gradient(circle, var(--a1) 0%, transparent 62%); animation: aura1 26s ease-in-out infinite alternate; }
 .aura i:nth-child(2) { right: -22vmax; top: 20vh; background: radial-gradient(circle, var(--a2) 0%, transparent 62%); animation: aura2 32s ease-in-out infinite alternate; }
-.aura i:nth-child(3) { left: 20vw; bottom: -30vmax; background: radial-gradient(circle, var(--a3) 0%, transparent 60%); opacity: 0.35; animation: aura3 38s ease-in-out infinite alternate; }
+.aura i:nth-child(3) { left: 20vw; bottom: -30vmax; background: radial-gradient(circle, var(--a3) 0%, transparent 60%); opacity: 0.5; animation: aura3 38s ease-in-out infinite alternate; }
 @keyframes aura1 { to { transform: translate(14vw, 12vh) scale(1.15); } }
 @keyframes aura2 { to { transform: translate(-16vw, -10vh) scale(0.9); } }
 @keyframes aura3 { to { transform: translate(-12vw, -14vh) scale(1.2); } }
