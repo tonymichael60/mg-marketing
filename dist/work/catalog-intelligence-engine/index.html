@@ -743,32 +743,48 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
   .mgv-track::after { display: none; }
 }
 
-/* Page background (after fromanother.love, where one colour fills every section): a visible light blue base
-   with brighter and deeper blue glows towards the edges and a faint dot grid, on a fixed layer behind all
-   content. The centre stays close to the base colour so Framer's page-coloured cut-outs (the hero's
-   "Scroll for more" tab, the FAQ tab) still blend in; Framer's page-colour token is set to the same base.
-   The page root and FAQ container painted solid grey over it, so they are made transparent. */
-:root, body { --token-10319844-22a0-4484-88cd-68e9879c6c2e: #dce3ff !important; }
-body { background-color: #dce3ff !important; }
+/* Page background (after fromanother.love, where colour fills every section): site-bg.js paints one long
+   gradient on <html>, deep navy at the top and lighter blue section by section. The body and the grey page
+   root/FAQ container are made transparent so it shows through; #dce3ff is the fallback before the script
+   runs. A fixed layer adds soft drifting glows on top. Framer's page-colour token (used by the hero's
+   "Scroll for more" tab) is set to the navy around the hero so the tab still blends in. */
+html { background-color: #dce3ff; }
+:root, body { --token-10319844-22a0-4484-88cd-68e9879c6c2e: #060e3a !important; }
+body { background: transparent !important; }
 .framer-qZQ5t, .framer-1ntlu9c { background-color: transparent !important; }
-body::before, body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
-body::before {
-  inset: -10%;
+body::before { content: ""; position: fixed; inset: -10%; z-index: -1; pointer-events: none;
   background:
-    radial-gradient(34% 46% at 0% 22%, rgba(96, 118, 255, 0.42) 0%, rgba(96, 118, 255, 0) 70%),
-    radial-gradient(36% 48% at 100% 78%, rgba(60, 80, 235, 0.36) 0%, rgba(60, 80, 235, 0) 70%),
-    radial-gradient(30% 30% at 92% 8%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 70%),
-    radial-gradient(32% 34% at 6% 96%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
-}
-body::after {
-  background: radial-gradient(rgba(20, 34, 120, 0.11) 1px, transparent 1.5px) 0 0 / 28px 28px;
-  -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 45%, #000 20%, transparent 85%);
-  mask-image: radial-gradient(ellipse 85% 75% at 50% 45%, #000 20%, transparent 85%);
+    radial-gradient(34% 46% at 0% 22%, rgba(96, 118, 255, 0.34) 0%, rgba(96, 118, 255, 0) 70%),
+    radial-gradient(36% 48% at 100% 78%, rgba(60, 80, 235, 0.3) 0%, rgba(60, 80, 235, 0) 70%),
+    radial-gradient(30% 30% at 92% 8%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 70%);
 }
 @media (prefers-reduced-motion: no-preference) and (min-width: 810px) {
   body::before { animation: mg-ambient 38s ease-in-out infinite alternate; }
   @keyframes mg-ambient { to { translate: 3% -4%; } }
 }
+
+/* Text that sits straight on the navy top of the page (services strip, About heading, trust bar, Services
+   heading and wheel) is switched to light colours; text inside cards keeps its own colours. */
+.mg-svc-marquee__track span { color: rgba(232, 236, 255, 0.78) !important; }
+#about [data-framer-name="Text-Box"] .framer-text { --framer-text-color: #eef1ff !important; color: #eef1ff !important; }
+.framer-19b0sxl .framer-text { --framer-text-color: rgba(232, 236, 255, 0.8) !important; color: rgba(232, 236, 255, 0.8) !important; }
+.framer-19b0sxl .framer-662aja .framer-e4sd2r > div img { filter: brightness(0) invert(1) !important; opacity: 0.72 !important; }
+/* The About heading's text box fades its second line out; on navy that hid it, so the fade is gentler. */
+#about [data-framer-name="Text-Box"] { -webkit-mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.6) 100%) !important; mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.6) 100%) !important; }
+.mg-trust-avatars > span { box-shadow: 0 0 0 3px #0d1b62 !important; }
+.mg-svcx__head h2 { background: linear-gradient(180deg, #ffffff 0%, #e4e8ff 45%, #8e9cf0 100%) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+.mg-svcx__head h2 i { background: linear-gradient(180deg, #b9c3ff 0%, #7d8dff 100%) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+.mg-svcx__lead { color: rgba(232, 236, 255, 0.72) !important; }
+.mg-wheel__name { color: #e8ecff !important; }
+.mg-wheel__name.is-active { color: #ffffff !important; text-shadow: 0 0 30px rgba(120, 140, 255, 0.55); }
+.mg-wheel__side ol { color: rgba(232, 236, 255, 0.35) !important; }
+.mg-wheel__side li.is-active { color: #ffffff !important; }
+.mg-wheel__side em { color: rgba(232, 236, 255, 0.7) !important; }
+.mg-wheel__detail h4 { color: #ffffff !important; }
+.mg-wheel__detail h4 i { color: #a9b6ff !important; }
+.mg-wheel__detail p { color: rgba(232, 236, 255, 0.72) !important; }
+.mg-wheel__more { color: #a9b6ff !important; }
+.mg-wheel__name:focus-visible { outline-color: #a9b6ff !important; }
 
 /* Process section (after spector.framer.website): stacked headline and a looping 3D carousel of stage cards.
    Mounted by site-process.js. */
@@ -2516,6 +2532,55 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
   const start = () => {
     mount();
     new MutationObserver(rafOnce(() => { if (!sec || !sec.isConnected) mount(); })).observe(document.body, { childList: true, subtree: true });
+  };
+  if (document.readyState === 'complete') start();
+  else addEventListener('load', start, { once: true });
+})();
+
+// Page background: one long gradient down the page, deep navy at the top and lighter blue section by
+// section, each section with its own shade. Section heights differ by device and change while Framer
+// hydrates, so the colour stops are placed at each section's measured top and re-placed when the page resizes.
+(() => {
+  const rafOnce = f => { let t = 0; return () => { if (t) return; t = 1; requestAnimationFrame(() => { t = 0; f(); }); }; };
+  const stops = [
+    ['[data-framer-name="Hero"]', '#040a2c'],
+    ['.mg-svc-marquee-band', '#060e3a'],
+    ['#about', '#0a1650'],
+    ['.framer-19b0sxl', '#0d1b62'],
+    ['.mg-svcx', '#0f1f6e'],
+    ['.mg-svcx__grid', '#132585'],
+    ['#process', '#b4c2ff'],
+    ['#works', '#c6d0ff'],
+    ['.mg-perf', '#b9c6ff'],
+    ['[data-framer-name="Benefits"]', '#ccd5ff'],
+    ['.framer-gtsbnt', '#bfcbff'],
+    ['[data-framer-name="Tools"]', '#d3dbff'],
+    ['.mg-iwork', '#c5d0ff'],
+    ['.framer-1ynxxm3', '#d8dfff'],
+    ['[data-framer-name="FAQ"]', '#cbd5ff'],
+    ['#contact', '#dbe2ff'],
+  ];
+  const visible = sel => [...document.querySelectorAll(sel)].find(e => e.getBoundingClientRect().height > 0);
+  function paint() {
+    const H = document.documentElement.scrollHeight;
+    const parts = [];
+    let last = -1;
+    for (const [sel, colour] of stops) {
+      const el = visible(sel);
+      if (!el) continue;
+      const top = Math.round(el.getBoundingClientRect().top + scrollY);
+      if (top <= last) continue;
+      parts.push(`${colour} ${top}px`);
+      last = top;
+    }
+    parts.push(`#e4e9ff ${H}px`);
+    document.documentElement.style.backgroundImage = `linear-gradient(180deg, ${parts.join(', ')})`;
+  }
+  const schedule = rafOnce(paint);
+  const start = () => {
+    paint();
+    new ResizeObserver(schedule).observe(document.body);
+    addEventListener('resize', schedule);
   };
   if (document.readyState === 'complete') start();
   else addEventListener('load', start, { once: true });
