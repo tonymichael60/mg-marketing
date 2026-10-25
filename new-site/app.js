@@ -17,13 +17,16 @@
   indexList.innerHTML = sections.map((s, i) => `<li>${i + 1}<span>${s.dataset.label}</span></li>`).join('');
   const indexItems = $$('li', indexList);
   let activeSection = -1;
-  function setSection(i) {
+  const light = $('.light');
+  const hexRgb = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
+  // keepBg: a glide is blending the background itself.
+  function setSection(i, keepBg) {
     if (i === activeSection) return;
     activeSection = i;
     const s = sections[i];
     body.dataset.fg = s.dataset.fg;
     body.dataset.section = s.id;
-    document.documentElement.style.backgroundColor = s.dataset.bg;
+    if (!keepBg) document.documentElement.style.backgroundColor = s.dataset.bg;
     const [a1, a2, a3] = s.dataset.aura.split(',');
     body.style.setProperty('--a1', a1); body.style.setProperty('--a2', a2); body.style.setProperty('--a3', a3);
     indexItems.forEach((li, j) => li.classList.toggle('is-on', j === i));
@@ -103,12 +106,23 @@
     // The background and section state switch to the destination as the glide starts, so the colour fades
     // across the move instead of a band of the next colour creeping in at the edge.
     const dest = sections.findIndex(s => { const t = secTop(s); return target + innerHeight / 2 >= t && target + innerHeight / 2 < t + s.offsetHeight; });
-    if (dest >= 0) setSection(dest);
+    // Background colour and the Clients light are blended by the glide's own progress (not a CSS timer), so the
+    // colour changes exactly as fast as the content moves.
+    const html = document.documentElement, fromSec = sections[activeSection], toSec = sections[dest] || fromSec;
+    const c0 = hexRgb(fromSec.dataset.bg), c1 = hexRgb(toSec.dataset.bg);
+    const l0 = fromSec.id === 'clients' ? 1 : 0, l1 = toSec.id === 'clients' ? 1 : 0;
+    html.style.transition = 'none'; light.style.transition = 'none';
+    if (dest >= 0) setSection(dest, true);
     gliding = { dest };
     const step = now => {
-      const k = Math.min(1, (now - start) / duration);
-      scrollTo({ top: from + (target - from) * easeInOut(k), behavior: 'instant' });
-      if (k < 1) requestAnimationFrame(step); else gliding = null;
+      const k = Math.min(1, (now - start) / duration), e = easeInOut(k);
+      scrollTo({ top: from + (target - from) * e, behavior: 'instant' });
+      html.style.backgroundColor = `rgb(${c0.map((v, i) => Math.round(v + (c1[i] - v) * e)).join(',')})`;
+      light.style.opacity = l0 + (l1 - l0) * e;
+      // Update the pinned animations in this same frame, so they never trail the scroll by a frame.
+      frame();
+      if (k < 1) requestAnimationFrame(step);
+      else { gliding = null; html.style.transition = ''; light.style.transition = ''; light.style.opacity = ''; }
     };
     requestAnimationFrame(step);
     // Swallow the rest of the gesture (trackpad inertia keeps sending wheel events after the glide).
@@ -196,7 +210,7 @@
 
     // Method: s runs from -0.6 (heading only) to the last stage. Each stage's panels drift from below the
     // screen to above it while d = s - i goes from -0.8 to 1; the echo panel moves faster and further right.
-    again = ease('method', progress(method) * (mTexts.length - 0.4) - 0.6, 0.35) || again;
+    again = ease('method', progress(method) * (mTexts.length - 0.4) - 0.6, gliding ? 1 : 0.35) || again;
     const ms = eased.method, vh = innerHeight;
     methodTitle.style.opacity = clamp(-ms * 2.2, 0, 1);
     methodTitle.style.transform = `translateY(${Math.min(0, ms + 0.45) * -60}px)`;
@@ -215,7 +229,7 @@
     mNum.style.opacity = clamp((ms + 0.3) * 3, 0, 1);
 
     // Clients wheel: names are spokes from a hub off to the left; the centred one is level and bright.
-    again = ease('clients', progress(clients) * (clientNames.length - 1), 0.35) || again;
+    again = ease('clients', progress(clients) * (clientNames.length - 1), gliding ? 1 : 0.35) || again;
     const radius = innerWidth < 760 ? 240 : Math.max(420, innerWidth * 0.34);
     clientNames.forEach((n, i) => {
       const d = i - eased.clients, a = Math.abs(d);
