@@ -1,5 +1,5 @@
 // MediaGroots site behaviour: section colours, side index, reveals, rotating words, and the scroll-driven
-// pinned sections (services list, featured work, clients wheel), plus the What we build card reveals. One rAF loop runs while the
+// pinned sections (services list, featured work, method, clients wheel, What we build scenes). One rAF loop runs while the
 // page scrolls; pinned sections ease towards their scroll position so motion stays smooth.
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -190,61 +190,16 @@
   const svc = $('.services'), svcItems = $$('.services__list li'), svcGroups = $$('.services__group');
   const work = $('.work'), workSets = ['.work__titles h3', '.work__media img', '.work__tags ul', '.work__thumbs li'].map(s => $$(s));
 
-  /* Page stepping: one scroll gesture (wheel, trackpad, swipe or key) glides to the next stop with our own eased
-     scroll, so the pinned animations and the background colour change move in step with it. Stops are each
-     section's top, every step in the pinned sections (projects, method stages, clients), and about a screen at
-     a time through sections taller than the screen. Services scroll freely between their first and last
-     discipline. Stops are worked out on each
-     gesture, so they stay right after resizes or opened FAQ answers. */
-  const workCount = workSets[0].length;
-  const pinnedStops = {
-    // Progress points (0..1 through the section's scroll span) where the page settles.
-    services: () => [0, 1],
-    work: () => Array.from({ length: workCount }, (_, i) => (i + 0.5) / workCount),
-    method: () => { const n = $$('.method__text').length; return [0, ...Array.from({ length: n }, (_, i) => (i + 0.6) / (n - 0.4))]; },
-    clients: () => $$('.clients__names a').map((_, i, a) => i / (a.length - 1)),
-  };
-  // Sections where one gesture moves one stop; everywhere else the page scrolls normally.
-  const stepped = () => [work];
+  /* Scrolling is normal everywhere; the pinned sections (Services, Work, Method, Clients, What we build) are
+     sticky and play with the scroll. glide() is an eased scroll used by the nav links and the client names; it
+     blends the background colour and the Clients light by its own progress, so colour moves with the content. */
   const secTop = sec => sec.getBoundingClientRect().top + scrollY;
-  function stops() {
-    const out = [];
-    for (const sec of stepped()) {
-      const top = secTop(sec), span = sec.offsetHeight - innerHeight;
-      const steps = pinnedStops[sec.id];
-      if (steps) out.push(...steps().map(p => top + span * p));
-      else {
-        out.push(top);
-        for (let y = top + innerHeight * 0.85; y < top + span - 40; y += innerHeight * 0.85) out.push(y);
-        if (span > 40) out.push(top + span);
-      }
-    }
-    return [...new Set(out.map(Math.round))].sort((x, y) => x - y);
-  }
-  // Inside a stepped section one gesture moves one stop; past its first or last stop (and everywhere else) the
-  // page scrolls normally.
-  function inFreeZone(y, dir) {
-    for (const sec of stepped()) {
-      const top = secTop(sec), span = sec.offsetHeight - innerHeight;
-      if (y < top - 4 || y > top + span + 4) continue;
-      const pts = pinnedStops[sec.id]().map(p => top + span * p), first = pts[0], last = pts.at(-1);
-      return dir > 0 ? y >= last - 4 : y <= first + 4;
-    }
-    return true;
-  }
-  let gliding = null, stepLock = 0;
-  // A gesture is a run of wheel events less than 180ms apart. Only the gesture that started a Work step may
-  // stretch its hold; a new gesture during the hold is ignored but does not extend it, so scrolling never sticks.
-  let lastWheel = 0, sameGesture = false, holdGesture = false;
+  let gliding = null;
   const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   function glide(target, duration) {
     stopSmooth();
     const from = scrollY, start = performance.now();
-    // The background and section state switch to the destination as the glide starts, so the colour fades
-    // across the move instead of a band of the next colour creeping in at the edge.
     const dest = sections.findIndex(s => { const t = secTop(s); return target + innerHeight / 2 >= t && target + innerHeight / 2 < t + s.offsetHeight; });
-    // Background colour and the Clients light are blended by the glide's own progress (not a CSS timer), so the
-    // colour changes exactly as fast as the content moves.
     const html = document.documentElement, fromSec = sections[activeSection], toSec = sections[dest] || fromSec;
     const c0 = hexRgb(fromSec.dataset.bg), c1 = hexRgb(toSec.dataset.bg);
     const l0 = fromSec.id === 'clients' ? 1 : 0, l1 = toSec.id === 'clients' ? 1 : 0;
@@ -262,32 +217,11 @@
       else { gliding = null; html.style.transition = ''; light.style.transition = ''; light.style.opacity = ''; }
     };
     requestAnimationFrame(step);
-    // Swallow the rest of the gesture (trackpad inertia keeps sending wheel events after the glide).
-    stepLock = performance.now() + duration + 350;
-    holdGesture = true;
-  }
-  function pageStep(dir) {
-    if (!menu.hidden) return false;
-    // While a step is held, events that keep arriving (a long flick or trackpad inertia) extend the hold, so one
-    // gesture can never move two steps.
-    if (gliding || performance.now() < stepLock) {
-      if (holdGesture && sameGesture) stepLock = Math.max(stepLock, performance.now() + 300); else holdGesture = false;
-      return true;
-    }
-    // Decide from where the page is heading (a smooth wheel scroll may still be settling); glide() takes over.
-    const y = smoothTarget ?? scrollY;
-    if (inFreeZone(y, dir)) return false;
-    const list = stops();
-    const target = dir > 0 ? list.find(v => v > y + 4) : [...list].reverse().find(v => v < y - 4);
-    if (target === undefined) return false;
-    if (reduce) { scrollTo({ top: target, behavior: 'instant' }); return true; }
-    glide(target, Math.min(1300, 700 + Math.abs(target - y) * 0.25));
-    return true;
   }
 
-  /* Smooth wheel: a mouse wheel moves the page in ~100px jumps, which made the big Services type jump. Normal
-     wheel scrolling instead sets a target and the page eases towards it each frame (as on fromanother.love).
-     Trackpads send small steps, so they feel the same as before. */
+  /* Smooth wheel: a mouse wheel moves the page in ~100px jumps, which made the big type jump. Wheel scrolling
+     instead sets a target and the page eases towards it each frame (as on fromanother.love). Trackpads send
+     small steps, so they feel the same as before. */
   let smoothTarget = null;
   const maxY = () => document.documentElement.scrollHeight - innerHeight;
   function smoothTo(y) {
@@ -305,38 +239,10 @@
   }
   const stopSmooth = () => { smoothTarget = null; };
   addEventListener('wheel', e => {
-    if (e.ctrlKey || Math.abs(e.deltaY) < 2) return;
-    const now = performance.now(); sameGesture = now - lastWheel < 180; lastWheel = now;
-    if (pageStep(e.deltaY > 0 ? 1 : -1)) { e.preventDefault(); return; }
-    if (reduce || !menu.hidden) return;
+    if (e.ctrlKey || Math.abs(e.deltaY) < 2 || reduce || !menu.hidden || gliding) return;
     e.preventDefault();
-    const from = smoothTarget ?? scrollY;
-    let to = from + (e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY);
-    // Normal scrolling stops exactly at a stepped section's first stop (going down) or last stop (going up), so
-    // its first scene is never skipped; the next gesture then steps.
-    for (const sec of stepped()) {
-      const top = secTop(sec), span = sec.offsetHeight - innerHeight, pts = pinnedStops[sec.id]().map(q => Math.round(top + span * q));
-      if (to > from && from < pts[0] - 1 && to > pts[0]) { to = pts[0]; holdGesture = true; stepLock = performance.now() + 500; }
-      if (to < from && from > pts.at(-1) + 1 && to < pts.at(-1)) { to = pts.at(-1); holdGesture = true; stepLock = performance.now() + 500; }
-    }
-    smoothTo(to);
+    smoothTo((smoothTarget ?? scrollY) + (e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY));
   }, { passive: false });
-  let touchY = null, touchUsed = false, touchFree = false;
-  addEventListener('touchstart', e => { touchY = e.touches[0].clientY; touchUsed = false; touchFree = false; }, { passive: true });
-  addEventListener('touchmove', e => {
-    if (touchY === null || !menu.hidden || touchFree) return;
-    const dy = touchY - e.touches[0].clientY, dir = dy > 0 ? 1 : -1;
-    if (!touchUsed && Math.abs(dy) < 8) return;
-    if (!touchUsed && !gliding && inFreeZone(scrollY, dir)) { touchFree = true; return; }
-    e.preventDefault();
-    if (!touchUsed && Math.abs(dy) > 30) { touchUsed = true; pageStep(dir); }
-  }, { passive: false });
-  addEventListener('touchend', () => { touchY = null; });
-  addEventListener('keydown', e => {
-    if (e.target.closest('input, textarea, select, [contenteditable]')) return;
-    const dir = { ArrowDown: 1, PageDown: 1, ' ': e.shiftKey ? -1 : 1, ArrowUp: -1, PageUp: -1 }[e.key];
-    if (dir && pageStep(dir)) e.preventDefault();
-  });
   const clients = $('.clients'), clientNames = $$('.clients__names a'), clientLogos = $$('.clients__logos img');
   const method = $('.method'), methodTitle = $('.method__title'), mFrames = $$('.frame'), mTexts = $$('.method__text'), mRoll = $('.method__num-roll'), mNum = $('.method__num');
   let svcHalf = null;
