@@ -406,43 +406,65 @@ body[data-section="clients"] .light { opacity: 1; }
 /* Clients note sits below the logo so it stays clear of the beam. */
 @media (min-width: 761px) { .clients__note { top: 74%; } }
 
-/* Liquid glass navigation bar: a frosted pill that blurs and brightens the page behind it, edged with light,
-   and a glass bubble that slides (with a slight liquid stretch) to the active section or the hovered link. */
+/* Liquid glass navigation bar: a thick clear pill that blurs and brightens the page behind it. Light catches a
+   gradient rim (bright top-left, glinting bottom-right), a curved sheen sits across the top, a soft light
+   follows the pointer through the glass, and a glass droplet slides to the active or hovered link. */
 .glassnav {
+  --nx: 50%; --nl: 0;
   position: relative; display: flex; align-items: center; gap: 2px; padding: 6px;
   border-radius: 999px;
-  /* A faint dark tint under the glass keeps the white links readable over light content (the cream cards). */
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04)), rgba(6, 14, 32, 0.32);
-  -webkit-backdrop-filter: blur(18px) saturate(180%);
-  backdrop-filter: blur(18px) saturate(180%);
+  /* A faint dark tint under the glass keeps the white links readable over light content. */
+  background:
+    radial-gradient(120% 140% at 50% 120%, rgba(120, 170, 255, 0.16), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.03)), rgba(6, 14, 32, 0.3);
+  -webkit-backdrop-filter: blur(20px) saturate(200%) brightness(1.05);
+  backdrop-filter: blur(20px) saturate(200%) brightness(1.05);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.14),
-    0 10px 30px -10px rgba(0, 0, 0, 0.45);
+    inset 0 1px 1px rgba(255, 255, 255, 0.5),
+    inset 0 -6px 14px -8px rgba(255, 255, 255, 0.28),
+    inset 0 10px 18px -12px rgba(255, 255, 255, 0.35),
+    0 1px 2px rgba(0, 0, 0, 0.25),
+    0 16px 40px -14px rgba(0, 0, 0, 0.55);
   isolation: isolate;
 }
-/* Specular sheen across the top half of the glass. */
+/* Curved specular sheen across the top half of the glass. */
 .glassnav::before {
-  content: ""; position: absolute; inset: 1px 1px 50%; border-radius: 999px 999px 40% 40% / 999px 999px 100% 100%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0)); pointer-events: none; z-index: -1;
+  content: ""; position: absolute; inset: 2px 10px 52%; border-radius: 999px 999px 40% 40% / 999px 999px 100% 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0)); pointer-events: none; z-index: -1;
+}
+/* Gradient rim: a 1px edge that is bright where light hits (top left, bottom right) and nearly clear elsewhere. */
+.glassnav::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.12) 30%, rgba(255, 255, 255, 0.05) 60%, rgba(190, 215, 255, 0.6) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+/* Light that follows the pointer through the glass. */
+.glassnav__light {
+  position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 0; opacity: var(--nl);
+  background: radial-gradient(90px 60px at var(--nx) 50%, rgba(255, 255, 255, 0.22), transparent 70%);
+  transition: opacity 0.4s;
 }
 .glassnav a {
   position: relative; z-index: 1; padding: 9px 18px; border-radius: 999px;
   font-size: 14px; font-weight: 500; letter-spacing: 0.01em; text-decoration: none; color: rgba(255, 255, 255, 0.78);
-  transition: color 0.3s var(--ease);
+  transition: color 0.3s var(--ease), text-shadow 0.3s var(--ease);
 }
-.glassnav a:hover, .glassnav a.is-on { color: #fff; }
+.glassnav a:hover, .glassnav a.is-on { color: #fff; text-shadow: 0 0 12px rgba(255, 255, 255, 0.45); }
 .glassnav a:focus-visible { outline: 2px solid rgba(255, 255, 255, 0.8); outline-offset: 2px; }
+/* The droplet: a lens of brighter glass with a highlight at the top and a light pooled along its bottom edge. */
 .glassnav__bubble {
   position: absolute; left: 0; top: 6px; bottom: 6px; width: 0; border-radius: 999px; z-index: 0; pointer-events: none;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.12));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 -2px 6px rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.22), 0 4px 14px rgba(0, 0, 0, 0.25);
-  transition: transform 0.55s cubic-bezier(0.34, 1.4, 0.5, 1), width 0.55s cubic-bezier(0.34, 1.4, 0.5, 1), opacity 0.3s;
+  background: radial-gradient(80% 120% at 50% 110%, rgba(170, 205, 255, 0.35), transparent 60%), linear-gradient(180deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.1));
+  -webkit-backdrop-filter: blur(4px) saturate(160%) brightness(1.15);
+  backdrop-filter: blur(4px) saturate(160%) brightness(1.15);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.85), inset 0 -3px 8px rgba(255, 255, 255, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.25), 0 6px 16px -4px rgba(0, 0, 0, 0.35), 0 0 18px rgba(150, 190, 255, 0.25);
+  transition: transform 0.6s cubic-bezier(0.34, 1.4, 0.5, 1), width 0.6s cubic-bezier(0.34, 1.4, 0.5, 1), opacity 0.3s;
   opacity: 0;
 }
-.glassnav__bubble.is-moving { animation: glass-squish 0.55s var(--ease); }
-@keyframes glass-squish { 40% { scale: 1.08 0.82; } }
+.glassnav__bubble::before { content: ""; position: absolute; left: 18%; right: 18%; top: 2px; height: 38%; border-radius: 999px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0)); }
+.glassnav__bubble.is-moving { animation: glass-squish 0.6s var(--ease); }
+@keyframes glass-squish { 35% { scale: 1.12 0.8; } 65% { scale: 0.96 1.06; } }
 /* Narrow screens: the bar is replaced by the Menu button. */
 @media (max-width: 900px) {
   .glassnav { display: none; }
@@ -492,3 +514,5 @@ body.spot-on .spot__beam, body.spot-on .spot__core { animation: spot-flicker-on 
 .spot__fixture::before { content: ""; position: absolute; left: 50%; bottom: 100%; width: 2px; height: 60px; translate: -50% 0; background: linear-gradient(transparent, #4a2a30); }
 .spot__fixture::after { content: ""; position: absolute; left: -4px; right: -4px; bottom: -4px; height: 8px; border-radius: 50%; background: linear-gradient(#5a3a40, #241014); }
 body.spot-on .spot__fixture::after { background: linear-gradient(#fff6ef, #f3d6cc); box-shadow: 0 0 22px 6px rgba(255, 238, 228, 0.55); transition: background 0.3s ease 0.3s, box-shadow 0.3s ease 0.3s; }
+/* Over pale sections the glass takes a deeper blue tint so the white links stay readable. */
+body[data-fg="dark"] .glassnav { background: radial-gradient(120% 140% at 50% 120%, rgba(120, 170, 255, 0.2), transparent 60%), linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.02)), rgba(0, 38, 77, 0.55); }

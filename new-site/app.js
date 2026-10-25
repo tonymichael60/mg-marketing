@@ -51,6 +51,8 @@
     if (!nav.matches(':hover')) moveBubble(navActive);
   }
   navLinks.forEach(a => a.addEventListener('pointerenter', () => moveBubble(a)));
+  nav.addEventListener('pointermove', e => { const r = nav.getBoundingClientRect(); nav.style.setProperty('--nx', `${e.clientX - r.left}px`); nav.style.setProperty('--nl', 1); });
+  nav.addEventListener('pointerleave', () => nav.style.setProperty('--nl', 0));
   nav.addEventListener('pointerleave', () => moveBubble(navActive));
   addEventListener('resize', () => moveBubble(navActive));
   // Header and menu links glide to their section instead of jumping.
