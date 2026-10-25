@@ -161,7 +161,8 @@
       return true;
     }
     const y = scrollY, dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
-    const tops = sections.map(sec => Math.round(secTop(sec))).filter(t => t > 0);
+    // Sections marked data-pause="0" (Services) scroll through with no stop.
+    const tops = sections.filter(sec => sec.dataset.pause !== '0').map(sec => Math.round(secTop(sec))).filter(t => t > 0);
     const hit = dy > 0 ? tops.find(t => t > y + 1 && t <= y + dy) : [...tops].reverse().find(t => t < y - 1 && t >= y + dy);
     if (hit === undefined || hit === pausedAt) return false;
     pausedAt = hit;
