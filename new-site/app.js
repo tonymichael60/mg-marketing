@@ -68,36 +68,47 @@
   const wbItems = $$('.wb-item'), wbImgs = $$('.wb-stack img');
   const seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1);
   const smooth = t => t * t * (3 - 2 * t);
-  // Tiles for the zoom-and-dissolve: built once (and on resize) to reproduce the photo exactly (object-fit: cover).
+  // Tiles for the zoom-and-dissolve: small canvases painted straight from the photo already on screen (no extra
+  // image requests, so they are never blank), cropped to match object-fit: cover. Built as soon as the photo has
+  // loaded, and again after a resize.
   const wbZoom = $('.wb-zoom'), wbImg = $('.wb-photo img');
   let zoomTiles = [], zoomSize = '';
   function buildTiles(w, h) {
     const iw = wbImg.naturalWidth, ih = wbImg.naturalHeight;
-    if (!iw) return;
+    if (!iw || !w) return false;
     const cols = innerWidth < 760 ? 6 : 9, rows = Math.round(cols * h / w), tw = w / cols, th = h / rows;
-    const c = Math.max(w / iw, h / ih), bw = iw * c, bh = ih * c, ox = (w - bw) / 2, oy = (h - bh) / 2;
+    const c = Math.max(w / iw, h / ih), sx0 = (iw - w / c) / 2, sy0 = (ih - h / c) / 2, dpr = Math.min(2, devicePixelRatio || 1);
     let rnd = 7;
     const rand = () => (rnd = (rnd * 9301 + 49297) % 233280) / 233280;
     wbZoom.innerHTML = '';
     zoomTiles = [];
     for (let y = 0; y < rows; y++) for (let x = 0; x < cols; x++) {
-      const t = document.createElement('i');
-      Object.assign(t.style, { left: `${x * tw}px`, top: `${y * th}px`, width: `${tw + 0.6}px`, height: `${th + 0.6}px`,
-        backgroundImage: `url("${wbImg.currentSrc || wbImg.src}")`, backgroundSize: `${bw}px ${bh}px`, backgroundPosition: `${ox - x * tw}px ${oy - y * th}px` });
+      const t = document.createElement('canvas');
+      t.width = Math.ceil(tw * dpr); t.height = Math.ceil(th * dpr);
+      Object.assign(t.style, { position: 'absolute', left: `${x * tw}px`, top: `${y * th}px`, width: `${tw + 0.6}px`, height: `${th + 0.6}px` });
+      t.getContext('2d').drawImage(wbImg, sx0 + x * tw / c, sy0 + y * th / c, tw / c, th / c, 0, 0, t.width, t.height);
       wbZoom.appendChild(t);
       // Tiles further from the centre break away first; each drifts outwards with a little spin.
       const dx = (x + 0.5) / cols - 0.5, dy = (y + 0.5) / rows - 0.5, d = Math.hypot(dx, dy);
       zoomTiles.push({ el: t, start: 0.15 + (0.7 - d) / 0.7 * 0.3 + rand() * 0.15, dx: dx * 260 + (rand() - 0.5) * 120, dy: dy * 260 + (rand() - 0.5) * 120, rot: (rand() - 0.5) * 50 });
     }
     wbZoom.style.width = `${w}px`; wbZoom.style.height = `${h}px`;
+    return true;
   }
+  function prepareTiles() {
+    const r = wbPhoto.getBoundingClientRect(), size = `${Math.round(r.width)}x${Math.round(r.height)}x${wbImg.naturalWidth}`;
+    if (size !== zoomSize && buildTiles(r.width, r.height)) zoomSize = size;
+  }
+  wbImg.loading = 'eager';
+  if (wbImg.complete) prepareTiles(); else wbImg.addEventListener('load', prepareTiles, { once: true });
+  addEventListener('resize', () => requestAnimationFrame(prepareTiles));
   function zoomFrame(g, r, vw, vh) {
-    const show = g > 0.001 && g < 0.999;
+    prepareTiles();
+    const ready = zoomTiles.length > 0, show = ready && g > 0.001 && g < 0.999;
     wbZoom.style.visibility = show ? 'visible' : 'hidden';
-    wbImg.style.visibility = g > 0.001 ? 'hidden' : '';
+    // The photo stays visible until the tiles are ready to take its place.
+    wbImg.style.visibility = ready && g > 0.001 ? 'hidden' : '';
     if (!show) return;
-    const size = `${Math.round(r.width)}x${Math.round(r.height)}x${wbImg.naturalWidth}`;
-    if (size !== zoomSize) { zoomSize = size; buildTiles(r.width, r.height); }
     // Grow from the photo's box (scale 1) to a little beyond the screen, moving to the centre.
     const S = Math.max(vw / r.width, vh / r.height) * 1.08, z = Math.min(1, g * 1.25);
     const cx = vw / 2 - (r.left + r.width / 2), cy = vh / 2 - (r.top + r.height / 2);
