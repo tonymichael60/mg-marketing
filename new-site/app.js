@@ -125,8 +125,12 @@
     // dissolving into the navy panel that grows behind it.
     const g = smooth(seg(p, 0.08, 0.22));
     const r = wbPhoto.getBoundingClientRect();
-    const ins = [r.top, vw - r.right, vh - r.bottom, r.left].map(v => (Math.max(0, v) * (1 - g)).toFixed(1));
-    wbPanel.style.clipPath = `inset(${ins[0]}px ${ins[1]}px ${ins[2]}px ${ins[3]}px round ${(22 * (1 - g)).toFixed(1)}px)`;
+    // Navy spreads like ink from the photo's centre (drifting to the screen centre) in a widening circle with a
+    // feathered edge, instead of a hard-edged box; scrolling back up draws it back in.
+    const ox = r.left + r.width / 2 + (vw / 2 - r.left - r.width / 2) * g, oy = r.top + r.height / 2 + (vh / 2 - r.top - r.height / 2) * g;
+    const rad = smooth(seg(g, 0.1, 1)) * Math.hypot(vw, vh) * 0.75, feather = 140 + 260 * g;
+    const ink = `radial-gradient(circle at ${ox.toFixed(0)}px ${oy.toFixed(0)}px, #000 ${rad.toFixed(0)}px, transparent ${(rad + feather).toFixed(0)}px)`;
+    wbPanel.style.webkitMaskImage = ink; wbPanel.style.maskImage = ink;
     zoomFrame(g, r, vw, vh);
     // The navy panel sits above the photo, so it only appears once the tiles have taken the photo's place.
     wbPanel.style.opacity = g > 0.001 && (zoomTiles.length || g > 0.5) ? 1 : 0;
