@@ -132,7 +132,9 @@
   }
   function pageStep(dir) {
     if (!menu.hidden) return false;
-    if (gliding || performance.now() < stepLock) return true;
+    // While a step is held, events that keep arriving (a long flick or trackpad inertia) extend the hold, so one
+    // gesture can never move two steps.
+    if (gliding || performance.now() < stepLock) { stepLock = Math.max(stepLock, performance.now() + 220); return true; }
     const y = scrollY;
     if (inFreeZone(y, dir)) return false;
     const list = stops();
@@ -144,9 +146,35 @@
     glide(target, long ? 2200 : Math.min(1300, 700 + Math.abs(target - y) * 0.25));
     return true;
   }
+  /* Section pause: with normal scrolling, a wheel or trackpad gesture that would carry the page past the start
+     of a section stops exactly at that start and holds for a moment (the rest of the gesture, including trackpad
+     inertia, is ignored). The next gesture scrolls on normally. */
+  const PAUSE = 700;
+  let pauseUntil = 0, pausedAt = null, lastWheel = 0;
+  function sectionPause(e) {
+    const now = performance.now(), gap = now - lastWheel;
+    lastWheel = now;
+    if (now < pauseUntil) {
+      // Still inside the gesture that hit the boundary: keep holding while its events keep arriving.
+      if (gap < 120) pauseUntil = now + 220;
+      return true;
+    }
+    const y = scrollY, dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+    const tops = sections.map(sec => Math.round(secTop(sec))).filter(t => t > 0);
+    const hit = dy > 0 ? tops.find(t => t > y + 1 && t <= y + dy) : [...tops].reverse().find(t => t < y - 1 && t >= y + dy);
+    if (hit === undefined || hit === pausedAt) return false;
+    pausedAt = hit;
+    scrollTo({ top: hit, behavior: 'instant' });
+    pauseUntil = now + PAUSE;
+    return true;
+  }
+  addEventListener('scroll', () => { if (pausedAt !== null && Math.abs(scrollY - pausedAt) > innerHeight * 0.5) pausedAt = null; }, { passive: true });
   addEventListener('wheel', e => {
     if (e.ctrlKey || Math.abs(e.deltaY) < 2) return;
-    if (pageStep(e.deltaY > 0 ? 1 : -1)) e.preventDefault();
+    // A pause in progress holds everything, including the Work steps.
+    if (performance.now() < pauseUntil && sectionPause(e)) { e.preventDefault(); return; }
+    if (pageStep(e.deltaY > 0 ? 1 : -1)) { e.preventDefault(); return; }
+    if (!reduce && menu.hidden && sectionPause(e)) e.preventDefault();
   }, { passive: false });
   let touchY = null, touchUsed = false, touchFree = false;
   addEventListener('touchstart', e => { touchY = e.touches[0].clientY; touchUsed = false; touchFree = false; }, { passive: true });
