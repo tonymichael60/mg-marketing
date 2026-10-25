@@ -152,6 +152,28 @@
   }
 
 
+  /* FAQ: answers open and close with a smooth height animation (and the text fades and rises in) instead of
+     snapping. A click during an animation reverses it from where it is. */
+  for (const d of $$('.faq details')) {
+    const sum = $('summary', d), ans = $('p', d);
+    let anim = null;
+    sum.addEventListener('click', e => {
+      if (reduce) return;
+      e.preventDefault();
+      const from = d.offsetHeight, opening = !d.open || d.classList.contains('is-closing');
+      anim?.cancel();
+      d.style.overflow = 'hidden';
+      if (opening) { d.open = true; d.classList.remove('is-closing'); }
+      // Natural height when open, or the summary-only height when closed (padding is the same either way).
+      const pad = parseFloat(getComputedStyle(d).paddingTop) + parseFloat(getComputedStyle(d).paddingBottom);
+      const to = opening ? d.offsetHeight : sum.offsetHeight + pad;
+      if (!opening) d.classList.add('is-closing');
+      anim = d.animate({ height: [`${from}px`, `${to}px`] }, { duration: 500, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+      ans.animate(opening ? { opacity: [0, 1], transform: ['translateY(-8px)', 'none'] } : { opacity: [1, 0], transform: ['none', 'translateY(-6px)'] }, { duration: opening ? 450 : 250, easing: 'ease-out', fill: 'forwards' });
+      anim.onfinish = () => { if (!opening) { d.open = false; d.classList.remove('is-closing'); } d.style.overflow = ''; anim = null; };
+    });
+  }
+
   /* Rotating words */
   for (const r of $$('.rotator')) {
     const words = r.dataset.words.split('|');

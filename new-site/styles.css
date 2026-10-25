@@ -282,7 +282,9 @@ h1, h2, h3, p { margin: 0; }
 .faq summary { display: flex; justify-content: space-between; gap: 20px; cursor: pointer; list-style: none; font-size: clamp(20px, 1.8vw, 26px); font-weight: 600; letter-spacing: -0.02em; }
 .faq summary::-webkit-details-marker { display: none; }
 .faq summary::after { content: "+"; font-weight: 400; transition: transform 0.4s var(--ease); }
-.faq details[open] summary::after { transform: rotate(45deg); }
+.faq details[open]:not(.is-closing) summary::after { transform: rotate(45deg); }
+.faq summary { transition: color 0.3s; }
+.faq summary:hover { color: #9fc3ff; }
 .faq details p { max-width: 56ch; padding-top: 14px; font-size: 17px; line-height: 1.6; color: var(--muted); }
 
 /* 10. Contact */
