@@ -162,12 +162,16 @@ h1, h2, h3, p { margin: 0; }
 .frame svg { width: 34%; fill: none; stroke: rgba(255, 255, 255, 0.92); stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; }
 .frame figcaption { position: absolute; left: 18px; bottom: 14px; font-size: 22px; color: rgba(255, 255, 255, 0.9); }
 .frame--main { left: 40%; width: min(300px, 22vw); aspect-ratio: 4 / 5; box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.6); }
-.frame--echo { left: 60%; width: min(240px, 17vw); aspect-ratio: 1; filter: blur(3px) saturate(0.7); opacity: 0.45; }
-.frame--root { background: radial-gradient(circle at 30% 25%, #4d8fd6, transparent 55%), linear-gradient(160deg, #00264D, #000B18); }
-.frame--grow { background: radial-gradient(circle at 70% 30%, #7fb2ea, transparent 50%), linear-gradient(160deg, #02386E, #00172D); }
-.frame--validate { background: radial-gradient(circle at 40% 70%, #9cc4ef, transparent 55%), linear-gradient(160deg, #00498D, #00172D); }
-.frame--launch { background: radial-gradient(circle at 60% 25%, #cfe2f7, transparent 50%), linear-gradient(160deg, #0052A2, #00264D); }
-.frame--bloom { background: radial-gradient(circle at 35% 30%, #b8d6f4, transparent 52%), linear-gradient(160deg, #0052A2, #000B18); }
+.frame--echo { left: 60%; width: min(240px, 17vw); aspect-ratio: 1; filter: blur(3px); opacity: 0.55; }
+/* Panels stay in the mid-to-light part of the palette (#02386E to #0052A2) so they sit in the blue
+   backgrounds instead of punching dark holes; a soft top highlight and a hairline edge define each card. */
+.frame--root { background: radial-gradient(circle at 30% 22%, rgba(127, 178, 234, 0.75), transparent 58%), linear-gradient(165deg, #0052A2, #02386E); }
+.frame--grow { background: radial-gradient(circle at 70% 25%, rgba(156, 196, 239, 0.7), transparent 55%), linear-gradient(165deg, #00498D, #00264D 120%); }
+.frame--validate { background: radial-gradient(circle at 40% 30%, rgba(207, 226, 247, 0.6), transparent 55%), linear-gradient(165deg, #0052A2, #00498D); }
+.frame--launch { background: radial-gradient(circle at 60% 22%, rgba(127, 178, 234, 0.75), transparent 55%), linear-gradient(165deg, #02386E, #00498D); }
+.frame--bloom { background: radial-gradient(circle at 35% 28%, rgba(184, 214, 244, 0.7), transparent 55%), linear-gradient(165deg, #0052A2, #02386E); }
+.frame { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 0 0 1px rgba(207, 226, 247, 0.14); }
+.frame--main { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 0 0 1px rgba(207, 226, 247, 0.14), 0 40px 80px -30px rgba(0, 11, 24, 0.55); }
 .method__texts { position: absolute; right: var(--pad); top: 16vh; z-index: 2; width: min(320px, 24vw); }
 .method__text { position: absolute; inset: 0 0 auto; opacity: 0; will-change: opacity, transform; }
 .method__text h3 { font-size: 30px; font-weight: 600; letter-spacing: -0.03em; }
@@ -196,11 +200,12 @@ h1, h2, h3, p { margin: 0; }
 .card small { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.8; }
 .card h3 { font-size: 28px; line-height: 1.05; letter-spacing: -0.03em; }
 .card p { font-size: 14px; line-height: 1.5; opacity: 0.85; }
-.card--a { background: radial-gradient(circle at 30% 20%, #4d8fd6, transparent 55%), linear-gradient(160deg, #0052A2, #000B18); }
-.card--b { background: radial-gradient(circle at 70% 30%, #7fb2ea, transparent 50%), linear-gradient(160deg, #00498D, #00172D); }
-.card--c { background: radial-gradient(circle at 40% 70%, #3a7bc8, transparent 55%), linear-gradient(160deg, #02386E, #000B18); }
-.card--d { background: radial-gradient(circle at 60% 25%, #cfe2f7, transparent 45%), linear-gradient(160deg, #0052A2, #00264D); }
-.card--e { background: radial-gradient(circle at 30% 30%, #9cc4ef, transparent 55%), linear-gradient(160deg, #00498D, #000B18); }
+.card--a { background: radial-gradient(circle at 30% 20%, rgba(127, 178, 234, 0.8), transparent 55%), linear-gradient(165deg, #0052A2, #02386E); }
+.card--b { background: radial-gradient(circle at 70% 25%, rgba(156, 196, 239, 0.7), transparent 52%), linear-gradient(165deg, #00498D, #00264D 120%); }
+.card--c { background: radial-gradient(circle at 40% 25%, rgba(207, 226, 247, 0.6), transparent 55%), linear-gradient(165deg, #0052A2, #00498D); }
+.card--d { background: radial-gradient(circle at 60% 22%, rgba(184, 214, 244, 0.7), transparent 50%), linear-gradient(165deg, #02386E, #0052A2); }
+.card--e { background: radial-gradient(circle at 30% 25%, rgba(127, 178, 234, 0.75), transparent 55%), linear-gradient(165deg, #00498D, #02386E); }
+.card { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 0 0 1px rgba(207, 226, 247, 0.14), 0 30px 60px -20px rgba(0, 11, 24, 0.5); }
 
 /* 8. Measure list */
 .measure { display: grid; grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr); align-items: center; gap: 40px; padding-left: calc(var(--pad) + 120px); }
