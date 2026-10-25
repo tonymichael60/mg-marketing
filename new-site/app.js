@@ -1,0 +1,127 @@
+// MediaGroots site behaviour: section colours, side index, reveals, rotating words, and the scroll-driven
+// pinned sections (services list, featured work, clients wheel, fanned cards). One rAF loop runs while the
+// page scrolls; pinned sections ease towards their scroll position so motion stays smooth.
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const body = document.body;
+
+  // Progress through a pinned section: 0 when its top reaches the viewport top, 1 when its bottom does.
+  const progress = el => { const r = el.getBoundingClientRect(), span = r.height - innerHeight; return span > 0 ? clamp(-r.top / span, 0, 1) : 0; };
+
+  /* Section colours and side index */
+  const sections = $$('.sec');
+  const indexList = $('.index ol');
+  indexList.innerHTML = sections.map((s, i) => `<li>${i + 1}<span>${s.dataset.label}</span></li>`).join('');
+  const indexItems = $$('li', indexList);
+  let activeSection = -1;
+  function setSection(i) {
+    if (i === activeSection) return;
+    activeSection = i;
+    const s = sections[i];
+    body.style.setProperty('--bg', s.dataset.bg);
+    body.dataset.fg = s.dataset.fg;
+    const [a1, a2, a3] = s.dataset.aura.split(',');
+    body.style.setProperty('--a1', a1); body.style.setProperty('--a2', a2); body.style.setProperty('--a3', a3);
+    indexItems.forEach((li, j) => li.classList.toggle('is-on', j === i));
+  }
+
+  /* Rotating words */
+  for (const r of $$('.rotator')) {
+    const words = r.dataset.words.split('|');
+    let k = 0;
+    if (reduce) continue;
+    setInterval(() => {
+      r.classList.remove('is-swap'); void r.offsetWidth; r.classList.add('is-swap');
+      setTimeout(() => { k = (k + 1) % words.length; r.textContent = words[k]; }, 420);
+    }, 2600);
+  }
+
+  /* Menu */
+  const menuBtn = $('.top__menu'), menu = $('#menu');
+  const setMenu = open => { menu.hidden = !open; menuBtn.setAttribute('aria-expanded', open); menuBtn.lastChild.textContent = open ? 'Close' : 'Menu'; };
+  menuBtn.addEventListener('click', () => setMenu(menu.hidden));
+  $$('a', menu).forEach(a => a.addEventListener('click', () => setMenu(false)));
+  addEventListener('keydown', e => { if (e.key === 'Escape' && !menu.hidden) { setMenu(false); menuBtn.focus(); } });
+
+  /* Measure list: hovering a row blurs the others */
+  const measure = $('.measure__list');
+  $$('li', measure).forEach(li => {
+    li.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') measure.classList.add('has-focus'); });
+    li.addEventListener('pointerleave', () => measure.classList.remove('has-focus'));
+  });
+
+  /* Pinned sections */
+  const svc = $('.services'), svcItems = $$('.services__list li'), svcGroups = $$('.services__group');
+  const work = $('.work'), workSets = ['.work__titles h3', '.work__media img', '.work__tags ul', '.work__thumbs li'].map(s => $$(s));
+  const clients = $('.clients'), clientNames = $$('.clients__names a'), clientLogos = $$('.clients__logos img');
+  const build = $('.build'), buildRow = $('.build__row'), cards = $$('.card');
+  const eased = { svc: 0, clients: 0 };
+  const ease = (key, target) => { eased[key] = reduce ? target : eased[key] + (target - eased[key]) * 0.14; if (Math.abs(target - eased[key]) < 0.001) eased[key] = target; return eased[key] !== target; };
+
+  // Clicking a client name rolls the wheel to it.
+  clientNames.forEach((a, i) => a.addEventListener('click', e => {
+    e.preventDefault();
+    const r = clients.getBoundingClientRect(), span = r.height - innerHeight;
+    scrollTo({ top: scrollY + r.top + span * i / (clientNames.length - 1), behavior: reduce ? 'auto' : 'smooth' });
+  }));
+
+  function frame() {
+    ticking = false;
+    let again = false;
+
+    // Active section: the one under the middle of the screen.
+    const mid = innerHeight * 0.5;
+    sections.forEach((s, i) => { const r = s.getBoundingClientRect(); if (r.top <= mid && r.bottom > mid) setSection(i); });
+
+    // Reveals
+    for (const el of $$('[data-reveal]:not(.is-in)')) if (el.getBoundingClientRect().top < innerHeight * 0.88) el.classList.add('is-in');
+
+    // Services: the list slides up; the centred discipline is full strength, its group label lit.
+    again = ease('svc', progress(svc) * (svcItems.length - 1)) || again;
+    const step = innerWidth < 760 ? 52 : Math.min(120, innerWidth * 0.075);
+    let svcActive = 0;
+    svcItems.forEach((li, i) => {
+      const d = i - eased.svc, a = Math.abs(d);
+      li.style.transform = `translate3d(0, calc(-50% + ${d * step}px), 0)`;
+      li.style.opacity = a > 3.5 ? 0 : String(Math.max(0.12, 1 - a * 0.32));
+      if (a < 0.5) svcActive = i;
+    });
+    svcGroups.forEach((g, i) => g.classList.toggle('is-on', +svcItems[svcActive].dataset.group === i));
+
+    // Featured work: one project per quarter of the scroll.
+    const wi = Math.min(workSets[0].length - 1, Math.floor(progress(work) * workSets[0].length));
+    workSets.forEach(set => set.forEach((el, i) => el.classList.toggle('is-on', i === wi)));
+
+    // Clients wheel: names are spokes from a hub off to the left; the centred one is level and bright.
+    again = ease('clients', progress(clients) * (clientNames.length - 1)) || again;
+    const radius = innerWidth < 760 ? 240 : Math.max(420, innerWidth * 0.34);
+    clientNames.forEach((n, i) => {
+      const d = i - eased.clients, a = Math.abs(d);
+      n.style.transformOrigin = `${-radius}px 50%`;
+      n.style.transform = `rotate(${d * 13}deg)`;
+      n.style.opacity = a > 4 ? 0 : String(Math.max(0.12, 1 - a * (d < 0 ? 0.22 : 0.3)));
+    });
+    const ci = Math.round(eased.clients);
+    clientLogos.forEach((img, i) => img.classList.toggle('is-on', i === ci));
+
+    // Fanned cards: the row drifts left; each card turns and tips by its distance from the centre.
+    const bp = progress(build);
+    const travel = buildRow.scrollWidth - innerWidth * 0.5 + 120;
+    buildRow.style.transform = `translate3d(${-bp * travel}px, 0, 0)`;
+    const cx = innerWidth / 2;
+    cards.forEach(c => {
+      const r = c.getBoundingClientRect(), off = clamp((r.left + r.width / 2 - cx) / innerWidth, -1, 1);
+      c.style.transform = `rotateY(${off * -38}deg) rotateZ(${off * 5}deg) translateZ(${-Math.abs(off) * 220}px)`;
+    });
+
+    if (again) request();
+  }
+  let ticking = false;
+  const request = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+  addEventListener('scroll', request, { passive: true });
+  addEventListener('resize', request);
+  frame();
+})();

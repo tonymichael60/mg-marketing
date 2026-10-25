@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MediaGroots</title>
+  <meta name="description" content="MediaGroots is a digital marketing and growth studio. We plant strategy, grow content and scale campaigns that turn attention into revenue.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Ambient layers: drifting colour aura and film grain, tinted per section by app.js. -->
+  <div class="aura" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="top">
+    <button class="top__menu" type="button" aria-expanded="false" aria-controls="menu"><span></span>Menu</button>
+    <a class="top__logo" href="#home" aria-label="MediaGroots home">
+      <svg viewBox="172 333 1589 806" aria-hidden="true"><path d="M172 333H291L966 750L1642 333H1761V553L966 1042L419 712V1139L172 1002Z"/><path d="M1065 1090L1322 931V1015H1624V816H1508L1706 694H1761V1139H1065Z"/></svg>
+      <span>media<em>groots</em></span>
+    </a>
+    <a class="top__chat" href="#contact">Let’s chat <span aria-hidden="true">→</span></a>
+  </header>
+
+  <nav class="menu" id="menu" aria-label="Main" hidden>
+    <ol>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#method">Method</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ol>
+  </nav>
+
+  <!-- Side index: which section is in view. -->
+  <aside class="index" aria-hidden="true"><ol></ol></aside>
+
+  <main>
+    <!-- 1. Hero -->
+    <section class="sec hero" id="home" data-label="Home" data-bg="#060b2e" data-fg="light" data-aura="#2f6bff,#1422e3,#00e0c6">
+      <h1 class="hero__title">
+        <span class="hero__line">We are a</span>
+        <span class="hero__line hero__line--in2">Results — led</span>
+        <span class="hero__line">Growth <span class="hero__pill" aria-hidden="true"><svg viewBox="172 333 1589 806"><path d="M172 333H291L966 750L1642 333H1761V553L966 1042L419 712V1139L172 1002Z"/><path d="M1065 1090L1322 931V1015H1624V816H1508L1706 694H1761V1139H1065Z"/></svg></span></span>
+        <span class="hero__line hero__line--in1"><span class="rotator" data-words="Studio|Partner|Engine">Studio</span></span>
+      </h1>
+      <div class="hero__meta">
+        <span>Thodupuzha · Kerala · IN</span>
+        <span class="hero__tag">Great brands grow from <i>deep groots</i></span>
+      </div>
+      <a class="hero__scroll" href="#manifesto">Scroll</a>
+    </section>
+
+    <!-- 2. Manifesto -->
+    <section class="sec manifesto" id="manifesto" data-label="About" data-bg="#0b1a7a" data-fg="light" data-aura="#4b5cff,#00b3ff,#7a5cff">
+      <p class="manifesto__big" data-reveal>We plant strategy, grow content and scale campaigns that turn <i>attention</i> into revenue.</p>
+      <p class="manifesto__small" data-reveal>Performance marketing, AI video and automation, measured in customers, not likes. Think of us as your in-house growth team, without the overhead.</p>
+    </section>
+
+    <!-- 3. What we do: pinned list, the active discipline lit in the centre. -->
+    <section class="sec services" id="services" data-label="Services" data-bg="#1422e3" data-fg="light" data-aura="#7d8dff,#00e0ff,#ffffff">
+      <div class="services__pin">
+        <div class="services__groups">
+          <div class="services__group"><b>01</b><span>Growth</span></div>
+          <div class="services__group"><b>02</b><span>Content</span></div>
+          <div class="services__group"><b>03</b><span>Systems</span></div>
+        </div>
+        <ol class="services__list">
+          <li data-group="0">Performance Marketing</li>
+          <li data-group="0">Social Media</li>
+          <li data-group="0">SEO &amp; AEO</li>
+          <li data-group="0">Conversion Copy</li>
+          <li data-group="1">AI Video Studio</li>
+          <li data-group="1">Brand Identity</li>
+          <li data-group="2">Web Design &amp; Build</li>
+          <li data-group="2">Business Automation</li>
+        </ol>
+        <p class="services__note">Eight disciplines. One plan. One team.</p>
+      </div>
+    </section>
+
+    <!-- 4. Featured work: pinned, one project at a time. -->
+    <section class="sec work" id="work" data-label="Work" data-bg="#f2efe6" data-fg="dark" data-aura="#c7d0ff,#ffd9b0,#b9f0e6">
+      <div class="work__pin">
+        <div class="work__titles">
+          <h3>Support Copilot<br>for SaaS</h3>
+          <h3>Underwriting<br>Risk Copilot</h3>
+          <h3>Clinical Note<br>Summarizer</h3>
+          <h3>Catalog Intelligence<br>Engine</h3>
+        </div>
+        <div class="work__media">
+          <img src="assets/work-support-copilot.svg" alt="Support Copilot for SaaS">
+          <img src="assets/work-underwriting.svg" alt="Underwriting Risk Copilot" loading="lazy">
+          <img src="assets/work-clinical.jpg" alt="Clinical Note Summarizer" loading="lazy">
+          <img src="assets/work-catalog.jpg" alt="Catalog Intelligence Engine" loading="lazy">
+        </div>
+        <div class="work__tags">
+          <ul><li>AI strategy</li><li>AI UX flows</li><li>LLM agent</li><li>RAG</li><li class="work__result">−38% first-response time</li></ul>
+          <ul><li>Use-case mapping</li><li>Prompt &amp; UI patterns</li><li>Fintech</li><li class="work__result">−42% manual review time</li></ul>
+          <ul><li>AI strategy</li><li>AI UX flows</li><li>Healthcare</li><li class="work__result">−28% front-desk calls</li></ul>
+          <ul><li>Data cleaning</li><li>Embeddings</li><li>Ecommerce</li><li class="work__result">+12% add-to-cart</li></ul>
+        </div>
+        <ol class="work__thumbs" aria-hidden="true">
+          <li><img src="assets/work-support-copilot.svg" alt=""></li>
+          <li><img src="assets/work-underwriting.svg" alt="" loading="lazy"></li>
+          <li><img src="assets/work-clinical.jpg" alt="" loading="lazy"></li>
+          <li><img src="assets/work-catalog.jpg" alt="" loading="lazy"></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 5. Method: numbered chapters. -->
+    <section class="sec method" id="method" data-label="Method" data-bg="#0a1240" data-fg="light" data-aura="#2f6bff,#00e0c6,#4b5cff">
+      <h2 class="method__title" data-reveal>Driven by<br><i>deep groots</i></h2>
+      <div class="method__chapters">
+        <article class="chapter" data-reveal><span class="chapter__num">01</span><div><h3>Root</h3><small>3–7 days</small><p>Align on problems, data reality and success metrics. Opportunity brief, KPI model, phased roadmap, effort and cost ranges.</p></div></article>
+        <article class="chapter" data-reveal><span class="chapter__num">02</span><div><h3>Grow</h3><small>1–2 weeks</small><p>We build the growth engine: funnels, campaigns, AI content and smart automations that tie it together.</p></div></article>
+        <article class="chapter" data-reveal><span class="chapter__num">03</span><div><h3>Validate</h3><small>1 week</small><p>Prove accuracy, usability, safety and cost. Eval dashboard, acceptance thresholds, a clear decision to iterate or ship.</p></div></article>
+        <article class="chapter" data-reveal><span class="chapter__num">04</span><div><h3>Launch</h3><small>1 week</small><p>Go live with eyes on every number. Go-live checklist and QA, tracking and dashboards switched on, team handover.</p></div></article>
+        <article class="chapter" data-reveal><span class="chapter__num">05</span><div><h3>Bloom</h3><small>Ongoing</small><p>Scale what works, cut what does not. Weekly optimisation sprints, monthly performance reviews, new channels as results compound.</p></div></article>
+      </div>
+    </section>
+
+    <!-- 6. Clients: names roll round a wheel; the centred client's logo shows on the right. -->
+    <section class="sec clients" id="clients" data-label="Clients" data-bg="#22305f" data-fg="light" data-aura="#7d8dff,#b9f0e6,#4b5cff">
+      <div class="clients__pin">
+        <div class="clients__names">
+          <a href="#clients">Aroma Prime</a>
+          <a href="#clients">Padathil Stays</a>
+          <a href="#clients">Pure Gold</a>
+          <a href="#clients">Tripips Academy</a>
+          <a href="#clients">Conztek Academy</a>
+          <a href="#clients">Oyster Gypsum</a>
+        </div>
+        <div class="clients__logos" aria-hidden="true">
+          <img src="assets/client-aroma-prime.png" alt="">
+          <img src="assets/client-padathil-stays.png" alt="" loading="lazy">
+          <img src="assets/client-pure-gold.png" alt="" loading="lazy">
+          <img src="assets/client-tripips.png" alt="" loading="lazy">
+          <img src="assets/client-conztek.png" alt="" loading="lazy">
+          <img src="assets/client-oyster.png" alt="" loading="lazy">
+        </div>
+        <p class="clients__note">Trusted by 100+ brands, from family businesses to fast-growing academies. We grow them like our own.</p>
+      </div>
+    </section>
+
+    <!-- 7. What we build: fanned cards that tilt as they drift past. -->
+    <section class="sec build" id="build" data-label="What we build" data-bg="#d9e1ff" data-fg="dark" data-aura="#ffffff,#9fb0ff,#b9f0e6">
+      <div class="build__pin">
+        <h2 class="build__title">What we <i>build</i></h2>
+        <div class="build__row">
+          <article class="card card--a"><small>01 · Performance</small><h3>Full-funnel ad systems</h3><p>Account architecture, creative testing and retargeting built around cost per customer.</p></article>
+          <article class="card card--b"><small>02 · AI Video</small><h3>AI films &amp; reel engines</h3><p>Cinematic ads and a weekly flow of short-form content, produced at the speed of AI.</p></article>
+          <article class="card card--c"><small>03 · Automation</small><h3>Lead machines that never sleep</h3><p>Capture, qualify and follow up automatically, so no enquiry goes cold.</p></article>
+          <article class="card card--d"><small>04 · Brand</small><h3>Brands built as systems</h3><p>Identity, website and collateral designed to look premium everywhere they appear.</p></article>
+          <article class="card card--e"><small>05 · Reporting</small><h3>Live KPI dashboards</h3><p>The handful of numbers your business actually runs on, always up to date.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. What we measure: big list; hovering a row blurs the rest. -->
+    <section class="sec measure" id="measure" data-label="Results" data-bg="#0a1240" data-fg="light" data-aura="#2f6bff,#7a5cff,#00b3ff">
+      <div class="measure__side" data-reveal><small>Likes don’t pay salaries</small><em>We measure</em></div>
+      <ol class="measure__list">
+        <li data-reveal><span class="measure__tile measure__tile--1"></span><span>Revenue</span></li>
+        <li data-reveal><span class="measure__tile measure__tile--2"></span><span>Cost per acquisition</span></li>
+        <li data-reveal><span class="measure__tile measure__tile--3"></span><span>Return on ad spend</span></li>
+        <li data-reveal><span class="measure__tile measure__tile--4"></span><span>Qualified leads</span></li>
+      </ol>
+    </section>
+
+    <!-- 9. FAQ -->
+    <section class="sec faq" id="faq" data-label="FAQ" data-bg="#f2efe6" data-fg="dark" data-aura="#c7d0ff,#ffd9b0,#ffffff">
+      <h2 class="faq__title" data-reveal>Questions, <i>answered</i></h2>
+      <div class="faq__list">
+        <details data-reveal><summary>What’s the typical timeline from idea to v1?</summary><p>Typically 3–8 weeks depending on scope and complexity. We move from discovery to deployment with regular check-ins.</p></details>
+        <details data-reveal><summary>What do we need to start?</summary><p>A clear problem statement, success metrics, access to sample data, and a stakeholder who can make decisions. We’ll run a kickoff workshop to align scope.</p></details>
+        <details data-reveal><summary>Which models and stack do you use?</summary><p>Modern, scalable stacks like React, Node.js and cloud services. We choose models and APIs based on the use case, performance and cost.</p></details>
+        <details data-reveal><summary>Are model and API costs included in pricing?</summary><p>Model and API costs are usually billed separately based on usage. We share estimates upfront and help optimise costs.</p></details>
+      </div>
+    </section>
+
+    <!-- 10. Contact -->
+    <section class="sec contact" id="contact" data-label="Contact" data-bg="#050817" data-fg="light" data-aura="#1422e3,#00e0c6,#4b5cff">
+      <h2 class="contact__title">
+        <span>Let’s</span>
+        <span>grow</span>
+        <span class="rotator rotator--serif" data-words="brands|revenue|roots|futures">brands</span>
+        <span>together</span>
+      </h2>
+      <div class="contact__info">
+        <div class="office"><span class="office__icon" aria-hidden="true"></span><b>India</b><p>Thodupuzha, Kerala</p></div>
+        <div class="office"><span class="office__icon" aria-hidden="true"></span><b>Email</b><p><a href="mailto:hello@youraiagency.com">hello@youraiagency.com</a></p></div>
+        <div class="office"><span class="office__icon" aria-hidden="true"></span><b>Phone</b><p><a href="tel:+16475550172">+1 (647) 555 0172</a></p></div>
+      </div>
+      <div class="contact__foot">
+        <div><small>Start a project</small><a class="contact__mail" href="mailto:hello@youraiagency.com">hello@youraiagency.com</a></div>
+        <ul class="contact__social"><li><a href="#">Instagram</a></li><li><a href="#">LinkedIn</a></li><li><a href="#">Facebook</a></li><li><a href="#">X</a></li></ul>
+        <p class="contact__copy">© 2026 MediaGroots. All rights reserved.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
