@@ -102,6 +102,10 @@
     return dir > 0 ? y >= last - 4 : y <= first + 4;
   }
   let gliding = null, stepLock = 0;
+  // A gesture is a run of wheel events less than 120ms apart. Only the gesture that started a stop (a section
+  // pause or a Work step) may stretch it; a new gesture during the stop is ignored but does not extend it, so
+  // continuous scrolling can never get stuck.
+  let lastWheel = 0, sameGesture = false, holdGesture = false;
   const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   function glide(target, duration) {
     stopSmooth();
@@ -130,12 +134,16 @@
     requestAnimationFrame(step);
     // Swallow the rest of the gesture (trackpad inertia keeps sending wheel events after the glide).
     stepLock = performance.now() + duration + 350;
+    holdGesture = true;
   }
   function pageStep(dir) {
     if (!menu.hidden) return false;
     // While a step is held, events that keep arriving (a long flick or trackpad inertia) extend the hold, so one
     // gesture can never move two steps.
-    if (gliding || performance.now() < stepLock) { stepLock = Math.max(stepLock, performance.now() + 300); return true; }
+    if (gliding || performance.now() < stepLock) {
+      if (holdGesture && sameGesture) stepLock = Math.max(stepLock, performance.now() + 300); else holdGesture = false;
+      return true;
+    }
     // Decide from where the page is heading (a smooth wheel scroll may still be settling); glide() takes over.
     const y = smoothTarget ?? scrollY;
     if (inFreeZone(y, dir)) return false;
@@ -152,14 +160,13 @@
      of a section stops exactly at that start and holds for a moment (the rest of the gesture, including trackpad
      inertia, is ignored). The next gesture scrolls on normally. */
   const PAUSE = 700;
-  let pauseUntil = 0, pauseHold = 0, pausedAt = null, lastWheel = 0;
+  let pauseUntil = 0, pauseHold = 0, pausedAt = null;
   function sectionPause(e) {
-    const now = performance.now(), gap = now - lastWheel;
-    lastWheel = now;
+    const now = performance.now();
     if (now < pauseUntil) {
       // Still inside the gesture that hit the boundary: keep holding while its events keep arriving.
       // The hold counts from the end of the gesture: continuing events push it out by the full pause.
-      if (gap < 120) pauseUntil = Math.max(pauseUntil, now + pauseHold);
+      if (holdGesture && sameGesture) pauseUntil = Math.max(pauseUntil, now + pauseHold); else holdGesture = false;
       return true;
     }
     const y = smoothTarget ?? scrollY, dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
@@ -173,6 +180,7 @@
     const sec = sections.find(s2 => Math.round(secTop(s2)) === hit);
     pauseHold = +sec?.dataset.pause || PAUSE;
     pauseUntil = now + pauseHold;
+    holdGesture = true;
     return true;
   }
   addEventListener('scroll', () => { if (pausedAt !== null && Math.abs(scrollY - pausedAt) > innerHeight * 0.5) pausedAt = null; }, { passive: true });
@@ -198,6 +206,7 @@
   const stopSmooth = () => { smoothTarget = null; };
   addEventListener('wheel', e => {
     if (e.ctrlKey || Math.abs(e.deltaY) < 2) return;
+    const now = performance.now(); sameGesture = now - lastWheel < 120; lastWheel = now;
     // A pause in progress holds everything, including the Work steps.
     if (performance.now() < pauseUntil && sectionPause(e)) { e.preventDefault(); return; }
     if (pageStep(e.deltaY > 0 ? 1 : -1)) { e.preventDefault(); return; }
