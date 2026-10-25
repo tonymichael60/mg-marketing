@@ -277,21 +277,25 @@
       swallow = true; swallowDir = dir;
       return;
     }
-    // Method → Clients: scrolling down stops at Bloom (the end of Method) and holds for the rest of that gesture;
-    // the next fresh scroll glides to the start of Clients.
+    // Breaks: scrolling down stops at the end of Method (Bloom) and at the end of Clients (last client, where the
+    // spotlight switches off), holding for the rest of that gesture; the next fresh scroll glides to the start of
+    // the following section.
     const y = smoothTarget ?? scrollY, dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
-    const bloom = Math.round(secTop(method) + method.offsetHeight - innerHeight), clientsTop = Math.round(secTop(clients));
-    if (dir > 0 && Math.abs(y - bloom) < 6 && !sameGesture) {
-      e.preventDefault();
-      if (reduce) scrollTo({ top: clientsTop, behavior: 'instant' }); else glide(clientsTop, 1100);
-      swallow = true; swallowDir = dir;
-      return;
-    }
-    if (dir > 0 && y < bloom - 1 && y + dy > bloom) {
-      e.preventDefault();
-      if (reduce) scrollTo({ top: bloom, behavior: 'instant' }); else smoothTo(bloom);
-      swallow = true; swallowDir = dir;
-      return;
+    const end = sec => Math.round(secTop(sec) + sec.offsetHeight - innerHeight);
+    const breaks = [[end(method), Math.round(secTop(clients))], [end(clients), Math.round(secTop(build))]];
+    for (const [at, next] of breaks) {
+      if (dir > 0 && Math.abs(y - at) < 6 && !sameGesture) {
+        e.preventDefault();
+        if (reduce) scrollTo({ top: next, behavior: 'instant' }); else glide(next, 1100);
+        swallow = true; swallowDir = dir;
+        return;
+      }
+      if (dir > 0 && y < at - 1 && y + dy > at) {
+        e.preventDefault();
+        if (reduce) scrollTo({ top: at, behavior: 'instant' }); else smoothTo(at);
+        swallow = true; swallowDir = dir;
+        return;
+      }
     }
     if (reduce) return;
     e.preventDefault();
@@ -379,7 +383,8 @@
     });
     // The spotlight only switches on once the page has settled on Clients (pinned, not mid-glide).
     const cr = clients.getBoundingClientRect();
-    body.classList.toggle('spot-on', !gliding && cr.top <= 2 && cr.bottom >= innerHeight - 2);
+    // Off again at the break on the last client (the section's end), before moving on.
+    body.classList.toggle('spot-on', !gliding && cr.top <= 2 && cr.bottom > innerHeight + 6);
     const ci = Math.round(eased.clients);
     clientLogos.forEach((img, i) => img.classList.toggle('is-on', i === ci));
 
