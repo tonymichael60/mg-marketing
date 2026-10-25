@@ -27,10 +27,14 @@
     indexItems.forEach((li, j) => li.classList.toggle('is-on', j === i));
   }
 
-  // Page gradient: each section's palette colour sits at that section's top; blends run between them.
+  // Page gradient: each section holds its own colour from its top until the last 60% of a screen above its
+  // bottom, then blends into the next section's colour.
   function paintBg() {
-    const H = document.documentElement.scrollHeight;
-    const stops = sections.map(s => `${s.dataset.bg} ${Math.round(s.getBoundingClientRect().top + scrollY)}px`);
+    const H = document.documentElement.scrollHeight, blend = innerHeight * 0.6;
+    const stops = sections.flatMap(s => {
+      const r = s.getBoundingClientRect(), top = Math.round(r.top + scrollY), hold = Math.round(Math.max(top, r.bottom + scrollY - blend));
+      return [`${s.dataset.bg} ${top}px`, `${s.dataset.bg} ${hold}px`];
+    });
     document.documentElement.style.backgroundImage = `linear-gradient(180deg, ${stops.join(', ')}, ${sections.at(-1).dataset.bg} ${H}px)`;
   }
   paintBg();

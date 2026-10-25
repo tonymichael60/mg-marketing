@@ -205,7 +205,10 @@ h1, h2, h3, p { margin: 0; }
 .card--c { background: radial-gradient(circle at 40% 25%, rgba(207, 226, 247, 0.6), transparent 55%), linear-gradient(165deg, #0052A2, #00498D); }
 .card--d { background: radial-gradient(circle at 60% 22%, rgba(184, 214, 244, 0.7), transparent 50%), linear-gradient(165deg, #02386E, #0052A2); }
 .card--e { background: radial-gradient(circle at 30% 25%, rgba(127, 178, 234, 0.75), transparent 55%), linear-gradient(165deg, #00498D, #02386E); }
-.card { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 0 0 1px rgba(207, 226, 247, 0.14), 0 30px 60px -20px rgba(0, 11, 24, 0.5); }
+.card { box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), inset 0 0 0 1px rgba(207, 226, 247, 0.16), 0 2px 6px rgba(0, 11, 24, 0.35), 0 26px 50px -12px rgba(0, 11, 24, 0.75), 0 60px 110px -30px rgba(0, 11, 24, 0.6); }
+/* White line icon at the top of each card; the text stays at the bottom. */
+.card__icon { width: 46px; height: 46px; margin-bottom: auto; padding: 10px; border-radius: 12px; fill: none; stroke: #fff; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+  background: rgba(255, 255, 255, 0.12); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 8px 18px -8px rgba(0, 11, 24, 0.6); }
 
 /* 8. Measure list */
 .measure { display: grid; grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr); align-items: center; gap: 40px; padding-left: calc(var(--pad) + 120px); }
@@ -292,3 +295,18 @@ h1, h2, h3, p { margin: 0; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   [data-reveal] { opacity: 1; transform: none; filter: none; }
 }
+
+/* Method and Clients (after fromanother.love "Our team" and "They trust us"): white text; the page blends from
+   deep navy into a dark red for Clients, lit by a soft white beam from the top left with darkened edges. */
+.method, .clients { --fg: #ffffff; --muted: rgba(255, 255, 255, 0.72); --line: rgba(255, 255, 255, 0.22); color: #fff; }
+.clients__names a { color: #fff; }
+.clients__logos img.is-on { opacity: 1; }
+.clients__pin::before, .clients__pin::after { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: -1; }
+.clients__pin::before {
+  background:
+    radial-gradient(28% 70% at 6% 0%, rgba(255, 244, 240, 0.55) 0%, rgba(255, 236, 232, 0.18) 40%, rgba(255, 236, 232, 0) 70%),
+    radial-gradient(60% 50% at 50% 55%, rgba(140, 34, 50, 0.35) 0%, rgba(140, 34, 50, 0) 70%);
+  filter: blur(10px);
+}
+.clients__pin::after { box-shadow: inset 0 0 180px 40px rgba(12, 2, 6, 0.55); }
+.clients__pin { isolation: isolate; }
