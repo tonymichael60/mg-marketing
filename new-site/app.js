@@ -1,5 +1,5 @@
 // MediaGroots site behaviour: section colours, side index, reveals, rotating words, and the scroll-driven
-// pinned sections (services list, featured work, clients wheel, fanned cards). One rAF loop runs while the
+// pinned sections (services list, featured work, clients wheel), plus the What we build card reveals. One rAF loop runs while the
 // page scrolls; pinned sections ease towards their scroll position so motion stays smooth.
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -62,6 +62,14 @@
     if (reduce) scrollTo({ top: y, behavior: 'instant' }); else glide(y, Math.min(1600, 700 + Math.abs(y - scrollY) * 0.04));
   }));
 
+  /* What we build: each card rises in once it is well into view, and its artefact animates (CSS, on .is-in). */
+  const bcards = $$('.bcard');
+  if (reduce) bcards.forEach(c => c.classList.add('is-in'));
+  else {
+    const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); } }), { threshold: 0.25 });
+    bcards.forEach(c => io.observe(c));
+  }
+
   /* Rotating words */
   for (const r of $$('.rotator')) {
     const words = r.dataset.words.split('|');
@@ -89,14 +97,13 @@
 
   /* Pinned sections */
   const svc = $('.services'), svcItems = $$('.services__list li'), svcGroups = $$('.services__group');
-  const build = $('.build'), buildRow = $('.build__row'), cards = $$('.card');
   const work = $('.work'), workSets = ['.work__titles h3', '.work__media img', '.work__tags ul', '.work__thumbs li'].map(s => $$(s));
 
   /* Page stepping: one scroll gesture (wheel, trackpad, swipe or key) glides to the next stop with our own eased
      scroll, so the pinned animations and the background colour change move in step with it. Stops are each
      section's top, every step in the pinned sections (projects, method stages, clients), and about a screen at
      a time through sections taller than the screen. Services scroll freely between their first and last
-     discipline; What we build is a single glide from the first card to the last. Stops are worked out on each
+     discipline. Stops are worked out on each
      gesture, so they stay right after resizes or opened FAQ answers. */
   const workCount = workSets[0].length;
   const pinnedStops = {
@@ -105,7 +112,6 @@
     work: () => Array.from({ length: workCount }, (_, i) => (i + 0.5) / workCount),
     method: () => { const n = $$('.method__text').length; return [0, ...Array.from({ length: n }, (_, i) => (i + 0.6) / (n - 0.4))]; },
     clients: () => $$('.clients__names a').map((_, i, a) => i / (a.length - 1)),
-    build: () => [0, 1],
   };
   const secTop = sec => sec.getBoundingClientRect().top + scrollY;
   function stops() {
@@ -179,9 +185,7 @@
     const target = dir > 0 ? list.find(v => v > y + 4) : [...list].reverse().find(v => v < y - 4);
     if (target === undefined) return false;
     if (reduce) { scrollTo({ top: target, behavior: 'instant' }); return true; }
-    // The card row in What we build gets a longer glide so the cards can be seen passing.
-    const long = [secTop(build), secTop(build) + build.offsetHeight - innerHeight].some(v => Math.abs(v - y) < 6) && Math.abs(target - y) > innerHeight * 1.5;
-    glide(target, long ? 2200 : Math.min(1300, 700 + Math.abs(target - y) * 0.25));
+    glide(target, Math.min(1300, 700 + Math.abs(target - y) * 0.25));
     return true;
   }
 
@@ -309,15 +313,6 @@
     const ci = Math.round(eased.clients);
     clientLogos.forEach((img, i) => img.classList.toggle('is-on', i === ci));
 
-    // Fanned cards: the row drifts left; each card turns and tips by its distance from the centre.
-    const bp = progress(build);
-    const travel = buildRow.scrollWidth - innerWidth * 0.5 + 120;
-    buildRow.style.transform = `translate3d(${-bp * travel}px, 0, 0)`;
-    const cx = innerWidth / 2;
-    cards.forEach(c => {
-      const r = c.getBoundingClientRect(), off = clamp((r.left + r.width / 2 - cx) / innerWidth, -1, 1);
-      c.style.transform = `rotateY(${off * -38}deg) rotateZ(${off * 5}deg) translateZ(${-Math.abs(off) * 220}px)`;
-    });
 
     if (again) request();
   }
