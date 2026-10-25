@@ -388,24 +388,29 @@ h1, h2, h3, p { margin: 0; }
    logo: a wide faint cone with a brighter core, soft feathered edges (masks, no blur), slow drifting dust,
    and the logo lit white with a glow. No pool of white behind the logo. */
 .spot { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
-.spot__beam, .spot__core, .spot__dust { position: absolute; left: 50%; bottom: 0; translate: -50% 0; height: var(--spot-h, 100vh); }
+.spot__beam, .spot__core, .spot__dust { position: absolute; left: 50%; bottom: -70px; translate: -50% 0; height: calc(var(--spot-h, 100vh) + 70px); }
+/* Beam and core fade out softly below the logo (side feather and bottom feather combined), so there is no
+   hard edge where the light ends. */
+.spot__beam, .spot__core {
+  -webkit-mask-composite: source-in; mask-composite: intersect;
+}
 .spot__beam {
   width: 420px;
   background: linear-gradient(to bottom, rgba(255, 246, 240, 0.34), rgba(255, 240, 236, 0.12) 70%, rgba(255, 240, 236, 0.03));
   clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 30%, #000 70%, transparent), linear-gradient(to bottom, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent, #000 30%, #000 70%, transparent), linear-gradient(to bottom, #000 72%, transparent 100%);
 }
 .spot__core {
   width: 200px;
   background: linear-gradient(to bottom, rgba(255, 252, 248, 0.5), rgba(255, 246, 240, 0.16) 75%, rgba(255, 246, 240, 0.04));
   clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent, #000 40%, #000 60%, transparent);
-  mask-image: linear-gradient(to right, transparent, #000 40%, #000 60%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 40%, #000 60%, transparent), linear-gradient(to bottom, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent, #000 40%, #000 60%, transparent), linear-gradient(to bottom, #000 72%, transparent 100%);
   animation: spot-breathe 6s ease-in-out infinite;
 }
 .spot__dust {
-  width: 360px;
+  width: 360px; bottom: 0; height: var(--spot-h, 100vh);
   background-image:
     radial-gradient(circle, rgba(255, 255, 255, 0.85) 0 1px, transparent 1.6px),
     radial-gradient(circle, rgba(255, 255, 255, 0.55) 0 1px, transparent 1.6px);
@@ -489,3 +494,8 @@ body[data-section="clients"] .light { opacity: 1; }
   .top__end { gap: 18px; }
 }
 @media (prefers-reduced-motion: reduce) { .glassnav__bubble { transition: none; } .glassnav__bubble.is-moving { animation: none; } }
+
+/* Under the logo: a faint pool of light on the floor, and a soft dark shadow beneath it. */
+.spot::before, .spot::after { content: ""; position: absolute; left: 50%; translate: -50% 0; pointer-events: none; border-radius: 50%; }
+.spot::before { bottom: -46px; width: 140%; height: 70px; background: radial-gradient(closest-side, rgba(255, 238, 232, 0.14), rgba(255, 238, 232, 0)); }
+.spot::after { bottom: -18px; width: 70%; height: 26px; background: radial-gradient(closest-side, rgba(10, 2, 6, 0.55), rgba(10, 2, 6, 0)); }
