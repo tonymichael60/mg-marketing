@@ -104,6 +104,7 @@
   let gliding = null, stepLock = 0;
   const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   function glide(target, duration) {
+    stopSmooth();
     const from = scrollY, start = performance.now();
     // The background and section state switch to the destination as the glide starts, so the colour fades
     // across the move instead of a band of the next colour creeping in at the edge.
@@ -135,7 +136,8 @@
     // While a step is held, events that keep arriving (a long flick or trackpad inertia) extend the hold, so one
     // gesture can never move two steps.
     if (gliding || performance.now() < stepLock) { stepLock = Math.max(stepLock, performance.now() + 300); return true; }
-    const y = scrollY;
+    // Decide from where the page is heading (a smooth wheel scroll may still be settling); glide() takes over.
+    const y = smoothTarget ?? scrollY;
     if (inFreeZone(y, dir)) return false;
     const list = stops();
     const target = dir > 0 ? list.find(v => v > y + 4) : [...list].reverse().find(v => v < y - 4);
@@ -160,13 +162,13 @@
       if (gap < 120) pauseUntil = Math.max(pauseUntil, now + pauseHold);
       return true;
     }
-    const y = scrollY, dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+    const y = smoothTarget ?? scrollY, dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
     // Sections marked data-pause="0" (Services) scroll through with no stop.
     const tops = sections.filter(sec => sec.dataset.pause !== '0').map(sec => Math.round(secTop(sec))).filter(t => t > 0);
     const hit = dy > 0 ? tops.find(t => t > y + 1 && t <= y + dy) : [...tops].reverse().find(t => t < y - 1 && t >= y + dy);
     if (hit === undefined || hit === pausedAt) return false;
     pausedAt = hit;
-    scrollTo({ top: hit, behavior: 'instant' });
+    smoothTo(hit);
     // A section can ask for a longer hold (data-pause, in ms), e.g. Results, which is easy to scroll past.
     const sec = sections.find(s2 => Math.round(secTop(s2)) === hit);
     pauseHold = +sec?.dataset.pause || PAUSE;
@@ -174,12 +176,35 @@
     return true;
   }
   addEventListener('scroll', () => { if (pausedAt !== null && Math.abs(scrollY - pausedAt) > innerHeight * 0.5) pausedAt = null; }, { passive: true });
+
+  /* Smooth wheel: a mouse wheel moves the page in ~100px jumps, which made the big Services type jump. Normal
+     wheel scrolling instead sets a target and the page eases towards it each frame (as on fromanother.love).
+     Trackpads send small steps, so they feel the same as before. */
+  let smoothTarget = null;
+  const maxY = () => document.documentElement.scrollHeight - innerHeight;
+  function smoothTo(y) {
+    const start = smoothTarget === null;
+    smoothTarget = clamp(y, 0, maxY());
+    if (start) requestAnimationFrame(smoothFrame);
+  }
+  function smoothFrame() {
+    if (smoothTarget === null) return;
+    const d = smoothTarget - scrollY;
+    if (Math.abs(d) < 0.5) { scrollTo({ top: smoothTarget, behavior: 'instant' }); smoothTarget = null; frame(); return; }
+    scrollTo({ top: scrollY + d * 0.14, behavior: 'instant' });
+    frame();
+    requestAnimationFrame(smoothFrame);
+  }
+  const stopSmooth = () => { smoothTarget = null; };
   addEventListener('wheel', e => {
     if (e.ctrlKey || Math.abs(e.deltaY) < 2) return;
     // A pause in progress holds everything, including the Work steps.
     if (performance.now() < pauseUntil && sectionPause(e)) { e.preventDefault(); return; }
     if (pageStep(e.deltaY > 0 ? 1 : -1)) { e.preventDefault(); return; }
-    if (!reduce && menu.hidden && sectionPause(e)) e.preventDefault();
+    if (reduce || !menu.hidden) return;
+    e.preventDefault();
+    if (sectionPause(e)) return;
+    smoothTo((smoothTarget ?? scrollY) + (e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY));
   }, { passive: false });
   let touchY = null, touchUsed = false, touchFree = false;
   addEventListener('touchstart', e => { touchY = e.touches[0].clientY; touchUsed = false; touchFree = false; }, { passive: true });
@@ -228,7 +253,7 @@
 
     // Services: the list slides up; the centred discipline is full strength, its group label lit.
     // Services track the scroll closely (light smoothing only), so the list never trails behind the page.
-    again = ease('svc', progress(svc) * (svcItems.length - 1), 0.45) || again;
+    again = ease('svc', progress(svc) * (svcItems.length - 1), 1) || again;
     // Item heights are measured once (and again after a resize), never while the items are being moved.
     if (!svcHalf) svcHalf = svcItems.map(li => li.offsetHeight / 2);
     const step = innerWidth < 760 ? 52 : Math.min(120, innerWidth * 0.075);

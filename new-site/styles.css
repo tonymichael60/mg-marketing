@@ -189,7 +189,7 @@ h1, h2, h3, p { margin: 0; }
 .clients__pin { position: sticky; top: 0; height: 100vh; overflow: hidden; }
 .clients__names { position: absolute; left: 24%; top: 50%; width: 0; height: 0; }
 .clients__names a { position: absolute; left: 0; top: 0; translate: 0 -50%; white-space: nowrap; font-size: clamp(36px, 5vw, 76px); line-height: 1.1; font-weight: 700; letter-spacing: -0.045em; text-decoration: none; will-change: transform, opacity; }
-.clients__logos { position: absolute; left: 62%; top: 50%; width: 280px; height: 170px; translate: 0 -50%; }
+.clients__logos { position: absolute; left: 62%; top: 50%; width: 280px; height: 170px; translate: 0 -50%; --spot-h: calc(50vh + 85px); /* beam reaches from the screen top to the logo */ }
 .clients__logos img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transform: translateY(14px); transition: opacity 0.5s, transform 0.6s var(--ease); }
 .clients__logos img.is-on { opacity: 0.9; transform: none; }
 .clients__note { position: absolute; right: var(--pad); top: 50%; translate: 0 -50%; width: min(300px, 22vw); font-size: 16px; line-height: 1.55; color: var(--muted); }
@@ -286,7 +286,7 @@ h1, h2, h3, p { margin: 0; }
   .frame--main { left: 24%; width: 46vw; } .frame--echo { left: 58%; width: 32vw; }
   .clients__names { left: 8%; top: 38%; }
   .clients__names a { font-size: 32px; }
-  .clients__logos { left: var(--pad); top: auto; bottom: 170px; translate: none; width: 190px; height: 110px; }
+  .clients__logos { left: var(--pad); top: auto; bottom: 170px; translate: none; width: 190px; height: 110px; --spot-h: calc(100vh - 170px); }
   .clients__note { top: auto; bottom: 60px; left: var(--pad); width: auto; translate: none; }
   .build__title { top: 100px; }
   .measure, .faq, .contact { grid-template-columns: 1fr; }
@@ -303,23 +303,45 @@ h1, h2, h3, p { margin: 0; }
    deep navy into a dark red for Clients, lit by a soft white beam from the top left with darkened edges. */
 .method, .clients { --fg: #ffffff; --muted: rgba(255, 255, 255, 0.72); --line: rgba(255, 255, 255, 0.22); color: #fff; }
 .clients__names a { color: #fff; }
-/* Spotlight: the only white in Clients. A soft cone falls from above onto a bright pool of light behind the
-   active logo, which shows in its own colours. */
-.clients__logos::before, .clients__logos::after { content: ""; position: absolute; pointer-events: none; }
-.clients__logos::before {
-  left: 50%; top: 50%; width: 175%; height: 230%; translate: -50% -50%;
-  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.95) 0%, rgba(255, 246, 244, 0.7) 30%, rgba(255, 236, 232, 0.25) 60%, rgba(255, 236, 232, 0) 100%);
-  filter: blur(6px);
+/* Spotlight: the only light in Clients. A lamp at the top of the screen throws a beam down onto the active
+   logo: a wide faint cone with a brighter core, soft feathered edges (masks, no blur), slow drifting dust,
+   and the logo lit white with a glow. No pool of white behind the logo. */
+.spot { position: absolute; left: 0; top: 0; width: 100%; height: 100%; pointer-events: none; }
+.spot__beam, .spot__core, .spot__dust { position: absolute; left: 50%; bottom: 0; translate: -50% 0; height: var(--spot-h, 100vh); }
+.spot__beam {
+  width: 420px;
+  background: linear-gradient(to bottom, rgba(255, 246, 240, 0.34), rgba(255, 240, 236, 0.12) 70%, rgba(255, 240, 236, 0.03));
+  clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 30%, #000 70%, transparent);
 }
-.clients__logos::after {
-  left: 50%; bottom: 50%; width: 120%; height: 100vh; translate: -50% 0;
-  background: linear-gradient(to top, rgba(255, 244, 240, 0.28), rgba(255, 244, 240, 0) 85%);
-  clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
-  filter: blur(18px);
+.spot__core {
+  width: 200px;
+  background: linear-gradient(to bottom, rgba(255, 252, 248, 0.5), rgba(255, 246, 240, 0.16) 75%, rgba(255, 246, 240, 0.04));
+  clip-path: polygon(46% 0, 54% 0, 100% 100%, 0 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 40%, #000 60%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 40%, #000 60%, transparent);
+  animation: spot-breathe 6s ease-in-out infinite;
 }
-.clients__logos img { z-index: 1; filter: contrast(1.25) brightness(0.85); }
-/* Note sits below the spotlight so its white text stays on the dark red. */
-@media (min-width: 761px) { .clients__note { top: 74%; } }
+.spot__dust {
+  width: 360px;
+  background-image:
+    radial-gradient(circle, rgba(255, 255, 255, 0.85) 0 1px, transparent 1.6px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.55) 0 1px, transparent 1.6px);
+  background-size: 90px 110px, 130px 150px;
+  background-position: 0 0, 40px 60px;
+  clip-path: polygon(44% 0, 56% 0, 100% 100%, 0 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 85%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 85%, transparent);
+  opacity: 0.55;
+  animation: spot-dust 22s linear infinite;
+}
+/* The lamp: a small bright lens at the top of the beam. */
+.spot__lamp { position: absolute; left: 50%; top: calc(100% - var(--spot-h, 100vh)); width: 46px; height: 14px; translate: -50% -40%; border-radius: 50%;
+  background: radial-gradient(closest-side, #fff, rgba(255, 244, 236, 0.6) 60%, transparent); box-shadow: 0 0 30px 8px rgba(255, 240, 230, 0.35); }
+@keyframes spot-breathe { 50% { opacity: 0.8; } }
+@keyframes spot-dust { to { background-position: 30px -440px, 70px -540px; } }
+.clients__logos img { z-index: 1; filter: brightness(0) invert(1) drop-shadow(0 0 18px rgba(255, 244, 236, 0.55)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.6)); }
 .clients__logos img.is-on { opacity: 1; }
 /* The dark edges live on a fixed full-screen layer (.light) and fade in while Clients is the active
    section, so there are no box edges to show as lines when sections meet. */
@@ -335,3 +357,5 @@ body[data-section="clients"] .light { opacity: 1; }
 .measure__list li:nth-child(3) { transition-delay: 0.3s; }
 .measure__list li:nth-child(4) { transition-delay: 0.45s; }
 .measure__list.has-focus li { transition-delay: 0s; }
+/* Clients note sits below the logo so it stays clear of the beam. */
+@media (min-width: 761px) { .clients__note { top: 74%; } }
