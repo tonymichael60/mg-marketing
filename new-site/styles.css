@@ -194,8 +194,9 @@ h1, h2, h3, p { margin: 0; }
 .clients__names { position: absolute; left: 24%; top: 50%; width: 0; height: 0; }
 .clients__names a { position: absolute; left: 0; top: 0; translate: 0 -50%; white-space: nowrap; font-size: clamp(36px, 5vw, 76px); line-height: 1.1; font-weight: 700; letter-spacing: -0.045em; text-decoration: none; will-change: transform, opacity; }
 .clients__logos { position: absolute; left: 62%; top: 50%; width: 280px; height: 170px; translate: 0 -50%; --spot-h: calc(50vh + 85px - 120px); /* beam from a lamp below the nav bar down to the logo */ }
-.clients__logos img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transform: translateY(14px); transition: opacity 0.5s, transform 0.6s var(--ease); }
-.clients__logos img.is-on { opacity: 0.9; transform: none; }
+/* Logos have no effects of their own: the one matching the centred company name simply shows. */
+.clients__logos img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; }
+.clients__logos img.is-on { opacity: 1; }
 .clients__note { position: absolute; right: var(--pad); top: 50%; translate: 0 -50%; width: min(300px, 22vw); font-size: 16px; line-height: 1.55; color: var(--muted); }
 
 /* 7. What we build (after agencefoudre.com): a pinned four-scene sequence, driven by app.js through CSS
@@ -466,15 +467,12 @@ body[data-section="clients"] .light { opacity: 1; }
   transition: scale 0.45s cubic-bezier(0.55, 0, 0.8, 0.4), opacity 0.35s ease 0.1s; }
 .spot__lamp { opacity: 0; transition: opacity 0.4s ease 0.3s, box-shadow 0.4s ease 0.3s; box-shadow: none; }
 .spot::before, .spot::after { opacity: 0; transition: opacity 0.4s ease; }
-.clients__logos img { transition: opacity 0.5s, transform 0.6s var(--ease), filter 0.6s ease; }
-.clients__logos img.is-on { opacity: 0.12; filter: brightness(0) invert(1); }
 
 body.spot-on .spot__lamp { opacity: 1; box-shadow: 0 0 30px 8px rgba(255, 240, 230, 0.35); animation: spot-flicker 0.6s steps(1) both; transition: none; }
 body.spot-on .spot__beam, body.spot-on .spot__core, body.spot-on .spot__dust {
   scale: 1 1; opacity: 1; transition: scale 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.55s, opacity 0.5s ease 0.55s; }
 body.spot-on .spot__dust { opacity: 0.55; }
 body.spot-on .spot::before, body.spot-on .spot::after { opacity: 1; transition: opacity 0.8s ease 1.1s; }
-body.spot-on .clients__logos img.is-on { opacity: 1; filter: brightness(0) invert(1) drop-shadow(0 0 18px rgba(255, 244, 236, 0.55)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.6)); transition: opacity 0.6s ease 0.9s, transform 0.6s var(--ease), filter 0.8s ease 0.9s; }
 @keyframes spot-flicker { 0% { opacity: 0; } 12% { opacity: 1; } 22% { opacity: 0.15; } 36% { opacity: 0.9; } 46% { opacity: 0.3; } 60%, 100% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .spot__lamp { animation: none !important; } }
 
