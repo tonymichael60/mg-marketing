@@ -212,8 +212,9 @@
     // Content of the destination starts revealing as the glide starts, so it settles together with the scroll
     // instead of fading in after the page has stopped.
     if (dest >= 0) $$('[data-reveal]', sections[dest]).forEach(el => el.classList.add('is-in'));
-    gliding = { dest };
+    const token = gliding = { dest, dir: Math.sign(target - from) };
     const step = now => {
+      if (gliding !== token) return;
       const k = Math.min(1, (now - start) / duration), e = easeInOut(k);
       scrollTo({ top: from + (target - from) * e, behavior: 'instant' });
       html.style.backgroundColor = `rgb(${c0.map((v, i) => Math.round(v + (c1[i] - v) * e)).join(',')})`;
@@ -224,6 +225,15 @@
       else { gliding = null; html.style.transition = ''; light.style.transition = ''; light.style.opacity = ''; }
     };
     requestAnimationFrame(step);
+  }
+  // Stops a glide where it is (scrolling the other way during it); the section state and colour are then worked
+  // out afresh from the current position, fading from the part-blended colour.
+  function cancelGlide() {
+    if (!gliding) return;
+    gliding = null;
+    document.documentElement.style.transition = ''; light.style.transition = ''; light.style.opacity = '';
+    activeSection = -1;
+    frame();
   }
 
   /* Smooth wheel: a mouse wheel moves the page in ~100px jumps, which made the big type jump. Wheel scrolling
@@ -248,18 +258,23 @@
   // Hero → About: the first downward gesture on the hero glides straight to About, so it lands centred. The rest
   // of that gesture (trackpad inertia) is swallowed; a new gesture scrolls on normally.
   const about = $('#manifesto');
-  let lastWheel = 0, swallow = false;
+  let lastWheel = 0, swallow = false, swallowDir = 0;
   addEventListener('wheel', e => {
     if (e.ctrlKey || Math.abs(e.deltaY) < 2 || !menu.hidden) return;
     const now = performance.now(), sameGesture = now - lastWheel < 180;
     lastWheel = now;
-    if (gliding || (swallow && sameGesture)) { e.preventDefault(); return; }
+    const dir = Math.sign(e.deltaY);
+    // Scrolling the other way during a glide takes over straight away instead of being ignored.
+    if (gliding && dir !== gliding.dir) { cancelGlide(); swallow = false; }
+    if (gliding || (swallow && sameGesture && dir === swallowDir)) { e.preventDefault(); return; }
     swallow = false;
     const aboutTop = secTop(about);
-    if (e.deltaY > 0 && (smoothTarget ?? scrollY) < aboutTop - 4) {
+    // Only a fresh scroll that starts on the hero itself (the top half of the way to About) jumps; scrolling back
+    // up from About and down again just scrolls.
+    if (dir > 0 && !sameGesture && (smoothTarget ?? scrollY) < aboutTop * 0.5) {
       e.preventDefault();
       if (reduce) scrollTo({ top: aboutTop, behavior: 'instant' }); else glide(aboutTop, 1000);
-      swallow = true;
+      swallow = true; swallowDir = dir;
       return;
     }
     if (reduce) return;
