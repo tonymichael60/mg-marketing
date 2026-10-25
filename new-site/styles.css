@@ -399,11 +399,11 @@ h1, h2, h3, p { margin: 0; }
 body[data-section="clients"] .light { opacity: 1; }
 
 /* Results rows slide in one after another on arrival. */
-.measure__list li[data-reveal] { transform: translateX(-60px); transition: opacity 0.9s var(--ease), transform 1s var(--ease), filter 0.9s var(--ease); }
+.measure__list li[data-reveal] { transform: translateX(-40px); transition: opacity 0.7s var(--ease), transform 0.8s var(--ease), filter 0.4s var(--ease); }
 .measure__list li[data-reveal].is-in { transform: none; }
-.measure__list li:nth-child(2) { transition-delay: 0.15s; }
-.measure__list li:nth-child(3) { transition-delay: 0.3s; }
-.measure__list li:nth-child(4) { transition-delay: 0.45s; }
+.measure__list li:nth-child(2) { transition-delay: 0.08s; }
+.measure__list li:nth-child(3) { transition-delay: 0.16s; }
+.measure__list li:nth-child(4) { transition-delay: 0.24s; }
 .measure__list.has-focus li { transition-delay: 0s; }
 /* Clients note sits below the logo so it stays clear of the beam. */
 @media (min-width: 761px) { .clients__note { top: 74%; } }

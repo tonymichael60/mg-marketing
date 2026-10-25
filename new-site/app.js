@@ -127,8 +127,15 @@
     const c = smooth(seg(p, 0.47, 0.6));
     wbPale.style.clipPath = `circle(${(c * 120).toFixed(1)}% at 50% ${(70 - c * 20).toFixed(1)}%)`;
     const pale = p >= 0.53;
-    // On the pale scenes the header switches to dark text so the logo stays visible.
-    if (body.dataset.section === 'build') body.dataset.fg = pale ? 'dark' : 'light';
+    // The header text is dark while a pale scene of this section covers the middle of the screen (also while
+    // gliding out of it, when the next section is already active), and back to the active section's own colour
+    // once it has gone.
+    const br = build.getBoundingClientRect(), inBuild = br.top <= vh * 0.5 && br.bottom > vh * 0.5;
+    const want = inBuild ? (pale ? 'dark' : 'light') : sections[activeSection]?.dataset.fg;
+    if (want && body.dataset.fg !== want) body.dataset.fg = want;
+    // Leaving the section, the pinned stage fades as it scrolls off, so the pale scene dissolves into the
+    // next section's colour instead of ending in a hard edge.
+    $('.wb-pin').style.opacity = br.bottom < vh ? clamp(br.bottom / vh * 1.4 - 0.2, 0, 1).toFixed(3) : '';
     const s2 = seg(p, 0.53, 0.58) * (1 - seg(p, 0.66, 0.7));
     wbSay2.style.opacity = s2; wbSay2.style.transform = `scale(${0.92 + 0.08 * seg(p, 0.53, 0.6)})`;
     // 4: the systems list; the active one follows the scroll, its picture comes to the front of the stack.
