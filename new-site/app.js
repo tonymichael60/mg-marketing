@@ -30,8 +30,37 @@
     const [a1, a2, a3] = s.dataset.aura.split(',');
     body.style.setProperty('--a1', a1); body.style.setProperty('--a2', a2); body.style.setProperty('--a3', a3);
     indexItems.forEach((li, j) => li.classList.toggle('is-on', j === i));
+    setNavActive(s.id);
   }
 
+
+  /* Liquid glass nav: the bubble sits under the active section's link, and follows the pointer on hover. */
+  const nav = $('.glassnav'), bubble = $('.glassnav__bubble'), navLinks = $$('.glassnav a');
+  let navActive = null;
+  function moveBubble(a) {
+    if (!a) { bubble.style.opacity = 0; return; }
+    const shown = bubble.style.opacity === '1';
+    bubble.style.width = a.offsetWidth + 'px';
+    bubble.style.transform = `translateX(${a.offsetLeft}px)`;
+    bubble.style.opacity = 1;
+    if (shown) { bubble.classList.remove('is-moving'); void bubble.offsetWidth; bubble.classList.add('is-moving'); }
+  }
+  function setNavActive(id) {
+    navActive = navLinks.find(a => a.dataset.for.split(' ').includes(id)) || navActive;
+    navLinks.forEach(a => a.classList.toggle('is-on', a === navActive));
+    if (!nav.matches(':hover')) moveBubble(navActive);
+  }
+  navLinks.forEach(a => a.addEventListener('pointerenter', () => moveBubble(a)));
+  nav.addEventListener('pointerleave', () => moveBubble(navActive));
+  addEventListener('resize', () => moveBubble(navActive));
+  // Header and menu links glide to their section instead of jumping.
+  $$('.top a[href^="#"], #menu a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    const y = target.getBoundingClientRect().top + scrollY;
+    if (reduce) scrollTo({ top: y, behavior: 'instant' }); else glide(y, Math.min(1600, 700 + Math.abs(y - scrollY) * 0.04));
+  }));
 
   /* Rotating words */
   for (const r of $$('.rotator')) {
