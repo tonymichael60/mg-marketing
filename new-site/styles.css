@@ -190,7 +190,7 @@ h1, h2, h3, p { margin: 0; }
 .clients__names { position: absolute; left: 24%; top: 50%; width: 0; height: 0; }
 .clients__names a { position: absolute; left: 0; top: 0; translate: 0 -50%; white-space: nowrap; font-size: clamp(36px, 5vw, 76px); line-height: 1.1; font-weight: 700; letter-spacing: -0.045em; text-decoration: none; will-change: transform, opacity; }
 .clients__logos { position: absolute; left: 62%; top: 50%; width: 280px; height: 170px; translate: 0 -50%; }
-.clients__logos img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; filter: brightness(0) invert(1); opacity: 0; transform: translateY(14px); transition: opacity 0.5s, transform 0.6s var(--ease); }
+.clients__logos img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; opacity: 0; transform: translateY(14px); transition: opacity 0.5s, transform 0.6s var(--ease); }
 .clients__logos img.is-on { opacity: 0.9; transform: none; }
 .clients__note { position: absolute; right: var(--pad); top: 50%; translate: 0 -50%; width: min(300px, 22vw); font-size: 16px; line-height: 1.55; color: var(--muted); }
 
@@ -303,12 +303,27 @@ h1, h2, h3, p { margin: 0; }
    deep navy into a dark red for Clients, lit by a soft white beam from the top left with darkened edges. */
 .method, .clients { --fg: #ffffff; --muted: rgba(255, 255, 255, 0.72); --line: rgba(255, 255, 255, 0.22); color: #fff; }
 .clients__names a { color: #fff; }
+/* Spotlight: the only white in Clients. A soft cone falls from above onto a bright pool of light behind the
+   active logo, which shows in its own colours. */
+.clients__logos::before, .clients__logos::after { content: ""; position: absolute; pointer-events: none; }
+.clients__logos::before {
+  left: 50%; top: 50%; width: 175%; height: 230%; translate: -50% -50%;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.95) 0%, rgba(255, 246, 244, 0.7) 30%, rgba(255, 236, 232, 0.25) 60%, rgba(255, 236, 232, 0) 100%);
+  filter: blur(6px);
+}
+.clients__logos::after {
+  left: 50%; bottom: 50%; width: 120%; height: 100vh; translate: -50% 0;
+  background: linear-gradient(to top, rgba(255, 244, 240, 0.28), rgba(255, 244, 240, 0) 85%);
+  clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
+  filter: blur(18px);
+}
+.clients__logos img { z-index: 1; filter: contrast(1.25) brightness(0.85); }
+/* Note sits below the spotlight so its white text stays on the dark red. */
+@media (min-width: 761px) { .clients__note { top: 74%; } }
 .clients__logos img.is-on { opacity: 1; }
-/* The beam and dark edges live on a fixed full-screen layer (.light) and fade in while Clients is the active
+/* The dark edges live on a fixed full-screen layer (.light) and fade in while Clients is the active
    section, so there are no box edges to show as lines when sections meet. */
 .light { position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity 1.4s var(--ease); }
-.light::before { content: ""; position: absolute; inset: -10%; filter: blur(14px);
-  background: radial-gradient(26% 66% at 12% 6%, rgba(255, 244, 240, 0.55) 0%, rgba(255, 236, 232, 0.18) 40%, rgba(255, 236, 232, 0) 70%); }
 .light::after { content: ""; position: absolute; inset: 0;
   background: radial-gradient(120% 95% at 50% 50%, rgba(12, 2, 6, 0) 55%, rgba(12, 2, 6, 0.5) 100%); }
 body[data-section="clients"] .light { opacity: 1; }
