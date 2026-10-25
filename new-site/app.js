@@ -81,7 +81,7 @@
   const secTop = sec => sec.getBoundingClientRect().top + scrollY;
   function stops() {
     const out = [];
-    for (const sec of sections) {
+    for (const sec of [work]) {
       const top = secTop(sec), span = sec.offsetHeight - innerHeight;
       const steps = pinnedStops[sec.id];
       if (steps) out.push(...steps().map(p => top + span * p));
@@ -91,13 +91,15 @@
         if (span > 40) out.push(top + span);
       }
     }
-    out.push(document.documentElement.scrollHeight - innerHeight);
     return [...new Set(out.map(Math.round))].sort((x, y) => x - y);
   }
-  // Inside Services (between its first and last discipline) the page scrolls normally.
+  // The page scrolls normally everywhere except while Work is pinned: there one gesture moves one project, and
+  // past the first or last project the page goes back to normal scrolling.
   function inFreeZone(y, dir) {
-    const top = secTop(svc), end = top + svc.offsetHeight - innerHeight;
-    return dir > 0 ? y >= top - 4 && y < end - 4 : y > top + 4 && y <= end + 4;
+    const top = secTop(work), span = work.offsetHeight - innerHeight;
+    if (y < top - 4 || y > top + span + 4) return true;
+    const first = top + span * 0.5 / workCount, last = top + span * (workCount - 0.5) / workCount;
+    return dir > 0 ? y >= last - 4 : y <= first + 4;
   }
   let gliding = null, stepLock = 0;
   const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
