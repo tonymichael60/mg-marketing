@@ -22,6 +22,7 @@
     activeSection = i;
     const s = sections[i];
     body.dataset.fg = s.dataset.fg;
+    body.dataset.section = s.id;
     const [a1, a2, a3] = s.dataset.aura.split(',');
     body.style.setProperty('--a1', a1); body.style.setProperty('--a2', a2); body.style.setProperty('--a3', a3);
     indexItems.forEach((li, j) => li.classList.toggle('is-on', j === i));
