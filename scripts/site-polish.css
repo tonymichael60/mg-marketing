@@ -267,7 +267,7 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
 .framer-1aue9ps { margin-top: clamp(96px, 13vh, 170px) !important; }
 /* Features: white panel with a soft navy halo behind the central logo. */
 .framer-gtsbnt {
-  background: radial-gradient(45% 40% at 50% 55%, rgba(20, 34, 227, 0.12) 0%, rgba(20, 34, 227, 0.04) 50%, transparent 75%), linear-gradient(180deg, #fff 0%, #f2f4ff 60%, #edecec 100%) !important;
+  background: radial-gradient(45% 40% at 50% 55%, rgba(20, 34, 227, 0.12) 0%, rgba(20, 34, 227, 0.04) 50%, transparent 75%), linear-gradient(180deg, #fff 0%, #f2f4ff 60%, #e3e8ff 100%) !important;
 }
 /* Tools: a soft white glow with a pale-navy ring that fades into the page grey, so it has no hard edges. */
 .framer-1vb41im {
@@ -413,24 +413,29 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
   .mgv-track::after { display: none; }
 }
 
-/* Ambient page background: the plain grey read as empty, so a fixed layer behind all content carries soft
-   blue glows (drifting slowly) and a faint dot grid. The page root and the FAQ container painted solid grey
-   over it, so they are made transparent; the body keeps the grey base colour. */
+/* Page background (after fromanother.love, where one colour fills every section): a visible light blue base
+   with brighter and deeper blue glows towards the edges and a faint dot grid, on a fixed layer behind all
+   content. The centre stays close to the base colour so Framer's page-coloured cut-outs (the hero's
+   "Scroll for more" tab, the FAQ tab) still blend in; Framer's page-colour token is set to the same base.
+   The page root and FAQ container painted solid grey over it, so they are made transparent. */
+:root, body { --token-10319844-22a0-4484-88cd-68e9879c6c2e: #dce3ff !important; }
+body { background-color: #dce3ff !important; }
 .framer-qZQ5t, .framer-1ntlu9c { background-color: transparent !important; }
 body::before, body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 body::before {
   inset: -10%;
   background:
-    radial-gradient(38% 34% at 86% 14%, rgba(20, 34, 227, 0.11) 0%, rgba(20, 34, 227, 0) 70%),
-    radial-gradient(44% 40% at 8% 82%, rgba(75, 92, 255, 0.10) 0%, rgba(75, 92, 255, 0) 70%),
-    radial-gradient(30% 26% at 52% 48%, rgba(150, 168, 245, 0.14) 0%, rgba(150, 168, 245, 0) 70%);
+    radial-gradient(34% 46% at 0% 22%, rgba(96, 118, 255, 0.42) 0%, rgba(96, 118, 255, 0) 70%),
+    radial-gradient(36% 48% at 100% 78%, rgba(60, 80, 235, 0.36) 0%, rgba(60, 80, 235, 0) 70%),
+    radial-gradient(30% 30% at 92% 8%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 70%),
+    radial-gradient(32% 34% at 6% 96%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
 }
 body::after {
-  background: radial-gradient(rgba(11, 11, 12, 0.10) 1px, transparent 1.5px) 0 0 / 28px 28px;
+  background: radial-gradient(rgba(20, 34, 120, 0.11) 1px, transparent 1.5px) 0 0 / 28px 28px;
   -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 45%, #000 20%, transparent 85%);
   mask-image: radial-gradient(ellipse 85% 75% at 50% 45%, #000 20%, transparent 85%);
 }
 @media (prefers-reduced-motion: no-preference) and (min-width: 810px) {
   body::before { animation: mg-ambient 38s ease-in-out infinite alternate; }
-  @keyframes mg-ambient { to { translate: -4% 5%; } }
+  @keyframes mg-ambient { to { translate: 3% -4%; } }
 }

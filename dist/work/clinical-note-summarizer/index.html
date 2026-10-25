@@ -597,7 +597,7 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
 .framer-1aue9ps { margin-top: clamp(96px, 13vh, 170px) !important; }
 /* Features: white panel with a soft navy halo behind the central logo. */
 .framer-gtsbnt {
-  background: radial-gradient(45% 40% at 50% 55%, rgba(20, 34, 227, 0.12) 0%, rgba(20, 34, 227, 0.04) 50%, transparent 75%), linear-gradient(180deg, #fff 0%, #f2f4ff 60%, #edecec 100%) !important;
+  background: radial-gradient(45% 40% at 50% 55%, rgba(20, 34, 227, 0.12) 0%, rgba(20, 34, 227, 0.04) 50%, transparent 75%), linear-gradient(180deg, #fff 0%, #f2f4ff 60%, #e3e8ff 100%) !important;
 }
 /* Tools: a soft white glow with a pale-navy ring that fades into the page grey, so it has no hard edges. */
 .framer-1vb41im {
@@ -743,26 +743,31 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
   .mgv-track::after { display: none; }
 }
 
-/* Ambient page background: the plain grey read as empty, so a fixed layer behind all content carries soft
-   blue glows (drifting slowly) and a faint dot grid. The page root and the FAQ container painted solid grey
-   over it, so they are made transparent; the body keeps the grey base colour. */
+/* Page background (after fromanother.love, where one colour fills every section): a visible light blue base
+   with brighter and deeper blue glows towards the edges and a faint dot grid, on a fixed layer behind all
+   content. The centre stays close to the base colour so Framer's page-coloured cut-outs (the hero's
+   "Scroll for more" tab, the FAQ tab) still blend in; Framer's page-colour token is set to the same base.
+   The page root and FAQ container painted solid grey over it, so they are made transparent. */
+:root, body { --token-10319844-22a0-4484-88cd-68e9879c6c2e: #dce3ff !important; }
+body { background-color: #dce3ff !important; }
 .framer-qZQ5t, .framer-1ntlu9c { background-color: transparent !important; }
 body::before, body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 body::before {
   inset: -10%;
   background:
-    radial-gradient(38% 34% at 86% 14%, rgba(20, 34, 227, 0.11) 0%, rgba(20, 34, 227, 0) 70%),
-    radial-gradient(44% 40% at 8% 82%, rgba(75, 92, 255, 0.10) 0%, rgba(75, 92, 255, 0) 70%),
-    radial-gradient(30% 26% at 52% 48%, rgba(150, 168, 245, 0.14) 0%, rgba(150, 168, 245, 0) 70%);
+    radial-gradient(34% 46% at 0% 22%, rgba(96, 118, 255, 0.42) 0%, rgba(96, 118, 255, 0) 70%),
+    radial-gradient(36% 48% at 100% 78%, rgba(60, 80, 235, 0.36) 0%, rgba(60, 80, 235, 0) 70%),
+    radial-gradient(30% 30% at 92% 8%, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0) 70%),
+    radial-gradient(32% 34% at 6% 96%, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 70%);
 }
 body::after {
-  background: radial-gradient(rgba(11, 11, 12, 0.10) 1px, transparent 1.5px) 0 0 / 28px 28px;
+  background: radial-gradient(rgba(20, 34, 120, 0.11) 1px, transparent 1.5px) 0 0 / 28px 28px;
   -webkit-mask-image: radial-gradient(ellipse 85% 75% at 50% 45%, #000 20%, transparent 85%);
   mask-image: radial-gradient(ellipse 85% 75% at 50% 45%, #000 20%, transparent 85%);
 }
 @media (prefers-reduced-motion: no-preference) and (min-width: 810px) {
   body::before { animation: mg-ambient 38s ease-in-out infinite alternate; }
-  @keyframes mg-ambient { to { translate: -4% 5%; } }
+  @keyframes mg-ambient { to { translate: 3% -4%; } }
 }
 
 /* Process section (after spector.framer.website): stacked headline and a looping 3D carousel of stage cards.
@@ -1174,7 +1179,7 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
 /* Drop the white card: logos sit on the page background like overtake-wbs.framer.website. */
 .framer-19b0sxl { background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }
 /* Rings separate overlapping avatars against the page grey, not white. */
-.mg-trust-avatars > span { box-shadow: 0 0 0 3px rgb(237, 236, 236); }
+.mg-trust-avatars > span { box-shadow: 0 0 0 3px #dce3ff; }
 
 .mg-trust-avatars {
   flex: none;
@@ -1354,67 +1359,59 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
 @media (max-width: 1024px) { .mg-svcx__grid { grid-template-columns: 1fr; } .mg-svcx__index { display: none; } }
 @media (max-width: 809.98px) { .mg-svcx { padding: 0 20px; } .mg-chapter__num { font-size: 64px; } .mg-feats { grid-template-columns: 1fr; } }
 
-/* Discipline list (after fromanother.love "They trust us"): a navy panel with big uppercase names, each with
-   an icon tile and an underline. Rows start dim and light up as they scroll in; hovering one focuses it and
-   blurs the others. Uses the Testimonials box's navy so the two dark panels match. */
-.mg-svclist {
-  display: grid;
-  grid-template-columns: minmax(0, 0.45fr) minmax(0, 1.55fr);
-  gap: 40px;
-  margin: clamp(40px, 6vh, 72px) 0 clamp(48px, 7vh, 88px);
-  padding: clamp(48px, 7vw, 96px) clamp(24px, 5vw, 72px);
-  border-radius: 40px;
-  background:
-    radial-gradient(70% 90% at 0% 0%, rgba(20, 34, 227, 0.38) 0%, rgba(2, 10, 112, 0.18) 45%, transparent 75%),
-    radial-gradient(65% 80% at 100% 100%, rgba(20, 34, 227, 0.32) 0%, rgba(2, 10, 112, 0.16) 45%, transparent 75%),
-    #03051a;
-  color: #f4f5ff;
-}
-.mg-svclist__side { display: grid; align-content: center; gap: 10px; }
-.mg-svclist__side small { display: flex; align-items: center; gap: 10px; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(244, 245, 255, 0.55); }
-.mg-svclist__side small::before { content: ""; width: 28px; height: 1px; background: currentColor; }
-.mg-svclist__side em { font-style: italic; font-weight: 500; font-size: 22px; color: rgba(244, 245, 255, 0.85); }
-.mg-svclist__rows { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
-.mg-svclist__row {
-  display: flex;
-  align-items: center;
-  gap: 18px;
-  color: inherit;
-  text-decoration: none;
-  opacity: 0.22;
-  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--k) * 0.06s), filter 0.4s ease;
-}
-.mg-svclist__row.is-lit { opacity: 1; }
-.mg-svclist__rows.has-focus .mg-svclist__row:not(.is-focus) { opacity: 0.2; filter: blur(4px); transition-delay: 0s; }
-.mg-svclist__row:focus-visible { outline: 2px solid #8fa0ff; outline-offset: 6px; border-radius: 8px; }
-.mg-svclist__tile {
-  flex: none;
-  display: grid;
-  place-items: center;
-  width: clamp(48px, 5vw, 76px);
-  aspect-ratio: 5 / 4;
-  border-radius: 10px;
-  background: linear-gradient(150deg, hsl(calc(232 + var(--k) * 6) 85% 62%), hsl(calc(236 + var(--k) * 6) 90% 30%));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 24px -10px rgba(20, 34, 227, 0.7);
-}
-.mg-svclist__tile svg { width: 42%; height: 42%; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.mg-svclist__name {
-  padding-bottom: 4px;
-  border-bottom: 2px solid rgba(244, 245, 255, 0.6);
-  font-size: clamp(22px, 3.3vw, 48px); /* one line per name, like the reference */
+/* Discipline wheel (after fromanother.love "They trust us"). The section pins for one screen while the names
+   roll round a wheel; site-svcindex.js sets each name's rotation (about a hub off to its left) and fade. */
+.mg-wheel { position: relative; height: calc((var(--n) - 1) * 42vh + 100vh); margin: clamp(24px, 4vh, 48px) 0; }
+.mg-wheel__stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.mg-wheel__side { position: absolute; left: 0; top: 50%; translate: 0 -50%; display: flex; align-items: center; gap: 14px; }
+.mg-wheel__side ol { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 11px; color: rgba(10, 18, 64, 0.3); font-variant-numeric: tabular-nums; }
+.mg-wheel__side li { transition: color 0.4s; }
+.mg-wheel__side li.is-active { color: #1422e3; font-weight: 700; }
+.mg-wheel__side em { font-style: italic; font-size: 14px; color: rgba(10, 18, 64, 0.6); }
+.mg-wheel__side em::before { content: ""; display: inline-block; width: 24px; height: 1px; margin-right: 10px; vertical-align: middle; background: currentColor; }
+.mg-wheel__names { position: absolute; left: 22%; top: 50%; width: 0; height: 0; }
+.mg-wheel__name {
+  position: absolute;
+  left: 0;
+  top: 0;
+  translate: 0 -50%;
   white-space: nowrap;
-  line-height: 1;
+  font-size: clamp(32px, 4.1vw, 60px);
+  line-height: 1.1;
   letter-spacing: -0.04em;
   font-weight: 700;
-  text-transform: uppercase;
+  color: #0a1240;
+  text-decoration: none;
+  will-change: transform, opacity;
 }
+.mg-wheel__name.is-active { color: #1422e3; }
+.mg-wheel__name:focus-visible { outline: 2px solid #1422e3; outline-offset: 6px; border-radius: 8px; }
+.mg-wheel__details { position: absolute; right: 0; top: 50%; translate: 0 -50%; width: min(380px, 32%); }
+.mg-wheel__detail { position: absolute; left: 0; right: 0; top: 0; translate: 0 -50%; opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); pointer-events: none; }
+.mg-wheel__detail.is-active { opacity: 1; transform: none; pointer-events: auto; }
+.mg-wheel__tile {
+  display: grid; place-items: center; width: 64px; height: 52px; border-radius: 12px;
+  background: linear-gradient(150deg, #4b5cff, #020a70);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 12px 26px -10px rgba(20, 34, 227, 0.7);
+}
+.mg-wheel__tile svg { width: 26px; height: 26px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.mg-wheel__detail h4 { margin: 18px 0 10px; font-size: 26px; line-height: 1.15; letter-spacing: -0.03em; font-weight: 700; color: #0a1240; }
+.mg-wheel__detail h4 i { font-style: normal; color: #1422e3; }
+.mg-wheel__detail p { margin: 0 0 16px; font-size: 16px; line-height: 1.5; color: rgba(10, 18, 64, 0.65); }
+.mg-wheel__more { font-size: 15px; font-weight: 600; color: #1422e3; text-decoration: none; }
+.mg-wheel__more:hover { text-decoration: underline; }
+/* Phone: names in the upper part of the screen, the active discipline's summary below them. */
 @media (max-width: 809.98px) {
-  .mg-svclist { grid-template-columns: 1fr; gap: 24px; }
-  .mg-svclist__row { gap: 12px; }
-  .mg-svclist__name { white-space: normal; font-size: 26px; }
+  .mg-wheel__side { display: none; }
+  .mg-wheel__names { left: 6%; top: 36%; }
+  .mg-wheel__name { font-size: 30px; }
+  .mg-wheel__details { top: auto; bottom: 7%; left: 0; right: 0; width: auto; translate: none; height: 220px; }
+  .mg-wheel__detail { top: 0; translate: none; }
+  .mg-wheel__detail h4 { font-size: 21px; margin-top: 12px; }
+  .mg-wheel__detail p { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .mg-svclist__row { transition: none; }
+  .mg-wheel__detail { transition: none; }
 }
 
 /* Performance section (ported from the reference file, light theme). Mounted by site-perf.js above Benefits. */
@@ -2230,8 +2227,9 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
       ${feats}
     </article>`;
   }
-  // Discipline list (after fromanother.love "They trust us"): big names with a small icon tile, lit as they
-  // scroll in; hovering one blurs the rest, and clicking jumps to that discipline's chapter.
+  // Discipline wheel (after fromanother.love "They trust us"): the section pins while the eight names roll
+  // round a large wheel. The centred one sits level and bright, and its icon, headline and summary show on
+  // the right. Clicking a name rolls the wheel to it; the summary links to that discipline's chapter.
   const tileIcons = [
     '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
     '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8"/>',
@@ -2242,10 +2240,18 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
     '<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>',
     '<path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10z"/>',
   ];
-  function listHTML() {
-    return `<div class="mg-svclist">
-      <div class="mg-svclist__side"><small>Our disciplines</small><em>We work across</em></div>
-      <ol class="mg-svclist__rows">${data.map((d, i) => `<li><a class="mg-svclist__row" href="#" style="--k:${i}"><span class="mg-svclist__tile" aria-hidden="true"><svg viewBox="0 0 24 24">${tileIcons[i]}</svg></span><span class="mg-svclist__name">${esc(d.tag)}</span></a></li>`).join('')}</ol>
+  function wheelHTML() {
+    return `<div class="mg-wheel" style="--n:${data.length}">
+      <div class="mg-wheel__stage">
+        <div class="mg-wheel__side"><ol>${data.map((d, i) => `<li>${i + 1}</li>`).join('')}</ol><em>Our disciplines</em></div>
+        <div class="mg-wheel__names">${data.map((d, i) => `<a class="mg-wheel__name" href="#" style="--k:${i}">${esc(d.tag)}</a>`).join('')}</div>
+        <div class="mg-wheel__details">${data.map((d, i) => `<div class="mg-wheel__detail">
+          <span class="mg-wheel__tile" aria-hidden="true"><svg viewBox="0 0 24 24">${tileIcons[i]}</svg></span>
+          <h4>${d.h}</h4>
+          <p>${esc(d.p)}</p>
+          <a class="mg-wheel__more" href="#">Explore ${esc(d.tag)} →</a>
+        </div>`).join('')}</div>
+      </div>
     </div>`;
   }
   function buildHTML() {
@@ -2259,7 +2265,7 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
         </div>
         <p class="mg-svcx__lead">Think of us as your in-house growth team, without the overhead. Eight disciplines working to one plan, led by performance, content and automation.</p>
       </div>
-      ${listHTML()}
+      ${wheelHTML()}
       <div class="mg-svcx__grid">
         <aside class="mg-svcx__index">
           <ol><i class="mg-svcx__rail"></i>${items}</ol>
@@ -2280,8 +2286,7 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
     chapters.forEach((c, i) => { if (c.getBoundingClientRect().top < innerHeight * .5) idx = i; });
     links.forEach((a, i) => a.classList.toggle('is-active', i === idx));
     if (count) count.textContent = String(idx + 1).padStart(2, '0') + ' / 08';
-    // Discipline list rows light up once they pass 80% of the viewport height.
-    ctx.rows.forEach(row => row.classList.toggle('is-lit', row.getBoundingClientRect().top < innerHeight * .8));
+    wheelFrame();
     if (!reduce) chapters.forEach(c => {
       if (!c.classList.contains('is-in')) return;
       const b = c.getBoundingClientRect(), p = clamp(-b.top / b.height, 0, 1);
@@ -2290,6 +2295,34 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
     });
   }
   const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+
+  // Wheel position in steps (0 = first discipline centred), eased towards the scroll position each frame.
+  let wheelShown = 0;
+  function wheelTarget() {
+    const r = ctx.wheel.getBoundingClientRect(), span = r.height - innerHeight;
+    return span > 0 ? clamp(-r.top / span, 0, 1) * (data.length - 1) : 0;
+  }
+  function wheelFrame() {
+    const t = wheelTarget();
+    wheelShown = reduce ? t : wheelShown + (t - wheelShown) * 0.14;
+    if (Math.abs(t - wheelShown) < 0.001) wheelShown = t;
+    // The names are spokes of a wheel whose hub sits off to the left (as on fromanother.love): neighbours
+    // above swing up and to the left, those below swing down and to the left, away from the summary.
+    const radius = innerWidth < 810 ? 260 : Math.max(420, innerWidth * 0.34);
+    ctx.names.forEach((n, i) => {
+      const d = i - wheelShown, a = Math.abs(d);
+      n.style.transformOrigin = `${-radius}px 50%`;
+      n.style.transform = `rotate(${d * 12}deg)`;
+      // On phones the summary sits under the wheel, so names more than a step below the centre fade out.
+      const hidden = a > 4.5 || (innerWidth < 810 && d > 1.4);
+      n.style.opacity = hidden ? 0 : String(Math.max(0.12, 1 - a * (d < 0 ? 0.2 : 0.28)));
+      n.classList.toggle('is-active', a < 0.5);
+    });
+    const active = Math.round(wheelShown);
+    ctx.details.forEach((el, i) => el.classList.toggle('is-active', i === active));
+    ctx.sideNums.forEach((el, i) => el.classList.toggle('is-active', i === active));
+    if (wheelShown !== t) req();
+  }
 
   function mount() {
     const host = document.querySelector('.framer-7u2uc9');
@@ -2301,14 +2334,17 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
     host.appendChild(block);
     const chapters = [...block.querySelectorAll('.mg-chapter')];
     const links = [...block.querySelectorAll('.mg-svcx__index a')];
-    const rows = [...block.querySelectorAll('.mg-svclist__row')];
-    ctx = { wrap: block.querySelector('.mg-svcx__chapters'), rail: block.querySelector('.mg-svcx__rail'), links, chapters, rows, count: block.querySelector('.mg-svcx__count') };
-    const list = block.querySelector('.mg-svclist__rows');
-    rows.forEach((row, i) => {
-      row.addEventListener('click', e => { e.preventDefault(); chapters[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); });
-      row.addEventListener('pointerenter', e => { if (e.pointerType !== 'mouse') return; list.classList.add('has-focus'); row.classList.add('is-focus'); });
-      row.addEventListener('pointerleave', () => { list.classList.remove('has-focus'); row.classList.remove('is-focus'); });
-    });
+    const wheel = block.querySelector('.mg-wheel');
+    const names = [...block.querySelectorAll('.mg-wheel__name')];
+    ctx = { wrap: block.querySelector('.mg-svcx__chapters'), rail: block.querySelector('.mg-svcx__rail'), links, chapters, count: block.querySelector('.mg-svcx__count'),
+      wheel, names, details: [...block.querySelectorAll('.mg-wheel__detail')], sideNums: [...block.querySelectorAll('.mg-wheel__side li')] };
+    // Clicking a name scrolls to the point where the wheel centres it.
+    names.forEach((n, i) => n.addEventListener('click', e => {
+      e.preventDefault();
+      const r = wheel.getBoundingClientRect(), span = r.height - innerHeight;
+      scrollTo({ top: scrollY + r.top + span * i / (data.length - 1), behavior: reduce ? 'auto' : 'smooth' });
+    }));
+    block.querySelectorAll('.mg-wheel__more').forEach((a, i) => a.addEventListener('click', e => { e.preventDefault(); chapters[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }));
     links.forEach((a, i) => a.addEventListener('click', e => { e.preventDefault(); chapters[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }));
     if (!io) io = new IntersectionObserver((es, o) => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); o.unobserve(e.target); } }), { threshold: .12, rootMargin: '0px 0px -8% 0px' });
     chapters.forEach(c => io.observe(c));
