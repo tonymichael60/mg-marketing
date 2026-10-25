@@ -28,10 +28,10 @@
     indexItems.forEach((li, j) => li.classList.toggle('is-on', j === i));
   }
 
-  // Page gradient: each section holds its own colour from its top until the last 60% of a screen above its
+  // Page gradient: each section holds its own colour from its top until the last 30% of a screen above its
   // bottom, then blends into the next section's colour.
   function paintBg() {
-    const H = document.documentElement.scrollHeight, blend = innerHeight * 0.6;
+    const H = document.documentElement.scrollHeight, blend = innerHeight * 0.3;
     const stops = sections.flatMap(s => {
       const r = s.getBoundingClientRect(), top = Math.round(r.top + scrollY), hold = Math.round(Math.max(top, r.bottom + scrollY - blend));
       return [`${s.dataset.bg} ${top}px`, `${s.dataset.bg} ${hold}px`];
