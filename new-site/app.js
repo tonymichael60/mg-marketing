@@ -185,7 +185,8 @@
     wbWipe.style.visibility = q > 0 && u < 1 ? 'visible' : 'hidden';
     // The line pops up (overshooting) only once the mark starts to leave.
     const t2 = seg(b, 0.64, 0.76);
-    wbSay2.style.opacity = Math.min(1, t2 * 3).toFixed(3); wbSay2.style.transform = `scale(${(0.6 + 0.4 * backOut(t2)).toFixed(4)})`;
+    // Half-lit while the mark is still crossing it, full strength once the mark has left the frame.
+    wbSay2.style.opacity = (Math.min(1, t2 * 3) * (0.45 + 0.55 * seg(u, 0.6, 1))).toFixed(3); wbSay2.style.transform = `scale(${(0.6 + 0.4 * backOut(t2)).toFixed(4)})`;
     // Leaving the section, the pinned stage fades as it scrolls off into Method.
     workPin.style.opacity = r.bottom < vh ? clamp(r.bottom / vh * 1.4 - 0.2, 0, 1).toFixed(3) : '';
     return r.top <= vh * 0.5 && r.bottom > vh * 0.5 && b >= 0.36;
