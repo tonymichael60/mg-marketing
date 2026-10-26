@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Urbanist:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=65">
+  <link rel="stylesheet" href="styles.css?v=66">
 </head>
 <body>
   <!-- Ambient layers: drifting colour aura and film grain, tinted per section by app.js. -->
@@ -83,7 +83,7 @@
       </div>
     </section>
 
-    <!-- 4. Featured work: pinned, one project at a time. -->
+    <!-- 4. Featured work: pinned, one project at a time, then the MG mark scene. -->
     <section class="sec work" id="work" data-label="Work" data-bg="#02386E" data-fg="light" data-aura="#4d8fd6,#000B18,#9cc4ef">
       <div class="work__pin">
         <div class="work__titles">
@@ -110,6 +110,12 @@
           <li><img src="assets/work-clinical.jpg" alt="" loading="lazy"></li>
           <li><img src="assets/work-catalog.jpg" alt="" loading="lazy"></li>
         </ol>
+        <!-- After the last project: the MG mark sweeps up and the screen turns pale. -->
+        <div class="work__brand">
+          <div class="wb-pale" aria-hidden="true"></div>
+          <div class="wb-wipe" aria-hidden="true"><svg viewBox="172 333 1589 806"><path d="M172 333H291L966 750L1642 333H1761V553L966 1042L419 712V1139L172 1002Z"/><path d="M1065 1090L1322 931V1015H1624V816H1508L1706 694H1761V1139H1065Z"/></svg></div>
+          <p class="wb-say2">And grow<br>from deep<br>groots.</p>
+        </div>
       </div>
     </section>
 
@@ -180,9 +186,6 @@
         <div class="wb-panel" aria-hidden="true"></div>
         <div class="wb-zoom" aria-hidden="true"></div>
         <p class="wb-say"><span>It’s the impact</span><span>of honest strategy.</span><span>It’s aiming true.</span></p>
-        <div class="wb-pale" aria-hidden="true"></div>
-        <div class="wb-wipe" aria-hidden="true"><svg viewBox="172 333 1589 806"><path d="M172 333H291L966 750L1642 333H1761V553L966 1042L419 712V1139L172 1002Z"/><path d="M1065 1090L1322 931V1015H1624V816H1508L1706 694H1761V1139H1065Z"/></svg></div>
-        <p class="wb-say2">And grow<br>from deep<br>groots.</p>
         <div class="wb-s4">
           <div class="wb-s4__head"><h2 class="wb-big wb-big--ink">Think<br>better,<br><em>build</em><br>better.</h2><p>MediaGroots is a growth studio built on five systems we put to work for every client.</p></div>
           <div class="wb-stack" aria-hidden="true"><img src="assets/wb-ads.jpg" alt="" loading="lazy"><img src="assets/wb-film.jpg" alt="" loading="lazy"><img src="assets/wb-automation.jpg" alt="" loading="lazy"><img src="assets/wb-brand.jpg" alt="" loading="lazy"><img src="assets/wb-dashboard.jpg" alt="" loading="lazy"></div>
@@ -240,7 +243,7 @@
     </section>
   </main>
 
-  <script src="water.js?v=65" defer></script>
-  <script src="app.js?v=65" defer></script>
+  <script src="water.js?v=66" defer></script>
+  <script src="app.js?v=66" defer></script>
 </body>
 </html>

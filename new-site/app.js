@@ -44,7 +44,7 @@
 
   /* What we build: four scenes driven by scroll progress through the section (see index.html). */
   const build = $('.build'), wbPhoto = $('.wb-photo'), wbS1 = $('.wb-s1'), wbPanel = $('.wb-panel');
-  const wbSay = $$('.wb-say span'), wbWipe = $('.wb-wipe'), wbPale = $('.wb-pale'), wbSay2 = $('.wb-say2'), wbS4 = $('.wb-s4');
+  const wbSay = $$('.wb-say span'), wbS4 = $('.wb-s4');
   const wbItems = $$('.wb-item'), wbImgs = $$('.wb-stack img');
   const seg = (p, a, b) => clamp((p - a) / (b - a), 0, 1);
   const smooth = t => t * t * (3 - 2 * t);
@@ -103,7 +103,7 @@
     const p = progress(build), vw = innerWidth, vh = innerHeight;
     // 1 → 2: the picture zooms up towards the full screen and breaks into tiles that drift apart and fade,
     // dissolving into the navy panel that grows behind it.
-    const g = smooth(seg(p, 0.08, 0.22));
+    const g = smooth(seg(p, 0.1, 0.275));
     const r = wbPhoto.getBoundingClientRect();
     // Navy spreads like ink from the photo's centre (drifting to the screen centre) in a widening circle with a
     // feathered edge, instead of a hard-edged box; scrolling back up draws it back in.
@@ -114,42 +114,49 @@
     zoomFrame(g, r, vw, vh);
     // The navy panel sits above the photo, so it only appears once the tiles have taken the photo's place.
     wbPanel.style.opacity = g > 0.001 && (zoomTiles.length || g > 0.5) ? 1 : 0;
-    wbS1.style.opacity = 1 - seg(p, 0.16, 0.2);
+    wbS1.style.opacity = 1 - seg(p, 0.2, 0.25);
     // 2: statement lines rise in one after another, then lift away.
-    wbSay.forEach((l, i) => { const t = smooth(seg(p, 0.21 + i * 0.04, 0.27 + i * 0.04)), out = seg(p, 0.42, 0.48);
+    wbSay.forEach((l, i) => { const t = smooth(seg(p, 0.2625 + i * 0.05, 0.3375 + i * 0.05)), out = seg(p, 0.525, 0.6);
       l.style.transform = `translateY(${(1 - t) * 110 - out * 60}%)`; l.style.opacity = t * (1 - out); });
-    // 3: a big MG mark sweeps up through the screen, tilting as it goes; pale blue spreads out behind it in a
-    // growing circle, so the colour change travels with the mark.
-    const w = seg(p, 0.44, 0.62);
-    const mh = wbWipe.offsetHeight;
-    wbWipe.style.transform = `translateY(${vh - w * (vh + mh)}px) rotate(${(w - 0.5) * -14}deg)`;
-    wbWipe.style.visibility = w > 0 && w < 1 ? 'visible' : 'hidden';
-    const c = smooth(seg(p, 0.47, 0.6));
-    wbPale.style.clipPath = `circle(${(c * 120).toFixed(1)}% at 50% ${(70 - c * 20).toFixed(1)}%)`;
-    const pale = p >= 0.53;
-    // The header text is dark while a pale scene of this section covers the middle of the screen (also while
-    // gliding out of it, when the next section is already active), and back to the active section's own colour
-    // once it has gone.
-    const br = build.getBoundingClientRect(), inBuild = br.top <= vh * 0.5 && br.bottom > vh * 0.5;
-    const want = inBuild ? (pale ? 'dark' : 'light') : sections[activeSection]?.dataset.fg;
-    if (want && body.dataset.fg !== want) body.dataset.fg = want;
+    // 3: the systems list fades in on its pale stage; the active one follows the scroll, its picture comes to
+    // the front of the stack.
+    const s4 = seg(p, 0.58, 0.66);
     // Leaving the section, the pinned stage fades as it scrolls off, so the pale scene dissolves into the
     // next section's colour instead of ending in a hard edge.
+    const br = build.getBoundingClientRect();
     $('.wb-pin').style.opacity = br.bottom < vh ? clamp(br.bottom / vh * 1.4 - 0.2, 0, 1).toFixed(3) : '';
-    const s2 = seg(p, 0.53, 0.58) * (1 - seg(p, 0.66, 0.7));
-    wbSay2.style.opacity = s2; wbSay2.style.transform = `scale(${0.92 + 0.08 * seg(p, 0.53, 0.6)})`;
-    // 4: the systems list; the active one follows the scroll, its picture comes to the front of the stack.
-    const s4 = seg(p, 0.68, 0.73);
     wbS4.style.opacity = s4; wbS4.style.transform = `translateY(${(1 - s4) * 40}px)`; wbS4.style.pointerEvents = s4 > 0.5 ? '' : 'none';
     // Continuous position through the five systems (a = 0..4): the stack moves with the scroll itself (no CSS
     // transitions to lag behind), the front picture is in colour and fades to black and white as it leaves.
-    const a = seg(p, 0.74, 0.97) * (wbItems.length - 1), act = Math.round(a);
+    const a = seg(p, 0.675, 0.9625) * (wbItems.length - 1), act = Math.round(a);
     wbItems.forEach((it, i) => it.classList.toggle('is-on', i === act));
     wbImgs.forEach((im, i) => { const d = i - a;
       if (d < 0) { im.style.transform = `translate(${d * 55}%, ${d * -30}px) rotate(${d * 10}deg) scale(${1 + d * 0.08})`; im.style.opacity = clamp(1 + d * 2, 0, 1); im.style.zIndex = 20; }
       else { im.style.transform = `translate(${d * 14}px, ${d * -14}px) rotate(${d * 3}deg) scale(${1 - d * 0.05})`; im.style.opacity = clamp(3 - d, 0, 1); im.style.zIndex = 10 - Math.round(d * 2); }
       im.style.filter = `grayscale(${clamp(Math.abs(d) * 1.6, 0, 1).toFixed(2)}) brightness(${(1 - clamp(Math.abs(d), 0, 1) * 0.08).toFixed(3)})`; });
+    return br.top <= vh * 0.5 && br.bottom > vh * 0.5 && s4 > 0.5;
   }
+
+  /* End of Work: after the last project a big MG mark sweeps up through the screen, tilting as it goes; pale blue
+     spreads out behind it in a growing circle, so the colour change travels with the mark, then the line
+     "And grow from deep groots." settles in. Runs over the last BRAND_VH of the section. */
+  const BRAND_VH = 1.8;
+  const workPin = $('.work__pin'), wbWipe = $('.wb-wipe'), wbPale = $('.wb-pale'), wbSay2 = $('.wb-say2');
+  function brandFrame() {
+    const vh = innerHeight, r = work.getBoundingClientRect(), len = BRAND_VH * vh;
+    const b = clamp((-r.top - (r.height - vh - len)) / len, 0, 1);
+    const w = seg(b, 0, 0.62);
+    wbWipe.style.transform = `translateY(${vh - w * (vh + wbWipe.offsetHeight)}px) rotate(${(w - 0.5) * -14}deg)`;
+    wbWipe.style.visibility = w > 0 && w < 1 ? 'visible' : 'hidden';
+    const c = smooth(seg(b, 0.15, 0.55));
+    wbPale.style.clipPath = `circle(${(c * 120).toFixed(1)}% at 50% ${(70 - c * 20).toFixed(1)}%)`;
+    wbSay2.style.opacity = seg(b, 0.45, 0.58); wbSay2.style.transform = `scale(${0.92 + 0.08 * seg(b, 0.45, 0.65)})`;
+    // Leaving the section, the pinned stage fades as it scrolls off into Method.
+    workPin.style.opacity = r.bottom < vh ? clamp(r.bottom / vh * 1.4 - 0.2, 0, 1).toFixed(3) : '';
+    return r.top <= vh * 0.5 && r.bottom > vh * 0.5 && b >= 0.35;
+  }
+  // Projects share the part of Work before the MG mark scene.
+  const workProgress = () => { const r = work.getBoundingClientRect(), span = r.height - innerHeight * (1 + BRAND_VH); return span > 0 ? clamp(-r.top / span, 0, 1) : 0; };
 
 
   /* FAQ: answers open and close with a smooth height animation (and the text fades and rises in) instead of
@@ -356,7 +363,7 @@
     svcGroups.forEach((g, i) => g.classList.toggle('is-on', +svcItems[svcActive].dataset.group === i));
 
     // Featured work: one project per quarter of the scroll.
-    const wi = Math.min(workSets[0].length - 1, Math.floor(progress(work) * workSets[0].length));
+    const wi = Math.min(workSets[0].length - 1, Math.floor(workProgress() * workSets[0].length));
     workSets.forEach(set => set.forEach((el, i) => el.classList.toggle('is-on', i === wi)));
     window.mgWater?.show(wi);
 
@@ -380,7 +387,12 @@
     mRoll.style.transition = 'transform 0.7s cubic-bezier(0.22, 1, 0.36, 1)';
     mNum.style.opacity = clamp((ms + 0.3) * 3, 0, 1);
 
-    buildFrame();
+    // The header text is dark while a pale scene (end of Work, systems list) covers the middle of the screen
+    // (also while gliding out of it, when the next section is already active), and back to the active
+    // section's own colour once it has gone.
+    const pale = brandFrame() | buildFrame();
+    const want = pale ? 'dark' : sections[activeSection]?.dataset.fg;
+    if (want && body.dataset.fg !== want) body.dataset.fg = want;
 
     // Clients wheel: names are spokes from a hub off to the left; the centred one is level and bright.
     again = ease('clients', progress(clients) * (clientNames.length - 1), gliding ? 1 : 0.35) || again;
