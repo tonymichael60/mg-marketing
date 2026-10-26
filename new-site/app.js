@@ -138,11 +138,11 @@
   }
 
   /* End of Work: after the last project its card zooms up to fill the screen while the water melts it to pale
-     from the middle outward; the MG mark is pushed up from below to the middle, then on out of the top, and as it
-     leaves the line "And grow from deep groots." pops up. Runs over the last BRAND_VH of the section. */
+     from the middle outward; the stage goes dark and a spotlight follows the MG mark as it is pushed up from below
+     to the middle and on out of the top; then the lights come up and "And grow from deep groots." pops up. Runs over the last BRAND_VH of the section. */
   const BRAND_VH = 2.2;
   const workPin = $('.work__pin'), workMedia = $('.work__media'), workSide = ['.work__titles', '.work__tags', '.work__thumbs'].map(s => $(s));
-  const wbWipe = $('.wb-wipe'), wbPale = $('.wb-pale'), wbSay2 = $('.wb-say2');
+  const wbWipe = $('.wb-wipe'), wbPale = $('.wb-pale'), wbSay2 = $('.wb-say2'), wbSpot = $('.work__spot');
   const backOut = t => 1 + 2.70158 * (t - 1) ** 3 + 1.70158 * (t - 1) ** 2;
   let mediaShift = [0, 0];
   function brandFrame() {
@@ -157,16 +157,21 @@
     workSide.forEach(el => { el.style.opacity = z ? 1 - seg(b, 0, 0.12) : ''; });
     window.mgWater?.melt(seg(b, 0.14, 0.42), smooth(seg(b, 0, 0.16)));
     wbPale.style.opacity = seg(b, 0.4, 0.44);
-    // The mark (full screen width, as first built) is pushed up from below the screen to the middle (settling with a slight overshoot and tilt),
-    // holds, then carries on up out of the top.
-    const q = seg(b, 0.38, 0.54), u = smooth(seg(b, 0.6, 0.8)), out = vh * 0.5 + wbWipe.offsetHeight * 0.6;
+    // The mark (scaled down so the spotlight can frame it) is pushed up from below the screen to the middle
+    // (settling with a slight overshoot and tilt), holds, then carries on up out of the top.
+    const WS = 0.42, mw = wbWipe.offsetWidth * WS, mh = wbWipe.offsetHeight * WS;
+    const q = seg(b, 0.38, 0.54), u = smooth(seg(b, 0.6, 0.8)), out = vh * 0.5 + mh * 0.75;
     const wy = (1 - backOut(q)) * out - u * out;
-    wbWipe.style.transform = `translateY(${wy.toFixed(1)}px) rotate(${((1 - q) * 8 - u * 8).toFixed(2)}deg)`;
+    wbWipe.style.transform = `translateY(${wy.toFixed(1)}px) rotate(${((1 - q) * 8 - u * 8).toFixed(2)}deg) scale(${WS})`;
     wbWipe.style.visibility = q > 0 && u < 1 ? 'visible' : 'hidden';
-    // The line pops up (overshooting) only once the mark starts to leave.
-    const t2 = seg(b, 0.64, 0.76);
-    // Half-lit while the mark is still crossing it, full strength once the mark has left the frame.
-    wbSay2.style.opacity = (Math.min(1, t2 * 3) * (0.45 + 0.55 * seg(u, 0.6, 1))).toFixed(3); wbSay2.style.transform = `scale(${(0.6 + 0.4 * backOut(t2)).toFixed(4)})`;
+    // Spotlight: the stage darkens as the mark comes in, leaving an oval pool of light that rides with it; once
+    // the mark has gone the lights come back up.
+    const dark = seg(b, 0.36, 0.44) * (1 - seg(b, 0.78, 0.84)), sy = vh / 2 + wy;
+    wbSpot.style.opacity = dark.toFixed(3);
+    if (dark > 0) wbSpot.style.background = `radial-gradient(ellipse ${(mw * 0.85).toFixed(0)}px ${(mh * 1.35).toFixed(0)}px at 50% ${sy.toFixed(0)}px, rgba(255, 252, 245, 0.45) 0, rgba(255, 252, 245, 0) 40%, rgba(0, 8, 20, 0) 58%, rgba(0, 8, 20, 0.55) 78%, rgba(0, 8, 20, 0.94) 100%)`;
+    // The line pops up (overshooting) once the mark has left the frame and the lights are back.
+    const t2 = seg(b, 0.83, 0.93);
+    wbSay2.style.opacity = Math.min(1, t2 * 3).toFixed(3); wbSay2.style.transform = `scale(${(0.6 + 0.4 * backOut(t2)).toFixed(4)})`;
     // Leaving the section, the pinned stage fades as it scrolls off into Method.
     // Its lower part dissolves into Method through a widening soft gradient, so the two sections blend instead of
     // meeting at a hard edge.
@@ -175,7 +180,7 @@
     workPin.style.webkitMaskImage = blend; workPin.style.maskImage = blend;
     workPin.style.opacity = r.bottom < vh ? clamp(r.bottom / vh * 1.4 - 0.2, 0, 1).toFixed(3) : '';
     // Dark header only while the pale scene still covers the top of the screen (not once it has blended away).
-    return r.top <= vh * 0.5 && r.bottom > vh * 0.5 && b >= 0.36 && leave < 0.15;
+    return r.top <= vh * 0.5 && r.bottom > vh * 0.5 && b >= 0.36 && dark < 0.5 && leave < 0.15;
   }
   // Projects share the part of Work before the MG mark scene.
   const workProgress = () => { const r = work.getBoundingClientRect(), span = r.height - innerHeight * (1 + BRAND_VH); return span > 0 ? clamp(-r.top / span, 0, 1) : 0; };

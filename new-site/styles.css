@@ -160,6 +160,8 @@ h1, h2, h3, p { margin: 0; }
 /* After the last project (the final 220vh of the section): the card zooms up and melts to pale, the MG mark pops
    out and rises away, then the closing line. Driven by app.js. */
 .work__pin { overflow: clip; }
+/* Spotlight on the MG mark: the stage goes dark except a soft pool of light that follows the mark (app.js). */
+.work__spot { position: absolute; inset: 0; opacity: 0; will-change: background, opacity; }
 .work__brand { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 5; --pale: #dbe6f7; --blue: #0052A2; }
 
 /* 5. Method (after fromanother.love "Our team"): pinned stage driven by app.js. Panels drift upward past
