@@ -3,7 +3,7 @@
 // old image into the new one through the same surface; the pointer leaves a ripple ring as it moves. The image
 // is black and white until hovered, then fades to its original colour (and back when the pointer leaves).
 // melt(k, liquid) (both 0..1, end of Work): liquid churns the picture with strong flow and ripples while it
-// zooms; k floods it with the Work section's dark blue from the middle outward. Exposes window.mgWater = { show(index), melt(k, liquid) }. If WebGL is unavailable the plain <img> elements stay visible.
+// zooms; k floods it to pale from the middle outward. Exposes window.mgWater = { show(index), melt(k, liquid) }. If WebGL is unavailable the plain <img> elements stay visible.
 (() => {
   const host = document.querySelector('.work__media');
   if (!host) return;
@@ -59,17 +59,16 @@ void main() {
   // Caustic sheen: soft light bands that move with the flow.
   float caustic = pow(fbm(uv * 6.0 + flow * 4.0 + t * 1.5), 3.0);
   col.rgb += caustic * 0.18;
-  // Melt: dark blue water (the Work background, #02386E) wells up in pools that pop up over the picture, merge
-  // and spread out to the corners. The water has a crisp wobbling edge with a light blue rim and moving ripples,
-  // which calm to the flat background colour at the end, so the screen blends into the section.
+  // Melt: pale water wells up in pools that pop up over the picture, merge and spread out to the corners. The
+  // water has a crisp wobbling edge with a blue rim and moving ripples, which calm to a flat pale at the end.
   float n = fbm(uv * 4.5 + flow * 3.0 + vec2(0.0, -uTime * 0.35)) * 0.6 + (1.0 - length(uv - 0.5) * 1.4) * 0.4;
   float th = 1.0 - uMelt * 1.6;
   float water = smoothstep(th, th + 0.025, n);
   float rim = water * (1.0 - smoothstep(th + 0.01, th + 0.05, n));
   float ripple = pow(fbm(uv * 9.0 + flow * 6.0 + vec2(uTime * 0.6, uTime * 0.3)), 2.0) * (1.0 - uMelt);
-  vec3 deep = vec3(0.008, 0.22, 0.431);
-  vec3 wcol = deep + vec3(0.06, 0.12, 0.2) * ripple + vec3(0.08, 0.12, 0.16) * smoothstep(0.5, 0.75, ripple);
-  wcol = mix(wcol, vec3(0.3, 0.56, 0.84), rim * 0.6);
+  vec3 pale = vec3(0.859, 0.902, 0.969);
+  vec3 wcol = pale - vec3(0.28, 0.2, 0.06) * ripple + vec3(0.1) * smoothstep(0.5, 0.75, ripple);
+  wcol = mix(wcol, vec3(0.0, 0.32, 0.64), rim * 0.55);
   col.rgb = mix(col.rgb, wcol, water);
   gl_FragColor = col;
 }`;

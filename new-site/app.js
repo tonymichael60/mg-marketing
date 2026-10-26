@@ -137,8 +137,8 @@
     return br.top <= vh * 0.5 && br.bottom > vh * 0.5 && s4 > 0.5;
   }
 
-  /* End of Work: after the last project its card zooms up to fill the screen while the water melts it into the
-     section's dark blue from the middle outward; the MG mark is pushed up from below to the middle, then on out of the top, and as it
+  /* End of Work: after the last project its card zooms up to fill the screen while the water melts it to pale
+     from the middle outward; the MG mark is pushed up from below to the middle, then on out of the top, and as it
      leaves the line "And grow from deep groots." pops up. Runs over the last BRAND_VH of the section. */
   const BRAND_VH = 2.2;
   const workPin = $('.work__pin'), workMedia = $('.work__media'), workSide = ['.work__titles', '.work__tags', '.work__thumbs'].map(s => $(s));
@@ -169,6 +169,7 @@
     wbSay2.style.opacity = (Math.min(1, t2 * 3) * (0.45 + 0.55 * seg(u, 0.6, 1))).toFixed(3); wbSay2.style.transform = `scale(${(0.6 + 0.4 * backOut(t2)).toFixed(4)})`;
     // Leaving the section, the pinned stage fades as it scrolls off into Method.
     workPin.style.opacity = r.bottom < vh ? clamp(r.bottom / vh * 1.4 - 0.2, 0, 1).toFixed(3) : '';
+    return r.top <= vh * 0.5 && r.bottom > vh * 0.5 && b >= 0.36;
   }
   // Projects share the part of Work before the MG mark scene.
   const workProgress = () => { const r = work.getBoundingClientRect(), span = r.height - innerHeight * (1 + BRAND_VH); return span > 0 ? clamp(-r.top / span, 0, 1) : 0; };
@@ -407,11 +408,10 @@
     mRoll.style.transition = 'transform 0.7s cubic-bezier(0.22, 1, 0.36, 1)';
     mNum.style.opacity = clamp((ms + 0.3) * 3, 0, 1);
 
-    brandFrame();
-    // The header text is dark while the pale systems list of What we build covers the middle of the screen
+    // The header text is dark while a pale scene (end of Work, systems list) covers the middle of the screen
     // (also while gliding out of it, when the next section is already active), and back to the active
     // section's own colour once it has gone.
-    const pale = buildFrame();
+    const pale = brandFrame() | buildFrame();
     const want = pale ? 'dark' : sections[activeSection]?.dataset.fg;
     if (want && body.dataset.fg !== want) body.dataset.fg = want;
 
