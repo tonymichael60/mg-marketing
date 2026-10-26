@@ -333,13 +333,13 @@
       swallow = true; swallowDir = dir;
       return;
     }
-    // Breaks: scrolling down stops at the end of Work ("And grow from deep groots."), the end of Method (Bloom), the end of Clients (last client, where the
+    // Breaks: scrolling down stops at the end of Method (Bloom), the end of Clients (last client, where the
     // spotlight switches off) and the end of What we build (Live KPI dashboards), holding for the rest of that
     // gesture; the next fresh scroll glides to the start of the following section.
     const y = smoothTarget ?? scrollY, dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
     const end = sec => Math.round(secTop(sec) + sec.offsetHeight - innerHeight);
     const measureSec = $('.measure');
-    const breaks = [[end(work), Math.round(secTop(method))], [end(method), Math.round(secTop(clients))], [end(clients), Math.round(secTop(build))], [end(build), Math.round(secTop(measureSec))]];
+    const breaks = [[end(method), Math.round(secTop(clients))], [end(clients), Math.round(secTop(build))], [end(build), Math.round(secTop(measureSec))]];
     for (const [at, next] of breaks) {
       if (dir > 0 && Math.abs(y - at) < 6 && !sameGesture) {
         e.preventDefault();
