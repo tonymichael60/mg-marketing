@@ -2,7 +2,8 @@
 // moving liquid surface (smooth noise displacement plus a light caustic sheen). Changing project melts the
 // old image into the new one through the same surface; the pointer leaves a ripple ring as it moves. The image
 // is black and white until hovered, then fades to its original colour (and back when the pointer leaves).
-// melt(k, liquid) (both 0..1, end of Work): liquid churns the picture with strong flow and ripples while it
+// melt(k, liquid, scale) (k and liquid 0..1, end of Work; scale = how far the box is zoomed up, so the canvas
+// renders sharp at that size): liquid churns the picture with strong flow and ripples while it
 // zooms; k floods it to pale from the middle outward. Exposes window.mgWater = { show(index), melt(k, liquid) }. If WebGL is unavailable the plain <img> elements stay visible.
 (() => {
   const host = document.querySelector('.work__media');
@@ -59,10 +60,17 @@ void main() {
   // Caustic sheen: soft light bands that move with the flow.
   float caustic = pow(fbm(uv * 6.0 + flow * 4.0 + t * 1.5), 3.0);
   col.rgb += caustic * 0.18;
-  // Melt: pale floods in from the middle through a noisy liquid edge that spreads out to the corners.
-  float n = fbm(uv * 3.0 + flow * 3.0 + t * 2.0) * 0.45 + (1.0 - length(uv - 0.5) * 1.4) * 0.55;
-  float th = 1.0 - uMelt * 1.5;
-  col.rgb = mix(col.rgb, vec3(0.859, 0.902, 0.969), smoothstep(th, th + 0.18, n));
+  // Melt: pale water wells up in pools that pop up over the picture, merge and spread out to the corners. The
+  // water has a crisp wobbling edge with a blue rim and moving ripples, which calm to a flat pale at the end.
+  float n = fbm(uv * 4.5 + flow * 3.0 + vec2(0.0, -uTime * 0.35)) * 0.6 + (1.0 - length(uv - 0.5) * 1.4) * 0.4;
+  float th = 1.0 - uMelt * 1.6;
+  float water = smoothstep(th, th + 0.025, n);
+  float rim = water * (1.0 - smoothstep(th + 0.01, th + 0.05, n));
+  float ripple = pow(fbm(uv * 9.0 + flow * 6.0 + vec2(uTime * 0.6, uTime * 0.3)), 2.0) * (1.0 - uMelt);
+  vec3 pale = vec3(0.859, 0.902, 0.969);
+  vec3 wcol = pale - vec3(0.28, 0.2, 0.06) * ripple + vec3(0.1) * smoothstep(0.5, 0.75, ripple);
+  wcol = mix(wcol, vec3(0.0, 0.32, 0.64), rim * 0.55);
+  col.rgb = mix(col.rgb, wcol, water);
   gl_FragColor = col;
 }`;
   const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
@@ -103,11 +111,11 @@ void main() {
     });
   }
 
-  let from = 0, to = 0, mix = 1, wave = 0, stir = 0, colour = 0, melt = 0, liquid = 0, hovered = false, mouse = [0.5, 0.5], running = false, transStart = 0;
+  let from = 0, to = 0, mix = 1, wave = 0, stir = 0, colour = 0, melt = 0, liquid = 0, zoom = 1, hovered = false, mouse = [0.5, 0.5], running = false, transStart = 0;
   const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   function resize() {
     // Layout size, not the on-screen one: the box is scaled up at the end of Work.
-    const dpr = Math.min(2, devicePixelRatio || 1);
+    const dpr = Math.min(2, devicePixelRatio || 1) * Math.min(zoom, 2560 / Math.max(1, host.offsetWidth * Math.min(2, devicePixelRatio || 1)));
     canvas.width = Math.max(1, Math.round(host.offsetWidth * dpr)); canvas.height = Math.max(1, Math.round(host.offsetHeight * dpr));
     gl.viewport(0, 0, canvas.width, canvas.height);
   }
@@ -170,6 +178,11 @@ void main() {
       if (i === to) return;
       load(i).then(() => { if (mix < 1) from = to; to = i; mix = 0; transStart = performance.now(); });
     },
-    melt(k, l) { melt = k; liquid = l; },
+    melt(k, l, s) {
+      melt = k; liquid = l;
+      // Re-render at the zoomed size in steps, not every frame.
+      const z = Math.max(1, Math.round(s * 2) / 2);
+      if (z !== zoom) { zoom = z; resize(); }
+    },
   };
 })();
