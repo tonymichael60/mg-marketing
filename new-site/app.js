@@ -157,11 +157,11 @@
     workSide.forEach(el => { el.style.opacity = z ? 1 - seg(b, 0, 0.12) : ''; });
     window.mgWater?.melt(seg(b, 0.14, 0.42), smooth(seg(b, 0, 0.16)));
     wbPale.style.opacity = seg(b, 0.4, 0.44);
-    // The mark is pushed up from below the screen to the middle (settling with a slight overshoot and tilt),
+    // The mark (full screen width, as first built) is pushed up from below the screen to the middle (settling with a slight overshoot and tilt),
     // holds, then carries on up out of the top.
-    const q = seg(b, 0.38, 0.54), u = smooth(seg(b, 0.6, 0.8)), out = vh * 0.5 + wbWipe.offsetHeight * 0.4;
+    const q = seg(b, 0.38, 0.54), u = smooth(seg(b, 0.6, 0.8)), out = vh * 0.5 + wbWipe.offsetHeight * 0.6;
     const wy = (1 - backOut(q)) * out - u * out;
-    wbWipe.style.transform = `translateY(${wy.toFixed(1)}px) rotate(${((1 - q) * 8 - u * 8).toFixed(2)}deg) scale(0.6)`;
+    wbWipe.style.transform = `translateY(${wy.toFixed(1)}px) rotate(${((1 - q) * 8 - u * 8).toFixed(2)}deg)`;
     wbWipe.style.visibility = q > 0 && u < 1 ? 'visible' : 'hidden';
     // The line pops up (overshooting) only once the mark starts to leave.
     const t2 = seg(b, 0.64, 0.76);
