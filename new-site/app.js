@@ -319,6 +319,17 @@
       swallow = true; swallowDir = dir;
       return;
     }
+    // End of Work → Method: a fresh downward scroll from the closing line ("And grow from deep groots.", the
+    // last quarter screen of Work) up to Method's top glides straight to Method, so "Driven by deep groots"
+    // lands centred. No stop on the way: a scroll that is already moving carries on through.
+    const methodTop = Math.round(secTop(method)), workEnd = Math.round(secTop(work) + work.offsetHeight - innerHeight);
+    const yNow = smoothTarget ?? scrollY;
+    if (dir > 0 && !sameGesture && yNow >= workEnd - innerHeight * 0.25 && yNow < methodTop - 2) {
+      e.preventDefault();
+      if (reduce) scrollTo({ top: methodTop, behavior: 'instant' }); else glide(methodTop, 1050);
+      swallow = true; swallowDir = dir;
+      return;
+    }
     // Breaks: scrolling down stops at the end of Method (Bloom), the end of Clients (last client, where the
     // spotlight switches off) and the end of What we build (Live KPI dashboards), holding for the rest of that
     // gesture; the next fresh scroll glides to the start of the following section.
