@@ -168,8 +168,14 @@
     // Half-lit while the mark is still crossing it, full strength once the mark has left the frame.
     wbSay2.style.opacity = (Math.min(1, t2 * 3) * (0.45 + 0.55 * seg(u, 0.6, 1))).toFixed(3); wbSay2.style.transform = `scale(${(0.6 + 0.4 * backOut(t2)).toFixed(4)})`;
     // Leaving the section, the pinned stage fades as it scrolls off into Method.
+    // Its lower part dissolves into Method through a widening soft gradient, so the two sections blend instead of
+    // meeting at a hard edge.
+    const leave = clamp(1 - r.bottom / vh, 0, 1), soft = 100 - 85 * smooth(seg(leave, 0, 0.35));
+    const blend = leave > 0 ? `linear-gradient(to bottom, #000 ${(soft - 15).toFixed(1)}%, transparent ${(soft + 15).toFixed(1)}%)` : '';
+    workPin.style.webkitMaskImage = blend; workPin.style.maskImage = blend;
     workPin.style.opacity = r.bottom < vh ? clamp(r.bottom / vh * 1.4 - 0.2, 0, 1).toFixed(3) : '';
-    return r.top <= vh * 0.5 && r.bottom > vh * 0.5 && b >= 0.36;
+    // Dark header only while the pale scene still covers the top of the screen (not once it has blended away).
+    return r.top <= vh * 0.5 && r.bottom > vh * 0.5 && b >= 0.36 && leave < 0.15;
   }
   // Projects share the part of Work before the MG mark scene.
   const workProgress = () => { const r = work.getBoundingClientRect(), span = r.height - innerHeight * (1 + BRAND_VH); return span > 0 ? clamp(-r.top / span, 0, 1) : 0; };
