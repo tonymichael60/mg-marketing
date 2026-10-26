@@ -250,7 +250,8 @@
      blends the background colour and the Clients light by its own progress, so colour moves with the content. */
   const secTop = sec => sec.getBoundingClientRect().top + scrollY;
   let gliding = null;
-  const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  // Sine in-out: starts moving at once and lands softly (cubic waited too long before moving).
+  const easeInOut = t => (1 - Math.cos(Math.PI * t)) / 2;
   function glide(target, duration) {
     stopSmooth();
     const from = scrollY, start = performance.now();
@@ -309,11 +310,14 @@
   // Hero → About: the first downward gesture on the hero glides straight to About, so it lands centred. The rest
   // of that gesture (trackpad inertia) is swallowed; a new gesture scrolls on normally.
   const about = $('#manifesto');
-  let lastWheel = 0, swallow = false, swallowDir = 0;
+  let lastWheel = 0, lastAbs = 0, swallow = false, swallowDir = 0;
   addEventListener('wheel', e => {
     if (e.ctrlKey || Math.abs(e.deltaY) < 2 || !menu.hidden) return;
-    const now = performance.now(), sameGesture = now - lastWheel < 180;
-    lastWheel = now;
+    const now = performance.now(), abs = Math.abs(e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY);
+    // A new swipe during trackpad inertia counts as a fresh gesture: inertia only fades, so a sudden jump in
+    // speed is the hand again. Without this, the next swipe at a break was swallowed until the inertia died.
+    const sameGesture = now - lastWheel < 180 && !(abs > Math.max(14, lastAbs * 2.2));
+    lastWheel = now; lastAbs = abs;
     const dir = Math.sign(e.deltaY);
     // Scrolling the other way during a glide takes over straight away instead of being ignored.
     if (gliding && dir !== gliding.dir) { cancelGlide(); swallow = false; }
@@ -324,7 +328,7 @@
     // up from About and down again just scrolls.
     if (dir > 0 && !sameGesture && (smoothTarget ?? scrollY) < aboutTop * 0.5) {
       e.preventDefault();
-      if (reduce) scrollTo({ top: aboutTop, behavior: 'instant' }); else glide(aboutTop, 1000);
+      if (reduce) scrollTo({ top: aboutTop, behavior: 'instant' }); else glide(aboutTop, 1050);
       swallow = true; swallowDir = dir;
       return;
     }
@@ -338,7 +342,7 @@
     for (const [at, next] of breaks) {
       if (dir > 0 && Math.abs(y - at) < 6 && !sameGesture) {
         e.preventDefault();
-        if (reduce) scrollTo({ top: next, behavior: 'instant' }); else glide(next, 1100);
+        if (reduce) scrollTo({ top: next, behavior: 'instant' }); else glide(next, 1050);
         swallow = true; swallowDir = dir;
         return;
       }
