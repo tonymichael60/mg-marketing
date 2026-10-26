@@ -160,17 +160,6 @@ h1, h2, h3, p { margin: 0; }
 /* After the last project (the final 220vh of the section): the card zooms up and melts to pale, the MG mark pops
    out and rises away, then the closing line. Driven by app.js. */
 .work__pin { overflow: clip; }
-.work__drops i { position: absolute; left: 0; top: 0; border-radius: 50%; visibility: hidden; will-change: transform, opacity;
-  /* Liquid glass: clear, with a bright rim, a specular glint and a soft caustic below (no backdrop-filter: 34 of
-     them over the WebGL canvas cost frames while zooming). */
-  background: radial-gradient(circle at 50% 120%, rgba(255, 255, 255, 0.45), transparent 55%), linear-gradient(160deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.04) 60%);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  box-shadow: inset 2px 3px 4px rgba(255, 255, 255, 0.9), inset -3px -4px 8px rgba(0, 38, 77, 0.25), 0 0 14px rgba(255, 255, 255, 0.35), 0 8px 18px -8px rgba(0, 11, 24, 0.45); }
-/* Shine: a hot glint that twinkles, each drop on its own beat (--tw set by app.js). */
-.work__drops i::after { content: ""; position: absolute; left: 20%; top: 14%; width: 30%; height: 22%; border-radius: 50%; rotate: -30deg;
-  background: radial-gradient(closest-side, #fff, rgba(255, 255, 255, 0.6) 45%, transparent); box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8);
-  animation: drop-glint 1.6s ease-in-out infinite; animation-delay: var(--tw, 0s); }
-@keyframes drop-glint { 50% { opacity: 0.55; scale: 0.8; } }
 .work__brand { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 5; --pale: #dbe6f7; --blue: #0052A2; }
 
 /* 5. Method (after fromanother.love "Our team"): pinned stage driven by app.js. Panels drift upward past
