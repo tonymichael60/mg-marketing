@@ -2,8 +2,7 @@
 // moving liquid surface (smooth noise displacement plus a light caustic sheen). Changing project melts the
 // old image into the new one through the same surface; the pointer leaves a ripple ring as it moves. The image
 // is black and white until hovered, then fades to its original colour (and back when the pointer leaves).
-// melt(k, liquid, scale) (k and liquid 0..1, end of Work; scale = how far the box is zoomed up, so the canvas
-// renders sharp at that size): liquid churns the picture with strong flow and ripples while it
+// melt(k, liquid) (both 0..1, end of Work): liquid churns the picture with strong flow and ripples while it
 // zooms; k floods it to pale from the middle outward. Exposes window.mgWater = { show(index), melt(k, liquid) }. If WebGL is unavailable the plain <img> elements stay visible.
 (() => {
   const host = document.querySelector('.work__media');
@@ -111,11 +110,15 @@ void main() {
     });
   }
 
-  let from = 0, to = 0, mix = 1, wave = 0, stir = 0, colour = 0, melt = 0, liquid = 0, zoom = 1, hovered = false, mouse = [0.5, 0.5], running = false, transStart = 0;
+  let from = 0, to = 0, mix = 1, wave = 0, stir = 0, colour = 0, melt = 0, liquid = 0, hovered = false, mouse = [0.5, 0.5], running = false, transStart = 0;
   const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   function resize() {
-    // Layout size, not the on-screen one: the box is scaled up at the end of Work.
-    const dpr = Math.min(2, devicePixelRatio || 1) * Math.min(zoom, 2560 / Math.max(1, host.offsetWidth * Math.min(2, devicePixelRatio || 1)));
+    // Layout size, not the on-screen one: the box is scaled up to fill the screen at the end of Work, so the canvas
+    // is sized once for that zoom (within a pixel budget) and never resized while zooming: resizing mid-zoom
+    // stalled for 100-200ms and cleared the canvas.
+    const w = Math.max(1, host.offsetWidth), h = Math.max(1, host.offsetHeight);
+    const fill = Math.max(innerWidth / w, innerHeight / h) * 1.04;
+    const dpr = Math.min(Math.max(Math.min(2, devicePixelRatio || 1), fill), Math.sqrt(1.6e6 / (w * h)));
     canvas.width = Math.max(1, Math.round(host.offsetWidth * dpr)); canvas.height = Math.max(1, Math.round(host.offsetHeight * dpr));
     gl.viewport(0, 0, canvas.width, canvas.height);
   }
@@ -157,7 +160,8 @@ void main() {
     host.appendChild(canvas);
     host.classList.add('has-gl');
     resize();
-    addEventListener('resize', resize);
+    // Resizing clears the canvas, so draw again straight away (no blank card for a frame).
+    addEventListener('resize', () => { resize(); if (running) render(lastNow); });
     imgs.forEach((_, i) => load(i));
     // Draw only while the work section is on screen.
     new IntersectionObserver(([e]) => {
@@ -183,12 +187,6 @@ void main() {
       if (i === to) return;
       load(i).then(() => { if (mix < 1) from = to; to = i; mix = 0; transStart = performance.now(); });
     },
-    melt(k, l, s) {
-      melt = k; liquid = l;
-      // Re-render at the zoomed size in steps, not every frame.
-      const z = Math.max(1, Math.round(s * 2) / 2);
-      // Resizing clears the canvas, so draw again straight away; otherwise a blank (black) card shows for a frame.
-      if (z !== zoom) { zoom = z; resize(); if (textures[to]) render(lastNow); }
-    },
+    melt(k, l) { melt = k; liquid = l; },
   };
 })();

@@ -161,9 +161,9 @@ h1, h2, h3, p { margin: 0; }
    out and rises away, then the closing line. Driven by app.js. */
 .work__pin { overflow: clip; }
 .work__drops i { position: absolute; left: 0; top: 0; border-radius: 50%; visibility: hidden; will-change: transform, opacity;
-  /* Liquid glass: clear, magnifying what is behind it, with a bright rim, a specular glint and a soft caustic below. */
+  /* Liquid glass: clear, with a bright rim, a specular glint and a soft caustic below (no backdrop-filter: 34 of
+     them over the WebGL canvas cost frames while zooming). */
   background: radial-gradient(circle at 50% 120%, rgba(255, 255, 255, 0.45), transparent 55%), linear-gradient(160deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.04) 60%);
-  -webkit-backdrop-filter: blur(1.5px) saturate(1.9) brightness(1.18) contrast(1.1); backdrop-filter: blur(1.5px) saturate(1.9) brightness(1.18) contrast(1.1);
   border: 1px solid rgba(255, 255, 255, 0.7);
   box-shadow: inset 2px 3px 4px rgba(255, 255, 255, 0.9), inset -3px -4px 8px rgba(0, 38, 77, 0.25), 0 0 14px rgba(255, 255, 255, 0.35), 0 8px 18px -8px rgba(0, 11, 24, 0.45); }
 /* Shine: a hot glint that twinkles, each drop on its own beat (--tw set by app.js). */

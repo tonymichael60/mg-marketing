@@ -164,7 +164,7 @@
     mediaShift = [(vw / 2 - cx) * z, (vh / 2 - cy) * z];
     workMedia.style.transform = z ? `translate(${mediaShift[0].toFixed(1)}px, ${mediaShift[1].toFixed(1)}px) scale(${s.toFixed(4)})` : '';
     workSide.forEach(el => { el.style.opacity = z ? 1 - seg(b, 0, 0.12) : ''; });
-    window.mgWater?.melt(seg(b, 0.14, 0.42), smooth(seg(b, 0, 0.16)), s);
+    window.mgWater?.melt(seg(b, 0.14, 0.42), smooth(seg(b, 0, 0.16)));
     // Droplets burst from the card's centre and spread out across the screen, stretching along their path,
     // then soak into the pale water.
     const dr = Math.hypot(vw, vh) * 0.6, fade = 1 - seg(b, 0.36, 0.44);
