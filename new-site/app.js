@@ -138,8 +138,8 @@
   }
 
   /* End of Work: after the last project its card zooms up to fill the screen while the water melts it to pale
-     from the middle outward; the line "And grow from deep groots." settles in, and the MG mark is pushed up from
-     below over it to the middle, then on out of the top. Runs over the last BRAND_VH of the section. */
+     from the middle outward; the MG mark is pushed up from below to the middle, then on out of the top, and as it
+     leaves the line "And grow from deep groots." pops up. Runs over the last BRAND_VH of the section. */
   const BRAND_VH = 2.2;
   const workPin = $('.work__pin'), workMedia = $('.work__media'), workSide = ['.work__titles', '.work__tags', '.work__thumbs'].map(s => $(s));
   const wbWipe = $('.wb-wipe'), wbPale = $('.wb-pale'), wbSay2 = $('.wb-say2');
@@ -149,6 +149,7 @@
     const el = document.createElement('i'), rnd = k => { const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return x - Math.floor(x); };
     $('.work__drops').appendChild(el);
     const size = 8 + rnd(1) ** 2 * 54;
+    el.style.setProperty('--tw', `${(-rnd(7) * 1.6).toFixed(2)}s`);
     el.style.width = `${size}px`; el.style.height = `${size * (0.9 + rnd(2) * 0.2)}px`;
     return { el, size, angle: rnd(3) * Math.PI * 2, reach: 0.35 + rnd(4) * 0.75, delay: rnd(5) * 0.4, spin: rnd(6) * 2 - 1 };
   });
@@ -182,8 +183,9 @@
     const wy = (1 - backOut(q)) * out - u * out;
     wbWipe.style.transform = `translateY(${wy.toFixed(1)}px) rotate(${((1 - q) * 8 - u * 8).toFixed(2)}deg) scale(0.6)`;
     wbWipe.style.visibility = q > 0 && u < 1 ? 'visible' : 'hidden';
-    // The line is already in place on the pale screen; the mark passes up over it.
-    wbSay2.style.opacity = seg(b, 0.42, 0.5); wbSay2.style.transform = `scale(${0.92 + 0.08 * seg(b, 0.42, 0.56)})`;
+    // The line pops up (overshooting) only once the mark starts to leave.
+    const t2 = seg(b, 0.64, 0.76);
+    wbSay2.style.opacity = Math.min(1, t2 * 3).toFixed(3); wbSay2.style.transform = `scale(${(0.6 + 0.4 * backOut(t2)).toFixed(4)})`;
     // Leaving the section, the pinned stage fades as it scrolls off into Method.
     workPin.style.opacity = r.bottom < vh ? clamp(r.bottom / vh * 1.4 - 0.2, 0, 1).toFixed(3) : '';
     return r.top <= vh * 0.5 && r.bottom > vh * 0.5 && b >= 0.36;
