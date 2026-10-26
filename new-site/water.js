@@ -2,8 +2,8 @@
 // moving liquid surface (smooth noise displacement plus a light caustic sheen). Changing project melts the
 // old image into the new one through the same surface; the pointer leaves a ripple ring as it moves. The image
 // is black and white until hovered, then fades to its original colour (and back when the pointer leaves).
-// melt(k) (0..1, end of Work) strengthens the liquid and floods the picture to pale from the middle outward.
-// Exposes window.mgWater = { show(index), melt(k) }. If WebGL is unavailable the plain <img> elements stay visible.
+// melt(k, liquid) (both 0..1, end of Work): liquid churns the picture with strong flow and ripples while it
+// zooms; k floods it to pale from the middle outward. Exposes window.mgWater = { show(index), melt(k, liquid) }. If WebGL is unavailable the plain <img> elements stay visible.
 (() => {
   const host = document.querySelector('.work__media');
   if (!host) return;
@@ -19,7 +19,7 @@
 varying vec2 vUv;
 uniform sampler2D uA, uB;
 uniform vec2 uResA, uResB, uCanvas, uMouse;
-uniform float uTime, uMix, uWave, uStir, uColor, uMelt;
+uniform float uTime, uMix, uWave, uStir, uColor, uMelt, uLiquid;
 // Smooth value noise (bilinear with smoothstep), cheap and free of pixel stepping.
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float noise(vec2 p) {
@@ -45,6 +45,11 @@ void main() {
   vec2 rippleDir = d > 0.0 ? m / d : vec2(0.0);
   float strength = 0.012 + uWave * 0.07 + uMelt * 0.22;
   vec2 offset = flow * strength + rippleDir * ring * 0.018;
+  // Liquid (end of Work): a faster, stronger second flow plus rings rolling out from the middle.
+  vec2 c = (uv - 0.5) * vec2(uCanvas.x / uCanvas.y, 1.0);
+  float cd = length(c);
+  vec2 churn = vec2(fbm(uv * 4.0 + vec2(uTime * 0.6, -uTime * 0.4)), fbm(uv * 4.0 + vec2(-uTime * 0.5, uTime * 0.7) + 2.3)) - 0.5;
+  offset += (churn * 0.16 + (cd > 0.0 ? c / cd : vec2(0.0)) * sin(cd * 22.0 - uTime * 5.0) * 0.025) * uLiquid;
   // Transition: the old image flows one way, the new one the other, revealed through a noisy liquid edge.
   float edge = smoothstep(uMix - 0.25, uMix + 0.25, fbm(uv * 2.5 + t) * 0.5 + uv.y * 0.5);
   vec4 a = texture2D(uA, cover(uv + offset + flow * uMix * 0.15, uResA));
@@ -73,7 +78,7 @@ void main() {
   gl.enableVertexAttribArray(loc);
   gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   const u = {};
-  for (const n of ['uA', 'uB', 'uResA', 'uResB', 'uCanvas', 'uMouse', 'uTime', 'uMix', 'uWave', 'uStir', 'uColor', 'uMelt']) u[n] = gl.getUniformLocation(prog, n);
+  for (const n of ['uA', 'uB', 'uResA', 'uResB', 'uCanvas', 'uMouse', 'uTime', 'uMix', 'uWave', 'uStir', 'uColor', 'uMelt', 'uLiquid']) u[n] = gl.getUniformLocation(prog, n);
   gl.uniform1i(u.uA, 0);
   gl.uniform1i(u.uB, 1);
 
@@ -98,7 +103,7 @@ void main() {
     });
   }
 
-  let from = 0, to = 0, mix = 1, wave = 0, stir = 0, colour = 0, melt = 0, hovered = false, mouse = [0.5, 0.5], running = false, transStart = 0;
+  let from = 0, to = 0, mix = 1, wave = 0, stir = 0, colour = 0, melt = 0, liquid = 0, hovered = false, mouse = [0.5, 0.5], running = false, transStart = 0;
   const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   function resize() {
     // Layout size, not the on-screen one: the box is scaled up at the end of Work.
@@ -120,6 +125,7 @@ void main() {
     colour += ((hovered || melt > 0 ? 1 : 0) - colour) * 0.09;
     gl.uniform1f(u.uColor, colour);
     gl.uniform1f(u.uMelt, melt);
+    gl.uniform1f(u.uLiquid, reduce ? 0 : liquid);
     // Bind "from" to unit 0 and "to" to unit 1; the shader shows A where the edge has not yet passed.
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, textures[from]);
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, textures[to]);
@@ -164,6 +170,6 @@ void main() {
       if (i === to) return;
       load(i).then(() => { if (mix < 1) from = to; to = i; mix = 0; transStart = performance.now(); });
     },
-    melt(k) { melt = k; },
+    melt(k, l) { melt = k; liquid = l; },
   };
 })();

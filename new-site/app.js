@@ -138,7 +138,7 @@
   }
 
   /* End of Work: after the last project its card zooms up to fill the screen while the water melts it to pale
-     from the middle outward; the MG mark pops out in the middle, then rises away tilting, and the line
+     from the middle outward; the MG mark is pushed up from below to the middle, then on out of the top, and the line
      "And grow from deep groots." settles in. Runs over the last BRAND_VH of the section. */
   const BRAND_VH = 2.2;
   const workPin = $('.work__pin'), workMedia = $('.work__media'), workSide = ['.work__titles', '.work__tags', '.work__thumbs'].map(s => $(s));
@@ -155,12 +155,13 @@
     mediaShift = [(vw / 2 - cx) * z, (vh / 2 - cy) * z];
     workMedia.style.transform = z ? `translate(${mediaShift[0].toFixed(1)}px, ${mediaShift[1].toFixed(1)}px) scale(${s.toFixed(4)})` : '';
     workSide.forEach(el => { el.style.opacity = z ? 1 - seg(b, 0, 0.12) : ''; });
-    window.mgWater?.melt(seg(b, 0.12, 0.42));
+    window.mgWater?.melt(seg(b, 0.14, 0.42), smooth(seg(b, 0, 0.16)));
     wbPale.style.opacity = seg(b, 0.4, 0.44);
-    // The mark pops (overshooting) to the middle, holds, then grows and rises out of the top.
-    const q = seg(b, 0.4, 0.52), u = smooth(seg(b, 0.58, 0.8));
-    const ws = 0.5 * backOut(q) + 0.5 * u, wy = -u * (vh * 0.5 + wbWipe.offsetHeight * 0.75);
-    wbWipe.style.transform = `translateY(${wy.toFixed(1)}px) rotate(${(u * -9).toFixed(2)}deg) scale(${ws.toFixed(4)})`;
+    // The mark is pushed up from below the screen to the middle (settling with a slight overshoot and tilt),
+    // holds, then carries on up out of the top.
+    const q = seg(b, 0.38, 0.54), u = smooth(seg(b, 0.6, 0.8)), out = vh * 0.5 + wbWipe.offsetHeight * 0.4;
+    const wy = (1 - backOut(q)) * out - u * out;
+    wbWipe.style.transform = `translateY(${wy.toFixed(1)}px) rotate(${((1 - q) * 8 - u * 8).toFixed(2)}deg) scale(0.6)`;
     wbWipe.style.visibility = q > 0 && u < 1 ? 'visible' : 'hidden';
     wbSay2.style.opacity = seg(b, 0.72, 0.84); wbSay2.style.transform = `scale(${0.92 + 0.08 * seg(b, 0.72, 0.9)})`;
     // Leaving the section, the pinned stage fades as it scrolls off into Method.
