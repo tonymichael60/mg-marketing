@@ -119,8 +119,14 @@ void main() {
     canvas.width = Math.max(1, Math.round(host.offsetWidth * dpr)); canvas.height = Math.max(1, Math.round(host.offsetHeight * dpr));
     gl.viewport(0, 0, canvas.width, canvas.height);
   }
+  let lastNow = 0;
   function draw(now) {
     if (!running) return;
+    render(now);
+    requestAnimationFrame(draw);
+  }
+  function render(now) {
+    lastNow = now;
     if (mix < 1) {
       const k = Math.min(1, (now - transStart) / 1300);
       mix = easeInOut(k);
@@ -145,7 +151,6 @@ void main() {
     gl.uniform1f(u.uWave, reduce ? 0 : wave);
     gl.uniform1f(u.uStir, reduce ? 0 : stir);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    requestAnimationFrame(draw);
   }
 
   load(0).then(() => {
@@ -182,7 +187,8 @@ void main() {
       melt = k; liquid = l;
       // Re-render at the zoomed size in steps, not every frame.
       const z = Math.max(1, Math.round(s * 2) / 2);
-      if (z !== zoom) { zoom = z; resize(); }
+      // Resizing clears the canvas, so draw again straight away; otherwise a blank (black) card shows for a frame.
+      if (z !== zoom) { zoom = z; resize(); if (textures[to]) render(lastNow); }
     },
   };
 })();

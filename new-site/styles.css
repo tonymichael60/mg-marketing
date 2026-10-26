@@ -160,6 +160,9 @@ h1, h2, h3, p { margin: 0; }
 /* After the last project (the final 220vh of the section): the card zooms up and melts to pale, the MG mark pops
    out and rises away, then the closing line. Driven by app.js. */
 .work__pin { overflow: clip; }
+.work__drops i { position: absolute; left: 0; top: 0; border-radius: 50%; visibility: hidden; will-change: transform, opacity;
+  background: radial-gradient(circle at 34% 30%, #fff 0 9%, rgba(219, 230, 247, 0.92) 22%, rgba(127, 178, 234, 0.75) 62%, rgba(0, 82, 162, 0.9) 100%);
+  box-shadow: inset -3px -5px 10px rgba(0, 38, 77, 0.35), 0 10px 22px -8px rgba(0, 11, 24, 0.5); }
 .work__brand { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 5; --pale: #dbe6f7; --blue: #0052A2; }
 
 /* 5. Method (after fromanother.love "Our team"): pinned stage driven by app.js. Panels drift upward past

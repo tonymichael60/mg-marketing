@@ -144,6 +144,14 @@
   const workPin = $('.work__pin'), workMedia = $('.work__media'), workSide = ['.work__titles', '.work__tags', '.work__thumbs'].map(s => $(s));
   const wbWipe = $('.wb-wipe'), wbPale = $('.wb-pale'), wbSay2 = $('.wb-say2');
   const backOut = t => 1 + 2.70158 * (t - 1) ** 3 + 1.70158 * (t - 1) ** 2;
+  // Liquid droplets thrown out from the card as it zooms: each has a fixed direction, speed, size and wobble.
+  const drops = Array.from({ length: 34 }, (_, i) => {
+    const el = document.createElement('i'), rnd = k => { const x = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453; return x - Math.floor(x); };
+    $('.work__drops').appendChild(el);
+    const size = 8 + rnd(1) ** 2 * 54;
+    el.style.width = `${size}px`; el.style.height = `${size * (0.9 + rnd(2) * 0.2)}px`;
+    return { el, size, angle: rnd(3) * Math.PI * 2, reach: 0.35 + rnd(4) * 0.75, delay: rnd(5) * 0.4, spin: rnd(6) * 2 - 1 };
+  });
   let mediaShift = [0, 0];
   function brandFrame() {
     const vw = innerWidth, vh = innerHeight, r = work.getBoundingClientRect(), len = BRAND_VH * vh;
@@ -156,6 +164,17 @@
     workMedia.style.transform = z ? `translate(${mediaShift[0].toFixed(1)}px, ${mediaShift[1].toFixed(1)}px) scale(${s.toFixed(4)})` : '';
     workSide.forEach(el => { el.style.opacity = z ? 1 - seg(b, 0, 0.12) : ''; });
     window.mgWater?.melt(seg(b, 0.14, 0.42), smooth(seg(b, 0, 0.16)), s);
+    // Droplets burst from the card's centre and spread out across the screen, stretching along their path,
+    // then soak into the pale water.
+    const dr = Math.hypot(vw, vh) * 0.6, fade = 1 - seg(b, 0.36, 0.44);
+    drops.forEach(d => {
+      const t = seg(b, 0.02 + d.delay * 0.3, 0.3 + d.delay * 0.3), e = 1 - (1 - t) ** 3;
+      const x = vw / 2 + Math.cos(d.angle) * d.reach * dr * e - d.size / 2, y = vh / 2 + Math.sin(d.angle) * d.reach * dr * e - d.size / 2 + e * e * 40;
+      const stretch = 1 + Math.sin(t * Math.PI) * 0.6;
+      d.el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${(d.angle * 57.3).toFixed(1)}deg) scale(${(stretch * (0.4 + e * 0.6)).toFixed(3)}, ${((0.4 + e * 0.6) / stretch).toFixed(3)})`;
+      d.el.style.opacity = (Math.min(1, t * 6) * fade).toFixed(3);
+      d.el.style.visibility = t > 0 && fade > 0 ? 'visible' : 'hidden';
+    });
     wbPale.style.opacity = seg(b, 0.4, 0.44);
     // The mark is pushed up from below the screen to the middle (settling with a slight overshoot and tilt),
     // holds, then carries on up out of the top.
