@@ -2,7 +2,8 @@
 // moving liquid surface (smooth noise displacement plus a light caustic sheen). Changing project melts the
 // old image into the new one through the same surface; the pointer leaves a ripple ring as it moves. The image
 // is black and white until hovered, then fades to its original colour (and back when the pointer leaves).
-// Exposes window.mgWater = { show(index) }. If WebGL is unavailable the plain <img> elements stay visible.
+// melt(k) (0..1, end of Work) strengthens the liquid and floods the picture to pale from the middle outward.
+// Exposes window.mgWater = { show(index), melt(k) }. If WebGL is unavailable the plain <img> elements stay visible.
 (() => {
   const host = document.querySelector('.work__media');
   if (!host) return;
@@ -18,7 +19,7 @@
 varying vec2 vUv;
 uniform sampler2D uA, uB;
 uniform vec2 uResA, uResB, uCanvas, uMouse;
-uniform float uTime, uMix, uWave, uStir, uColor;
+uniform float uTime, uMix, uWave, uStir, uColor, uMelt;
 // Smooth value noise (bilinear with smoothstep), cheap and free of pixel stepping.
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float noise(vec2 p) {
@@ -42,7 +43,7 @@ void main() {
   float d = length(m);
   float ring = sin(d * 38.0 - uTime * 6.0) * exp(-d * 6.0) * uStir;
   vec2 rippleDir = d > 0.0 ? m / d : vec2(0.0);
-  float strength = 0.012 + uWave * 0.07;
+  float strength = 0.012 + uWave * 0.07 + uMelt * 0.22;
   vec2 offset = flow * strength + rippleDir * ring * 0.018;
   // Transition: the old image flows one way, the new one the other, revealed through a noisy liquid edge.
   float edge = smoothstep(uMix - 0.25, uMix + 0.25, fbm(uv * 2.5 + t) * 0.5 + uv.y * 0.5);
@@ -53,6 +54,10 @@ void main() {
   // Caustic sheen: soft light bands that move with the flow.
   float caustic = pow(fbm(uv * 6.0 + flow * 4.0 + t * 1.5), 3.0);
   col.rgb += caustic * 0.18;
+  // Melt: pale floods in from the middle through a noisy liquid edge that spreads out to the corners.
+  float n = fbm(uv * 3.0 + flow * 3.0 + t * 2.0) * 0.45 + (1.0 - length(uv - 0.5) * 1.4) * 0.55;
+  float th = 1.0 - uMelt * 1.5;
+  col.rgb = mix(col.rgb, vec3(0.859, 0.902, 0.969), smoothstep(th, th + 0.18, n));
   gl_FragColor = col;
 }`;
   const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; };
@@ -68,7 +73,7 @@ void main() {
   gl.enableVertexAttribArray(loc);
   gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   const u = {};
-  for (const n of ['uA', 'uB', 'uResA', 'uResB', 'uCanvas', 'uMouse', 'uTime', 'uMix', 'uWave', 'uStir', 'uColor']) u[n] = gl.getUniformLocation(prog, n);
+  for (const n of ['uA', 'uB', 'uResA', 'uResB', 'uCanvas', 'uMouse', 'uTime', 'uMix', 'uWave', 'uStir', 'uColor', 'uMelt']) u[n] = gl.getUniformLocation(prog, n);
   gl.uniform1i(u.uA, 0);
   gl.uniform1i(u.uB, 1);
 
@@ -93,11 +98,12 @@ void main() {
     });
   }
 
-  let from = 0, to = 0, mix = 1, wave = 0, stir = 0, colour = 0, hovered = false, mouse = [0.5, 0.5], running = false, transStart = 0;
+  let from = 0, to = 0, mix = 1, wave = 0, stir = 0, colour = 0, melt = 0, hovered = false, mouse = [0.5, 0.5], running = false, transStart = 0;
   const easeInOut = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   function resize() {
-    const r = host.getBoundingClientRect(), dpr = Math.min(2, devicePixelRatio || 1);
-    canvas.width = Math.max(1, Math.round(r.width * dpr)); canvas.height = Math.max(1, Math.round(r.height * dpr));
+    // Layout size, not the on-screen one: the box is scaled up at the end of Work.
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    canvas.width = Math.max(1, Math.round(host.offsetWidth * dpr)); canvas.height = Math.max(1, Math.round(host.offsetHeight * dpr));
     gl.viewport(0, 0, canvas.width, canvas.height);
   }
   function draw(now) {
@@ -111,8 +117,9 @@ void main() {
     stir *= 0.965;
     if (pointer) { const r = host.getBoundingClientRect(); hovered = pointer[0] >= r.left && pointer[0] <= r.right && pointer[1] >= r.top && pointer[1] <= r.bottom; }
     else hovered = false;
-    colour += ((hovered ? 1 : 0) - colour) * 0.09;
+    colour += ((hovered || melt > 0 ? 1 : 0) - colour) * 0.09;
     gl.uniform1f(u.uColor, colour);
+    gl.uniform1f(u.uMelt, melt);
     // Bind "from" to unit 0 and "to" to unit 1; the shader shows A where the edge has not yet passed.
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, textures[from]);
     gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, textures[to]);
@@ -157,5 +164,6 @@ void main() {
       if (i === to) return;
       load(i).then(() => { if (mix < 1) from = to; to = i; mix = 0; transStart = performance.now(); });
     },
+    melt(k) { melt = k; },
   };
 })();

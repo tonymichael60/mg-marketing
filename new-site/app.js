@@ -137,23 +137,35 @@
     return br.top <= vh * 0.5 && br.bottom > vh * 0.5 && s4 > 0.5;
   }
 
-  /* End of Work: after the last project a big MG mark sweeps up through the screen, tilting as it goes; pale blue
-     spreads out behind it in a growing circle, so the colour change travels with the mark, then the line
+  /* End of Work: after the last project its card zooms up to fill the screen while the water melts it to pale
+     from the middle outward; the MG mark pops out in the middle, then rises away tilting, and the line
      "And grow from deep groots." settles in. Runs over the last BRAND_VH of the section. */
-  const BRAND_VH = 1.8;
-  const workPin = $('.work__pin'), wbWipe = $('.wb-wipe'), wbPale = $('.wb-pale'), wbSay2 = $('.wb-say2');
+  const BRAND_VH = 2.2;
+  const workPin = $('.work__pin'), workMedia = $('.work__media'), workSide = ['.work__titles', '.work__tags', '.work__thumbs'].map(s => $(s));
+  const wbWipe = $('.wb-wipe'), wbPale = $('.wb-pale'), wbSay2 = $('.wb-say2');
+  const backOut = t => 1 + 2.70158 * (t - 1) ** 3 + 1.70158 * (t - 1) ** 2;
+  let mediaShift = [0, 0];
   function brandFrame() {
-    const vh = innerHeight, r = work.getBoundingClientRect(), len = BRAND_VH * vh;
+    const vw = innerWidth, vh = innerHeight, r = work.getBoundingClientRect(), len = BRAND_VH * vh;
     const b = clamp((-r.top - (r.height - vh - len)) / len, 0, 1);
-    const w = seg(b, 0, 0.62);
-    wbWipe.style.transform = `translateY(${vh - w * (vh + wbWipe.offsetHeight)}px) rotate(${(w - 0.5) * -14}deg)`;
-    wbWipe.style.visibility = w > 0 && w < 1 ? 'visible' : 'hidden';
-    const c = smooth(seg(b, 0.15, 0.55));
-    wbPale.style.clipPath = `circle(${(c * 120).toFixed(1)}% at 50% ${(70 - c * 20).toFixed(1)}%)`;
-    wbSay2.style.opacity = seg(b, 0.45, 0.58); wbSay2.style.transform = `scale(${0.92 + 0.08 * seg(b, 0.45, 0.65)})`;
+    // The card's untransformed centre: its on-screen centre less the shift applied last frame.
+    const m = workMedia.getBoundingClientRect(), w = workMedia.offsetWidth, h = workMedia.offsetHeight;
+    const cx = m.left + m.width / 2 - mediaShift[0], cy = m.top + m.height / 2 - mediaShift[1];
+    const z = smooth(seg(b, 0, 0.3)), s = 1 + (Math.max(vw / w, vh / h) * 1.04 - 1) * z;
+    mediaShift = [(vw / 2 - cx) * z, (vh / 2 - cy) * z];
+    workMedia.style.transform = z ? `translate(${mediaShift[0].toFixed(1)}px, ${mediaShift[1].toFixed(1)}px) scale(${s.toFixed(4)})` : '';
+    workSide.forEach(el => { el.style.opacity = z ? 1 - seg(b, 0, 0.12) : ''; });
+    window.mgWater?.melt(seg(b, 0.12, 0.42));
+    wbPale.style.opacity = seg(b, 0.4, 0.44);
+    // The mark pops (overshooting) to the middle, holds, then grows and rises out of the top.
+    const q = seg(b, 0.4, 0.52), u = smooth(seg(b, 0.58, 0.8));
+    const ws = 0.5 * backOut(q) + 0.5 * u, wy = -u * (vh * 0.5 + wbWipe.offsetHeight * 0.75);
+    wbWipe.style.transform = `translateY(${wy.toFixed(1)}px) rotate(${(u * -9).toFixed(2)}deg) scale(${ws.toFixed(4)})`;
+    wbWipe.style.visibility = q > 0 && u < 1 ? 'visible' : 'hidden';
+    wbSay2.style.opacity = seg(b, 0.72, 0.84); wbSay2.style.transform = `scale(${0.92 + 0.08 * seg(b, 0.72, 0.9)})`;
     // Leaving the section, the pinned stage fades as it scrolls off into Method.
     workPin.style.opacity = r.bottom < vh ? clamp(r.bottom / vh * 1.4 - 0.2, 0, 1).toFixed(3) : '';
-    return r.top <= vh * 0.5 && r.bottom > vh * 0.5 && b >= 0.35;
+    return r.top <= vh * 0.5 && r.bottom > vh * 0.5 && b >= 0.36;
   }
   // Projects share the part of Work before the MG mark scene.
   const workProgress = () => { const r = work.getBoundingClientRect(), span = r.height - innerHeight * (1 + BRAND_VH); return span > 0 ? clamp(-r.top / span, 0, 1) : 0; };
@@ -293,13 +305,13 @@
       swallow = true; swallowDir = dir;
       return;
     }
-    // Breaks: scrolling down stops at the end of Method (Bloom), the end of Clients (last client, where the
+    // Breaks: scrolling down stops at the end of Work ("And grow from deep groots."), the end of Method (Bloom), the end of Clients (last client, where the
     // spotlight switches off) and the end of What we build (Live KPI dashboards), holding for the rest of that
     // gesture; the next fresh scroll glides to the start of the following section.
     const y = smoothTarget ?? scrollY, dy = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
     const end = sec => Math.round(secTop(sec) + sec.offsetHeight - innerHeight);
     const measureSec = $('.measure');
-    const breaks = [[end(method), Math.round(secTop(clients))], [end(clients), Math.round(secTop(build))], [end(build), Math.round(secTop(measureSec))]];
+    const breaks = [[end(work), Math.round(secTop(method))], [end(method), Math.round(secTop(clients))], [end(clients), Math.round(secTop(build))], [end(build), Math.round(secTop(measureSec))]];
     for (const [at, next] of breaks) {
       if (dir > 0 && Math.abs(y - at) < 6 && !sameGesture) {
         e.preventDefault();
@@ -322,7 +334,7 @@
   const method = $('.method'), methodTitle = $('.method__title'), mFrames = $$('.frame'), mTexts = $$('.method__text'), mRoll = $('.method__num-roll'), mNum = $('.method__num');
   let svcHalf = null;
   addEventListener('resize', () => { svcHalf = null; });
-  const eased = { svc: 0, clients: 0, method: -0.6 };
+  const eased = { svc: 0, clients: 0, method: -1 };
   const ease = (key, target, k = 0.14) => { eased[key] = reduce ? target : eased[key] + (target - eased[key]) * k; if (Math.abs(target - eased[key]) < 0.001) eased[key] = target; return eased[key] !== target; };
 
   // Clicking a client name rolls the wheel to it.
@@ -367,12 +379,13 @@
     workSets.forEach(set => set.forEach((el, i) => el.classList.toggle('is-on', i === wi)));
     window.mgWater?.show(wi);
 
-    // Method: s runs from -0.6 (heading only) to the last stage. Each stage's panels drift from below the
+    // Method: s runs from -1 (heading only, first panel still below the screen) to the last stage. Each stage's panels drift from below the
     // screen to above it while d = s - i goes from -0.8 to 1; the echo panel moves faster and further right.
-    again = ease('method', progress(method) * (mTexts.length - 0.4) - 0.6, gliding ? 1 : 0.35) || again;
+    again = ease('method', progress(method) * mTexts.length - 1, gliding ? 1 : 0.35) || again;
     const ms = eased.method, vh = innerHeight;
     methodTitle.style.opacity = clamp(-ms * 2.2, 0, 1);
-    methodTitle.style.transform = `translateY(${Math.min(0, ms + 0.45) * -60}px)`;
+    // The heading sits exactly centred at the start, then lifts as the first panel rises.
+    methodTitle.style.transform = `translateY(${Math.max(0, ms + 0.6) * -60}px)`;
     // At d = 0 the main panel is centred (lower on phones, under the text); the echo trails below it.
     const centre = innerWidth < 760 ? 0.66 : 0.5;
     mFrames.forEach(f => {
