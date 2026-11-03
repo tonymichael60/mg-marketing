@@ -357,20 +357,31 @@
     e.preventDefault();
     smoothTo(y + dy);
   }, { passive: false });
-  const clients = $('.clients'), clientNames = $$('.clients__names a'), clientLogos = $$('.clients__logos img');
+  const clients = $('.clients'), clientNames = $$('.clients__ring a'), clientLogos = $$('.clients__logos img');
   const method = $('.method'), methodTitle = $('.method__title'), mFrames = $$('.frame'), mTexts = $$('.method__text'), mRoll = $('.method__num-roll'), mNum = $('.method__num');
   let svcHalf = null;
   addEventListener('resize', () => { svcHalf = null; });
-  const eased = { svc: 0, clients: 0, method: -1 };
+  const eased = { svc: 0, method: -1 };
   const ease = (key, target, k = 0.14) => { eased[key] = reduce ? target : eased[key] + (target - eased[key]) * k; if (Math.abs(target - eased[key]) < 0.001) eased[key] = target; return eased[key] !== target; };
 
-  // Clicking a client name rolls the wheel to it.
-  clientNames.forEach((a, i) => a.addEventListener('click', e => {
-    e.preventDefault();
-    const r = clients.getBoundingClientRect(), span = r.height - innerHeight;
-    const target = scrollY + r.top + span * i / (clientNames.length - 1);
-    if (reduce) scrollTo({ top: target, behavior: 'instant' }); else glide(target, 900);
-  }));
+  // Clients circle: hovering, focusing or tapping a name puts its logo under the spotlight. Left alone, the light
+  // moves on round the circle every few seconds (paused while the pointer is on the circle).
+  let clientOn = 0, ringHeld = false;
+  const showClient = i => {
+    clientOn = i;
+    clientNames.forEach((a, j) => a.classList.toggle('is-on', j === i));
+    clientLogos.forEach((img, j) => img.classList.toggle('is-on', j === i));
+  };
+  clientNames.forEach((a, i) => {
+    a.addEventListener('pointerenter', () => showClient(i));
+    a.addEventListener('focus', () => showClient(i));
+    a.addEventListener('click', e => { e.preventDefault(); showClient(i); });
+  });
+  const ring = $('.clients__ring');
+  ring.addEventListener('pointerenter', () => { ringHeld = true; });
+  ring.addEventListener('pointerleave', () => { ringHeld = false; });
+  showClient(0);
+  setInterval(() => { if (!ringHeld && !reduce && body.dataset.section === 'clients') showClient((clientOn + 1) % clientNames.length); }, 2800);
 
   function frame() {
     ticking = false;
@@ -442,21 +453,9 @@
     const want = pale ? 'dark' : sections[activeSection]?.dataset.fg;
     if (want && body.dataset.fg !== want) body.dataset.fg = want;
 
-    // Clients wheel: names are spokes from a hub off to the left; the centred one is level and bright.
-    again = ease('clients', progress(clients) * (clientNames.length - 1), gliding ? 1 : 0.35) || again;
-    const radius = innerWidth < 760 ? 240 : Math.max(420, innerWidth * 0.34);
-    clientNames.forEach((n, i) => {
-      const d = i - eased.clients, a = Math.abs(d);
-      n.style.transformOrigin = `${-radius}px 50%`;
-      n.style.transform = `rotate(${d * 13}deg)`;
-      n.style.opacity = a > 4 ? 0 : String(Math.max(0.12, 1 - a * (d < 0 ? 0.22 : 0.3)));
-    });
-    // The spotlight only switches on once the page has settled on Clients (pinned, not mid-glide).
+    // The spotlight only switches on once the page has settled on Clients (screen-filling, not mid-glide).
     const cr = clients.getBoundingClientRect();
-    // Off again at the break on the last client (the section's end), before moving on.
-    body.classList.toggle('spot-on', !gliding && cr.top <= 2 && cr.bottom > innerHeight + 6);
-    const ci = Math.round(eased.clients);
-    clientLogos.forEach((img, i) => img.classList.toggle('is-on', i === ci));
+    body.classList.toggle('spot-on', !gliding && Math.abs(cr.top) < innerHeight * 0.06);
 
 
     if (again) request();
