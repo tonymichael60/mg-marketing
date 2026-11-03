@@ -15,7 +15,7 @@
   const sections = $$('.sec');
   const indexList = $('.index ol');
   indexList.innerHTML = sections.map((s, i) => `<li>${i + 1}<span>${s.dataset.label}</span></li>`).join('');
-  const indexFill = $('.index__bar i');
+  const indexFill = $('.index__bar i'), badgeRing = $('.badge__ring');
   const indexItems = $$('li', indexList);
   let activeSection = -1;
   const light = $('.light');
@@ -36,7 +36,7 @@
 
 
   // Header and menu links glide to their section instead of jumping.
-  $$('.top a[href^="#"], #menu a[href^="#"], .index__top').forEach(a => a.addEventListener('click', e => {
+  $$('.top a[href^="#"], #menu a[href^="#"], .index__top, .badge').forEach(a => a.addEventListener('click', e => {
     const target = document.querySelector(a.getAttribute('href'));
     if (!target) return;
     e.preventDefault();
@@ -375,6 +375,10 @@
   function frame() {
     ticking = false;
     let again = false;
+
+    // Badge ring: its angle is the scroll position itself (0.1° per pixel), so scrolling down turns it clockwise,
+    // scrolling up turns it back, and any glide to the top (the badge's own click) winds it back to 0 in step.
+    badgeRing.style.transform = `rotate(${(scrollY * 0.1).toFixed(2)}deg)`;
 
     // Page progress: the line beside the index fills from top to bottom as the page is read, full at the end.
     const maxScroll = document.documentElement.scrollHeight - innerHeight;

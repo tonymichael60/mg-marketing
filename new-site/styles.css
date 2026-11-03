@@ -100,6 +100,16 @@ body[data-fg="dark"] .index__bar { background: rgba(0, 38, 77, 0.2); }
 .index__bar::after { content: ""; position: absolute; inset: 0; background: var(--fg); opacity: 0; transform-origin: top; transform: scaleY(0); }
 body.is-idle .index__bar::after { opacity: 0.55; animation: drip 2s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { body.is-idle .index__bar::after { animation: none; } }
+/* Badge (bottom left): a ring of text turning with the scroll around the fixed MG marketing logo. */
+.badge { position: fixed; left: calc(var(--pad) - 6px); bottom: 24px; z-index: 31; width: 112px; height: 112px; display: grid; place-items: center; color: var(--fg); text-decoration: none; -webkit-tap-highlight-color: transparent; }
+.badge__ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; will-change: transform; }
+.badge__ring text { fill: currentColor; font-family: "Urbanist", sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: 0.02em; }
+.badge__logo { position: relative; width: 44%; height: auto; transition: scale 0.4s var(--ease), filter 0.4s; }
+.badge:hover .badge__logo { scale: 1.08; }
+.badge:focus-visible { outline: 1px solid currentColor; outline-offset: 4px; border-radius: 50%; }
+/* On the pale scenes the header turns dark; the badge follows (white logo inked navy). */
+body[data-fg="dark"] .badge__logo { filter: brightness(0) saturate(100%) invert(11%) sepia(56%) saturate(3000%) hue-rotate(196deg); }
+@media (max-width: 760px) { .badge { width: 84px; height: 84px; left: 12px; bottom: 14px; } }
 /* The hero's "Scroll" cue, fixed at the bottom of the screen: it pops up on every other page while the page is idle
    (not on Home, which has its own, nor on Contact, the end), and fades away as soon as scrolling starts. */
 .hero__scroll.idle-scroll { position: fixed; z-index: 30; pointer-events: none; opacity: 0; translate: -50% 12px; transition: opacity 0.6s var(--ease), translate 0.6s var(--ease); }
@@ -132,7 +142,7 @@ body[data-section="contact"] .index__top { opacity: 1; translate: 0 0; pointer-e
 .rotator { display: inline-block; position: relative; }
 .rotator.is-swap { animation: swap 0.9s var(--ease); }
 @keyframes swap { 0% { opacity: 1; transform: none; filter: none; } 45% { opacity: 0; transform: translateY(-40%); filter: blur(10px); } 55% { opacity: 0; transform: translateY(40%); filter: blur(10px); } 100% { opacity: 1; transform: none; filter: none; } }
-.hero__meta { position: absolute; left: var(--pad); right: var(--pad); bottom: 40px; display: flex; justify-content: space-between; align-items: end; gap: 20px; font-size: 14px; color: var(--muted); }
+.hero__meta { position: absolute; left: calc(var(--pad) + 130px); /* clear of the badge */ right: var(--pad); bottom: 40px; display: flex; justify-content: space-between; align-items: end; gap: 20px; font-size: 14px; color: var(--muted); }
 .hero__tag { font-size: clamp(18px, 2vw, 26px); color: var(--fg); }
 .hero__scroll { position: absolute; left: 50%; bottom: 36px; translate: -50% 0; font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; text-decoration: none; color: var(--muted); }
 .hero__scroll::after { content: ""; display: block; width: 1px; height: 40px; margin: 10px auto 0; background: currentColor; animation: drip 2s ease-in-out infinite; transform-origin: top; }
@@ -342,7 +352,7 @@ body[data-section="contact"] .index__top { opacity: 1; translate: 0 0; pointer-e
   .top__logo { font-size: 20px; } .top__logo em { font-size: 22px; } .top__logo svg { width: 24px; }
   .top__chat { font-size: 14px; }
   .hero__line--in2 { padding-left: 0.5em; } .hero__line--in1 { padding-left: 0.25em; }
-  .hero__meta { flex-direction: column; align-items: flex-start; bottom: 90px; }
+  .hero__meta { flex-direction: column; align-items: flex-start; bottom: 112px; left: var(--pad); }
   .hero__scroll { display: none; }
   .services__pin { grid-template-columns: 1fr; grid-template-rows: auto 1fr; padding-top: 110px; }
   .services__groups { grid-auto-flow: column; justify-content: start; gap: 18px; }

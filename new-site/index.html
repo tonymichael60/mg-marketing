@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Urbanist:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=99">
+  <link rel="stylesheet" href="styles.css?v=101">
 </head>
 <body>
   <!-- Ambient layers: drifting colour aura and film grain, tinted per section by app.js. -->
@@ -38,6 +38,15 @@
 
   <!-- Side index: which section is in view. -->
   <div class="hero__scroll idle-scroll" aria-hidden="true">Scroll</div>
+  <!-- Badge: the MG marketing logo inside a ring of text. The ring turns with the page scroll (clockwise going down);
+       clicking the logo glides back to the top, so the ring winds back to where it started. -->
+  <a class="badge" href="#home" aria-label="MediaGroots marketing, back to top">
+    <svg class="badge__ring" viewBox="0 0 200 200" aria-hidden="true">
+      <defs><path id="badge-path" d="M100,100 m-84,0 a84,84 0 1,1 168,0 a84,84 0 1,1 -168,0"/></defs>
+      <text><textPath href="#badge-path" textLength="527" lengthAdjust="spacing">MEDIAGROOTS • DIGITAL MARKETING &amp; GROWTH STUDIO • </textPath></text>
+    </svg>
+    <img class="badge__logo" src="assets/mg-marketing-logo.png" alt="" width="1390" height="1020">
+  </a>
   <aside class="index"><span class="index__bar" aria-hidden="true"><i></i></span><ol aria-hidden="true"></ol><a class="index__top" href="#home" aria-label="Back to top" tabindex="-1"><svg viewBox="0 0 12 16" aria-hidden="true"><path d="M6 15V2M1 7l5-5 5 5"/></svg><span>Top</span></a></aside>
 
   <main>
@@ -244,7 +253,7 @@
     </section>
   </main>
 
-  <script src="water.js?v=99" defer></script>
-  <script src="app.js?v=99" defer></script>
+  <script src="water.js?v=101" defer></script>
+  <script src="app.js?v=101" defer></script>
 </body>
 </html>
