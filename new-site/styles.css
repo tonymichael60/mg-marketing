@@ -85,9 +85,10 @@ h1, h2, h3, p { margin: 0; }
 
 /* Side index */
 .index { position: fixed; left: var(--pad); top: 50%; z-index: 30; translate: 0 -50%; }
-.index ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
-/* Only the current section's number shows; the others fade out (keeping their places in the column). */
-.index li { display: flex; align-items: center; gap: 6px; opacity: 0; translate: 0 6px; filter: blur(3px); transition: color 0.4s, opacity 0.7s var(--ease), translate 0.7s var(--ease), filter 0.7s var(--ease); }
+.index ol { margin: 0; padding: 0; list-style: none; display: grid; grid-template-areas: 'n'; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+/* Only the current section's number shows, always in the same fixed spot: all numbers share one grid cell and
+   cross-fade there. */
+.index li { grid-area: n; display: flex; align-items: center; gap: 6px; opacity: 0; translate: 0 6px; filter: blur(3px); transition: color 0.4s, opacity 0.7s var(--ease), translate 0.7s var(--ease), filter 0.7s var(--ease); }
 .index li::after { content: ""; width: 0; height: 1px; background: currentColor; transition: width 0.5s var(--ease); }
 .index li span { opacity: 0; font-family: var(--serif); font-style: italic; font-size: 14px; transition: opacity 0.4s; }
 .index li.is-on { color: var(--fg); opacity: 1; translate: 0 0; filter: none; }
