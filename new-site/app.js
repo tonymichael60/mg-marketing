@@ -14,7 +14,7 @@
   /* Section colours and side index */
   const sections = $$('.sec');
   const indexList = $('.index ol');
-  indexList.innerHTML = sections.map((s, i) => `<li>${i + 1}<small>/${sections.length}</small><span>${s.dataset.label}</span></li>`).join('');
+  indexList.innerHTML = sections.map((s, i) => `<li>${i + 1}<span>${s.dataset.label}</span></li>`).join('');
   const indexFill = $('.index__bar i');
   const indexItems = $$('li', indexList);
   let activeSection = -1;

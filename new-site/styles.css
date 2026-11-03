@@ -92,7 +92,6 @@ h1, h2, h3, p { margin: 0; }
 /* Number, dash, name always in that order and fully formed: the whole item fades, so the dash never jumps to
    the end or shrinks mid-transition. */
 .index li::after { content: ""; width: 10px; height: 1px; background: currentColor; }
-.index li small { font-size: 10px; opacity: 0.5; margin-left: -4px; }
 /* Page progress: a thin vertical track left of the number, filling top to bottom as the page scrolls. */
 .index__bar { position: absolute; left: -14px; top: 50%; width: 1px; height: 180px; translate: 0 -50%; background: rgba(255, 255, 255, 0.18); overflow: hidden; border-radius: 1px; }
 .index__bar i { position: absolute; inset: 0; background: var(--fg); transform-origin: top; transform: scaleY(0); }
