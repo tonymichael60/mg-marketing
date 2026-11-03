@@ -87,11 +87,11 @@ h1, h2, h3, p { margin: 0; }
 .index { position: fixed; left: var(--pad); top: 50%; z-index: 30; translate: 0 -50%; }
 .index ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
 /* Only the current section's number shows; the others fade out (keeping their places in the column). */
-.index li { display: flex; align-items: center; gap: 10px; opacity: 0; transition: color 0.4s, opacity 0.5s var(--ease); }
+.index li { display: flex; align-items: center; gap: 6px; opacity: 0; translate: 0 6px; filter: blur(3px); transition: color 0.4s, opacity 0.7s var(--ease), translate 0.7s var(--ease), filter 0.7s var(--ease); }
 .index li::after { content: ""; width: 0; height: 1px; background: currentColor; transition: width 0.5s var(--ease); }
 .index li span { opacity: 0; font-family: var(--serif); font-style: italic; font-size: 14px; transition: opacity 0.4s; }
-.index li.is-on { color: var(--fg); opacity: 1; }
-.index li.is-on::after { width: 22px; }
+.index li.is-on { color: var(--fg); opacity: 1; translate: 0 0; filter: none; }
+.index li.is-on::after { width: 10px; }
 .index li.is-on span { opacity: 1; order: 3; }
 /* Back to top: under the last number, it fades and rises in once the page reaches the last section (Contact). */
 .index__top { position: absolute; left: 0; top: 100%; margin-top: 22px; display: flex; align-items: center; gap: 8px; color: var(--fg); font-family: var(--serif); font-style: italic; font-size: 14px; text-decoration: none;
