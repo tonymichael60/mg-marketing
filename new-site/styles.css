@@ -92,6 +92,12 @@ h1, h2, h3, p { margin: 0; }
 .index li.is-on { color: var(--fg); }
 .index li.is-on::after { width: 22px; }
 .index li.is-on span { opacity: 1; order: 3; }
+/* Back to top: under the last number, it fades and rises in once the page reaches the last section (Contact). */
+.index__top { position: absolute; left: 0; top: 100%; margin-top: 22px; display: flex; align-items: center; gap: 8px; color: var(--fg); font-family: var(--serif); font-style: italic; font-size: 14px; text-decoration: none;
+  opacity: 0; translate: 0 12px; pointer-events: none; transition: opacity 0.6s var(--ease), translate 0.6s var(--ease); }
+.index__top svg { width: 12px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; transition: translate 0.3s var(--ease); }
+.index__top:hover svg { translate: 0 -3px; }
+body[data-section="contact"] .index__top { opacity: 1; translate: 0 0; pointer-events: auto; }
 
 /* Sections */
 .sec { position: relative; min-height: 100vh; padding: 120px var(--pad); }

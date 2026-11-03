@@ -26,6 +26,7 @@
     const s = sections[i];
     body.dataset.fg = s.dataset.fg;
     body.dataset.section = s.id;
+    $('.index__top').tabIndex = s.id === 'contact' ? 0 : -1;
     if (!keepBg) document.documentElement.style.backgroundColor = s.dataset.bg;
     const [a1, a2, a3] = s.dataset.aura.split(',');
     body.style.setProperty('--a1', a1); body.style.setProperty('--a2', a2); body.style.setProperty('--a3', a3);
@@ -34,7 +35,7 @@
 
 
   // Header and menu links glide to their section instead of jumping.
-  $$('.top a[href^="#"], #menu a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+  $$('.top a[href^="#"], #menu a[href^="#"], .index__top').forEach(a => a.addEventListener('click', e => {
     const target = document.querySelector(a.getAttribute('href'));
     if (!target) return;
     e.preventDefault();
