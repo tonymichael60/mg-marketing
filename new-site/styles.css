@@ -96,6 +96,10 @@ h1, h2, h3, p { margin: 0; }
 .index__bar { position: absolute; left: -14px; top: 50%; width: 1px; height: 180px; translate: 0 -50%; background: rgba(255, 255, 255, 0.18); overflow: hidden; border-radius: 1px; }
 .index__bar i { position: absolute; inset: 0; background: var(--fg); transform-origin: top; transform: scaleY(0); }
 body[data-fg="dark"] .index__bar { background: rgba(0, 38, 77, 0.2); }
+/* While the page rests, the line plays the hero's "Scroll" drip (grow down, then fade) as a nudge to keep going. */
+.index__bar::after { content: ""; position: absolute; inset: 0; background: var(--fg); opacity: 0; transform-origin: top; transform: scaleY(0); }
+body.is-idle .index__bar::after { opacity: 0.55; animation: drip 2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { body.is-idle .index__bar::after { animation: none; } }
 .index li span { order: 3; font-family: var(--serif); font-style: italic; font-size: 14px; }
 .index li.is-on { color: var(--fg); opacity: 1; translate: 0 0; filter: none; }
 /* Back to top: under the last number, it fades and rises in once the page reaches the last section (Contact). */
