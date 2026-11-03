@@ -462,7 +462,14 @@
   addEventListener('scroll', request, { passive: true });
   // Idle: 1.5s without scrolling turns on the progress line's drip animation; any scroll turns it off.
   let idleTimer = 0;
-  const rest = () => { body.classList.remove('is-idle'); clearTimeout(idleTimer); idleTimer = setTimeout(() => body.classList.add('is-idle'), 1500); };
+  // All drips (progress line, idle Scroll cue, hero Scroll cue) are put on one shared start time, so they pulse
+  // together instead of each running on its own beat.
+  const syncDrips = () => requestAnimationFrame(() => {
+    const drips = document.getAnimations().filter(a => a.animationName === 'drip');
+    const t0 = Math.min(...drips.map(a => a.startTime ?? Infinity));
+    if (Number.isFinite(t0)) drips.forEach(a => { a.startTime = t0; });
+  });
+  const rest = () => { body.classList.remove('is-idle'); clearTimeout(idleTimer); idleTimer = setTimeout(() => { body.classList.add('is-idle'); syncDrips(); }, 1500); };
   addEventListener('scroll', rest, { passive: true });
   rest();
   addEventListener('resize', request);
