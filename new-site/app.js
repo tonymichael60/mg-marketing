@@ -14,7 +14,8 @@
   /* Section colours and side index */
   const sections = $$('.sec');
   const indexList = $('.index ol');
-  indexList.innerHTML = sections.map((s, i) => `<li>${i + 1}<span>${s.dataset.label}</span></li>`).join('');
+  indexList.innerHTML = sections.map((s, i) => `<li>${i + 1}<small>/${sections.length}</small><span>${s.dataset.label}</span></li>`).join('');
+  const indexFill = $('.index__bar i');
   const indexItems = $$('li', indexList);
   let activeSection = -1;
   const light = $('.light');
@@ -374,6 +375,10 @@
   function frame() {
     ticking = false;
     let again = false;
+
+    // Page progress: the line beside the index fills from top to bottom as the page is read, full at the end.
+    const maxScroll = document.documentElement.scrollHeight - innerHeight;
+    indexFill.style.transform = `scaleY(${maxScroll > 0 ? clamp(scrollY / maxScroll, 0, 1).toFixed(4) : 0})`;
 
     // Active section: the one under the middle of the screen.
     const mid = innerHeight * 0.5;
