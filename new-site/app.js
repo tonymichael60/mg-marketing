@@ -357,30 +357,70 @@
     e.preventDefault();
     smoothTo(y + dy);
   }, { passive: false });
-  const clients = $('.clients'), clientNames = $$('.clients__ring a'), clientLogos = $$('.clients__logos img');
+  const clients = $('.clients'), clientNames = $$('.clients__list a'), clientLogos = $$('.clients__logos img');
   const method = $('.method'), methodTitle = $('.method__title'), mFrames = $$('.frame'), mTexts = $$('.method__text'), mRoll = $('.method__num-roll'), mNum = $('.method__num');
   let svcHalf = null;
   addEventListener('resize', () => { svcHalf = null; });
   const eased = { svc: 0, method: -1 };
   const ease = (key, target, k = 0.14) => { eased[key] = reduce ? target : eased[key] + (target - eased[key]) * k; if (Math.abs(target - eased[key]) < 0.001) eased[key] = target; return eased[key] !== target; };
 
-  // Clients circle: hovering, focusing or tapping a name puts its logo under the spotlight. Left alone, the light
-  // moves on round the circle every few seconds (paused while the pointer is on the circle).
+  // Clients: names on up to three orbits around the spotlit logo. The orbits turn together as one (separate speeds
+  // made names on neighbouring rings run into each other), each ring's names set at the angle that keeps them
+  // furthest from the ring inside it. Each ring takes a share of the names in proportion to its size. On phones
+  // the orbits hold fewer and the rest slide past in a strip. Hovering, focusing or tapping a name puts its logo
+  // under the spotlight; left alone, the light moves on to the next client every few seconds.
+  const orbits = $('.clients__orbits'), strip = $('.clients__strip'), track = $('.clients__track');
+  const chip = (i, ring) => { const a = document.createElement('a'); a.href = '#clients'; a.dataset.i = i; a.innerHTML = ring ? `<span>${clientNames[i].textContent}</span>` : clientNames[i].textContent; return a; };
+  function layoutClients() {
+    const n = clientNames.length, phone = innerWidth < 760;
+    const ks = phone ? [0.85] : n <= 8 ? [0.85] : n <= 16 ? [0.6, 1] : [0.56, 0.78, 1];
+    const fit = phone ? Math.min(n, 6) : n, sum = ks.reduce((x, y) => x + y, 0);
+    let left = fit, next = 0, inner = [];
+    orbits.innerHTML = ''; track.innerHTML = '';
+    const R = phone ? innerWidth * 0.42 : Math.min(innerHeight * 0.37, 390);
+    orbits.style.setProperty('--sx', phone ? 1 : clamp(innerWidth * 0.44 / R, 1, ks.length === 1 ? 1.3 : 2).toFixed(3));
+    const spin = document.createElement('div');
+    spin.className = 'clients__spin';
+    orbits.appendChild(spin);
+    ks.forEach((k, r) => {
+      const cnt = r === ks.length - 1 ? left : Math.round(fit * k / sum); left -= cnt;
+      // Best offset: the one whose angles stay furthest from the inner ring's.
+      let off = 0, best = -1;
+      for (let o = 0; o < 360 / cnt; o++) {
+        let m = 360;
+        for (let i = 0; i < cnt; i++) for (const b of inner) { const d = Math.abs(((o + i * 360 / cnt - b) % 360 + 540) % 360 - 180); if (d < m) m = d; }
+        if (m > best) { best = m; off = o; }
+      }
+      inner = Array.from({ length: cnt }, (_, i) => off + i * 360 / cnt);
+      const ring = document.createElement('div');
+      ring.className = 'clients__ring';
+      ring.style.cssText = `--k:${k};--n:${cnt};--off:${off}deg`;
+      for (let i = 0; i < cnt; i++) { const a = chip(next++, true); a.style.setProperty('--i', i); ring.appendChild(a); }
+      spin.appendChild(ring);
+      const line = document.createElement('i');
+      line.style.setProperty('--k', k);
+      orbits.insertBefore(line, spin);
+    });
+    const rest = [];
+    for (; next < n; next++) rest.push(next);
+    strip.classList.toggle('is-on', rest.length > 0);
+    for (const copy of [0, 1]) rest.forEach(i => track.appendChild(chip(i, false)));
+    showClient(clientOn);
+  }
   let clientOn = 0, ringHeld = false;
   const showClient = i => {
     clientOn = i;
-    clientNames.forEach((a, j) => a.classList.toggle('is-on', j === i));
+    $$('a[data-i]', clients).forEach(a => a.classList.toggle('is-on', +a.dataset.i === i));
     clientLogos.forEach((img, j) => img.classList.toggle('is-on', j === i));
   };
-  clientNames.forEach((a, i) => {
-    a.addEventListener('pointerenter', () => showClient(i));
-    a.addEventListener('focus', () => showClient(i));
-    a.addEventListener('click', e => { e.preventDefault(); showClient(i); });
-  });
-  const ring = $('.clients__ring');
-  ring.addEventListener('pointerenter', () => { ringHeld = true; });
-  ring.addEventListener('pointerleave', () => { ringHeld = false; });
-  showClient(0);
+  const pick = e => { const a = e.target.closest('a[data-i]'); if (a) showClient(+a.dataset.i); return a; };
+  clients.addEventListener('pointerover', pick);
+  clients.addEventListener('focusin', pick);
+  clients.addEventListener('click', e => { if (pick(e)) e.preventDefault(); });
+  for (const el of [orbits, strip]) { el.addEventListener('pointerenter', () => { ringHeld = true; }); el.addEventListener('pointerleave', () => { ringHeld = false; }); }
+  layoutClients();
+  let clientsResize = 0;
+  addEventListener('resize', () => { clearTimeout(clientsResize); clientsResize = setTimeout(layoutClients, 150); });
   setInterval(() => { if (!ringHeld && !reduce && body.dataset.section === 'clients') showClient((clientOn + 1) % clientNames.length); }, 2800);
 
   function frame() {
