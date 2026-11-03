@@ -100,6 +100,10 @@ body[data-fg="dark"] .index__bar { background: rgba(0, 38, 77, 0.2); }
 .index__bar::after { content: ""; position: absolute; inset: 0; background: var(--fg); opacity: 0; transform-origin: top; transform: scaleY(0); }
 body.is-idle .index__bar::after { opacity: 0.55; animation: drip 2s ease-in-out infinite; }
 @media (prefers-reduced-motion: reduce) { body.is-idle .index__bar::after { animation: none; } }
+/* The hero's "Scroll" cue, fixed at the bottom of the screen: it pops up on every other page while the page is idle
+   (not on Home, which has its own, nor on Contact, the end), and fades away as soon as scrolling starts. */
+.hero__scroll.idle-scroll { position: fixed; z-index: 30; pointer-events: none; opacity: 0; translate: -50% 12px; transition: opacity 0.6s var(--ease), translate 0.6s var(--ease); }
+body.is-idle:not([data-section="home"]):not([data-section="contact"]) .hero__scroll.idle-scroll { opacity: 1; translate: -50% 0; }
 .index li span { order: 3; font-family: var(--serif); font-style: italic; font-size: 14px; }
 .index li.is-on { color: var(--fg); opacity: 1; translate: 0 0; filter: none; }
 /* Back to top: under the last number, it fades and rises in once the page reaches the last section (Contact). */
