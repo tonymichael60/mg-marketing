@@ -35,13 +35,30 @@
   }
 
 
-  // Header and menu links glide to their section instead of jumping.
-  $$('.top a[href^="#"], #menu a[href^="#"], .index__top, .badge').forEach(a => a.addEventListener('click', e => {
+  // Menu and header links go straight to their section: a veil in that section's colour fades in, the page jumps
+  // there behind it, and the veil fades away, so nothing scrolls past on the way. The back-to-top arrow and the
+  // badge still glide (the badge's ring winds back with the scroll).
+  const veil = document.createElement('div');
+  veil.className = 'jump-veil';
+  body.appendChild(veil);
+  $$('.top a[href^="#"], #menu a[href^="#"]').forEach(a => a.addEventListener('click', e => {
     const target = document.querySelector(a.getAttribute('href'));
     if (!target) return;
     e.preventDefault();
     const y = target.getBoundingClientRect().top + scrollY;
-    if (reduce) scrollTo({ top: y, behavior: 'instant' }); else glide(y, Math.min(1600, 700 + Math.abs(y - scrollY) * 0.04));
+    if (reduce) { scrollTo({ top: y, behavior: 'instant' }); return; }
+    veil.style.background = (target.closest('.sec') || target).dataset.bg || '#000B18';
+    veil.classList.add('is-on');
+    setTimeout(() => {
+      stopSmooth(); cancelGlide();
+      scrollTo({ top: y, behavior: 'instant' });
+      frame();
+      requestAnimationFrame(() => veil.classList.remove('is-on'));
+    }, 260);
+  }));
+  $$('.index__top, .badge').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    if (reduce) scrollTo({ top: 0, behavior: 'instant' }); else glide(0, Math.min(1600, 700 + scrollY * 0.04));
   }));
 
   /* What we build: four scenes driven by scroll progress through the section (see index.html). */
