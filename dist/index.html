@@ -597,7 +597,7 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
 .framer-1aue9ps { margin-top: clamp(96px, 13vh, 170px) !important; }
 /* Features: white panel with a soft navy halo behind the central logo. */
 .framer-gtsbnt {
-  background: radial-gradient(45% 40% at 50% 55%, rgba(20, 34, 227, 0.12) 0%, rgba(20, 34, 227, 0.04) 50%, transparent 75%), linear-gradient(180deg, #fff 0%, #f2f4ff 60%, #edecec 100%) !important;
+  background: radial-gradient(45% 40% at 50% 55%, rgba(20, 34, 227, 0.12) 0%, rgba(20, 34, 227, 0.04) 50%, transparent 75%), linear-gradient(180deg, #fff 0%, #f2f4ff 60%, #e3e8ff 100%) !important;
 }
 /* Tools: a soft white glow with a pale-navy ring that fades into the page grey, so it has no hard edges. */
 .framer-1vb41im {
@@ -742,6 +742,49 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
   .mgv-play, .mgv-head, .mgv-track::after, .framer-570b9w .framer-zli2me { animation: none !important; }
   .mgv-track::after { display: none; }
 }
+
+/* Page background (after fromanother.love, where colour fills every section): site-bg.js paints one long
+   gradient on <html>, deep navy at the top and lighter blue section by section. The body and the grey page
+   root/FAQ container are made transparent so it shows through; #dce3ff is the fallback before the script
+   runs. A fixed layer adds soft drifting glows on top. Framer's page-colour token (used by the hero's
+   "Scroll for more" tab) is set to the navy around the hero so the tab still blends in. */
+html { background-color: #dce3ff; }
+:root, body { --token-10319844-22a0-4484-88cd-68e9879c6c2e: #060e3a !important; }
+body { background: transparent !important; }
+.framer-qZQ5t, .framer-1ntlu9c { background-color: transparent !important; }
+body::before { content: ""; position: fixed; inset: -10%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(34% 46% at 0% 22%, rgba(96, 118, 255, 0.34) 0%, rgba(96, 118, 255, 0) 70%),
+    radial-gradient(36% 48% at 100% 78%, rgba(60, 80, 235, 0.3) 0%, rgba(60, 80, 235, 0) 70%),
+    radial-gradient(30% 30% at 92% 8%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 70%);
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 810px) {
+  body::before { animation: mg-ambient 38s ease-in-out infinite alternate; }
+  @keyframes mg-ambient { to { translate: 3% -4%; } }
+}
+
+/* Text that sits straight on the navy top of the page (services strip, About heading, trust bar, Services
+   heading and wheel) is switched to light colours; text inside cards keeps its own colours. */
+.mg-svc-marquee__track span { color: rgba(232, 236, 255, 0.78) !important; }
+#about [data-framer-name="Text-Box"] .framer-text { --framer-text-color: #eef1ff !important; color: #eef1ff !important; }
+.framer-19b0sxl .framer-text { --framer-text-color: rgba(232, 236, 255, 0.8) !important; color: rgba(232, 236, 255, 0.8) !important; }
+.framer-19b0sxl .framer-662aja .framer-e4sd2r > div img { filter: brightness(0) invert(1) !important; opacity: 0.72 !important; }
+/* The About heading's text box fades its second line out; on navy that hid it, so the fade is gentler. */
+#about [data-framer-name="Text-Box"] { -webkit-mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.6) 100%) !important; mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.6) 100%) !important; }
+.mg-trust-avatars > span { box-shadow: 0 0 0 3px #0d1b62 !important; }
+.mg-svcx__head h2 { background: linear-gradient(180deg, #ffffff 0%, #e4e8ff 45%, #8e9cf0 100%) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+.mg-svcx__head h2 i { background: linear-gradient(180deg, #b9c3ff 0%, #7d8dff 100%) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+.mg-svcx__lead { color: rgba(232, 236, 255, 0.72) !important; }
+.mg-wheel__name { color: #e8ecff !important; }
+.mg-wheel__name.is-active { color: #ffffff !important; text-shadow: 0 0 30px rgba(120, 140, 255, 0.55); }
+.mg-wheel__side ol { color: rgba(232, 236, 255, 0.35) !important; }
+.mg-wheel__side li.is-active { color: #ffffff !important; }
+.mg-wheel__side em { color: rgba(232, 236, 255, 0.7) !important; }
+.mg-wheel__detail h4 { color: #ffffff !important; }
+.mg-wheel__detail h4 i { color: #a9b6ff !important; }
+.mg-wheel__detail p { color: rgba(232, 236, 255, 0.72) !important; }
+.mg-wheel__more { color: #a9b6ff !important; }
+.mg-wheel__name:focus-visible { outline-color: #a9b6ff !important; }
 
 /* Process section (after spector.framer.website): stacked headline and a looping 3D carousel of stage cards.
    Mounted by site-process.js. */
@@ -1159,7 +1202,7 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
 /* Drop the white card: logos sit on the page background like overtake-wbs.framer.website. */
 .framer-19b0sxl { background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }
 /* Rings separate overlapping avatars against the page grey, not white. */
-.mg-trust-avatars > span { box-shadow: 0 0 0 3px rgb(237, 236, 236); }
+.mg-trust-avatars > span { box-shadow: 0 0 0 3px #dce3ff; }
 
 .mg-trust-avatars {
   flex: none;
@@ -1338,6 +1381,61 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
 
 @media (max-width: 1024px) { .mg-svcx__grid { grid-template-columns: 1fr; } .mg-svcx__index { display: none; } }
 @media (max-width: 809.98px) { .mg-svcx { padding: 0 20px; } .mg-chapter__num { font-size: 64px; } .mg-feats { grid-template-columns: 1fr; } }
+
+/* Discipline wheel (after fromanother.love "They trust us"). The section pins for one screen while the names
+   roll round a wheel; site-svcindex.js sets each name's rotation (about a hub off to its left) and fade. */
+.mg-wheel { position: relative; height: calc((var(--n) - 1) * 42vh + 100vh); margin: clamp(24px, 4vh, 48px) 0; }
+.mg-wheel__stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.mg-wheel__side { position: absolute; left: 0; top: 50%; translate: 0 -50%; display: flex; align-items: center; gap: 14px; }
+.mg-wheel__side ol { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 11px; color: rgba(10, 18, 64, 0.3); font-variant-numeric: tabular-nums; }
+.mg-wheel__side li { transition: color 0.4s; }
+.mg-wheel__side li.is-active { color: #1422e3; font-weight: 700; }
+.mg-wheel__side em { font-style: italic; font-size: 14px; color: rgba(10, 18, 64, 0.6); }
+.mg-wheel__side em::before { content: ""; display: inline-block; width: 24px; height: 1px; margin-right: 10px; vertical-align: middle; background: currentColor; }
+.mg-wheel__names { position: absolute; left: 22%; top: 50%; width: 0; height: 0; }
+.mg-wheel__name {
+  position: absolute;
+  left: 0;
+  top: 0;
+  translate: 0 -50%;
+  white-space: nowrap;
+  font-size: clamp(32px, 4.1vw, 60px);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+  color: #0a1240;
+  text-decoration: none;
+  will-change: transform, opacity;
+}
+.mg-wheel__name.is-active { color: #1422e3; }
+.mg-wheel__name:focus-visible { outline: 2px solid #1422e3; outline-offset: 6px; border-radius: 8px; }
+.mg-wheel__details { position: absolute; right: 0; top: 50%; translate: 0 -50%; width: min(380px, 32%); }
+.mg-wheel__detail { position: absolute; left: 0; right: 0; top: 0; translate: 0 -50%; opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); pointer-events: none; }
+.mg-wheel__detail.is-active { opacity: 1; transform: none; pointer-events: auto; }
+.mg-wheel__tile {
+  display: grid; place-items: center; width: 64px; height: 52px; border-radius: 12px;
+  background: linear-gradient(150deg, #4b5cff, #020a70);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 12px 26px -10px rgba(20, 34, 227, 0.7);
+}
+.mg-wheel__tile svg { width: 26px; height: 26px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.mg-wheel__detail h4 { margin: 18px 0 10px; font-size: 26px; line-height: 1.15; letter-spacing: -0.03em; font-weight: 700; color: #0a1240; }
+.mg-wheel__detail h4 i { font-style: normal; color: #1422e3; }
+.mg-wheel__detail p { margin: 0 0 16px; font-size: 16px; line-height: 1.5; color: rgba(10, 18, 64, 0.65); }
+.mg-wheel__more { font-size: 15px; font-weight: 600; color: #1422e3; text-decoration: none; }
+.mg-wheel__more:hover { text-decoration: underline; }
+/* Phone: names in the upper part of the screen, the active discipline's summary below them. */
+@media (max-width: 809.98px) {
+  .mg-wheel__side { display: none; }
+  .mg-wheel__names { left: 6%; top: 36%; }
+  .mg-wheel__name { font-size: 30px; }
+  .mg-wheel__details { top: auto; bottom: 7%; left: 0; right: 0; width: auto; translate: none; height: 220px; }
+  .mg-wheel__detail { top: 0; translate: none; }
+  .mg-wheel__detail h4 { font-size: 21px; margin-top: 12px; }
+  .mg-wheel__detail p { font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mg-wheel__detail { transition: none; }
+}
 
 /* Performance section (ported from the reference file, light theme). Mounted by site-perf.js above Benefits. */
 .mg-perf {
@@ -2104,6 +2202,33 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
       ${feats}
     </article>`;
   }
+  // Discipline wheel (after fromanother.love "They trust us"): the section pins while the eight names roll
+  // round a large wheel. The centred one sits level and bright, and its icon, headline and summary show on
+  // the right. Clicking a name rolls the wheel to it; the summary links to that discipline's chapter.
+  const tileIcons = [
+    '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+    '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8"/>',
+    '<path d="M8 5.5v13l11-6.5z"/>',
+    '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+    '<path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18"/>',
+    '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/>',
+    '<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>',
+    '<path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10z"/>',
+  ];
+  function wheelHTML() {
+    return `<div class="mg-wheel" style="--n:${data.length}">
+      <div class="mg-wheel__stage">
+        <div class="mg-wheel__side"><ol>${data.map((d, i) => `<li>${i + 1}</li>`).join('')}</ol><em>Our disciplines</em></div>
+        <div class="mg-wheel__names">${data.map((d, i) => `<a class="mg-wheel__name" href="#" style="--k:${i}">${esc(d.tag)}</a>`).join('')}</div>
+        <div class="mg-wheel__details">${data.map((d, i) => `<div class="mg-wheel__detail">
+          <span class="mg-wheel__tile" aria-hidden="true"><svg viewBox="0 0 24 24">${tileIcons[i]}</svg></span>
+          <h4>${d.h}</h4>
+          <p>${esc(d.p)}</p>
+          <a class="mg-wheel__more" href="#">Explore ${esc(d.tag)} →</a>
+        </div>`).join('')}</div>
+      </div>
+    </div>`;
+  }
   function buildHTML() {
     const items = data.map(d => `<li><a><span>${d.n}</span>${esc(d.tag)}</a></li>`).join('');
     const chapters = data.map(chapterHTML).join('');
@@ -2115,6 +2240,7 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
         </div>
         <p class="mg-svcx__lead">Think of us as your in-house growth team, without the overhead. Eight disciplines working to one plan, led by performance, content and automation.</p>
       </div>
+      ${wheelHTML()}
       <div class="mg-svcx__grid">
         <aside class="mg-svcx__index">
           <ol><i class="mg-svcx__rail"></i>${items}</ol>
@@ -2135,6 +2261,7 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
     chapters.forEach((c, i) => { if (c.getBoundingClientRect().top < innerHeight * .5) idx = i; });
     links.forEach((a, i) => a.classList.toggle('is-active', i === idx));
     if (count) count.textContent = String(idx + 1).padStart(2, '0') + ' / 08';
+    wheelFrame();
     if (!reduce) chapters.forEach(c => {
       if (!c.classList.contains('is-in')) return;
       const b = c.getBoundingClientRect(), p = clamp(-b.top / b.height, 0, 1);
@@ -2143,6 +2270,34 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
     });
   }
   const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+
+  // Wheel position in steps (0 = first discipline centred), eased towards the scroll position each frame.
+  let wheelShown = 0;
+  function wheelTarget() {
+    const r = ctx.wheel.getBoundingClientRect(), span = r.height - innerHeight;
+    return span > 0 ? clamp(-r.top / span, 0, 1) * (data.length - 1) : 0;
+  }
+  function wheelFrame() {
+    const t = wheelTarget();
+    wheelShown = reduce ? t : wheelShown + (t - wheelShown) * 0.14;
+    if (Math.abs(t - wheelShown) < 0.001) wheelShown = t;
+    // The names are spokes of a wheel whose hub sits off to the left (as on fromanother.love): neighbours
+    // above swing up and to the left, those below swing down and to the left, away from the summary.
+    const radius = innerWidth < 810 ? 260 : Math.max(420, innerWidth * 0.34);
+    ctx.names.forEach((n, i) => {
+      const d = i - wheelShown, a = Math.abs(d);
+      n.style.transformOrigin = `${-radius}px 50%`;
+      n.style.transform = `rotate(${d * 12}deg)`;
+      // On phones the summary sits under the wheel, so names more than a step below the centre fade out.
+      const hidden = a > 4.5 || (innerWidth < 810 && d > 1.4);
+      n.style.opacity = hidden ? 0 : String(Math.max(0.12, 1 - a * (d < 0 ? 0.2 : 0.28)));
+      n.classList.toggle('is-active', a < 0.5);
+    });
+    const active = Math.round(wheelShown);
+    ctx.details.forEach((el, i) => el.classList.toggle('is-active', i === active));
+    ctx.sideNums.forEach((el, i) => el.classList.toggle('is-active', i === active));
+    if (wheelShown !== t) req();
+  }
 
   function mount() {
     const host = document.querySelector('.framer-7u2uc9');
@@ -2154,7 +2309,17 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
     host.appendChild(block);
     const chapters = [...block.querySelectorAll('.mg-chapter')];
     const links = [...block.querySelectorAll('.mg-svcx__index a')];
-    ctx = { wrap: block.querySelector('.mg-svcx__chapters'), rail: block.querySelector('.mg-svcx__rail'), links, chapters, count: block.querySelector('.mg-svcx__count') };
+    const wheel = block.querySelector('.mg-wheel');
+    const names = [...block.querySelectorAll('.mg-wheel__name')];
+    ctx = { wrap: block.querySelector('.mg-svcx__chapters'), rail: block.querySelector('.mg-svcx__rail'), links, chapters, count: block.querySelector('.mg-svcx__count'),
+      wheel, names, details: [...block.querySelectorAll('.mg-wheel__detail')], sideNums: [...block.querySelectorAll('.mg-wheel__side li')] };
+    // Clicking a name scrolls to the point where the wheel centres it.
+    names.forEach((n, i) => n.addEventListener('click', e => {
+      e.preventDefault();
+      const r = wheel.getBoundingClientRect(), span = r.height - innerHeight;
+      scrollTo({ top: scrollY + r.top + span * i / (data.length - 1), behavior: reduce ? 'auto' : 'smooth' });
+    }));
+    block.querySelectorAll('.mg-wheel__more').forEach((a, i) => a.addEventListener('click', e => { e.preventDefault(); chapters[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }));
     links.forEach((a, i) => a.addEventListener('click', e => { e.preventDefault(); chapters[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }));
     if (!io) io = new IntersectionObserver((es, o) => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); o.unobserve(e.target); } }), { threshold: .12, rootMargin: '0px 0px -8% 0px' });
     chapters.forEach(c => io.observe(c));
@@ -2326,6 +2491,55 @@ svg.framer-x8YHN .mg-pulse { animation-delay: 1.8s; }
   const start = () => {
     mount();
     new MutationObserver(rafOnce(() => { if (!sec || !sec.isConnected) mount(); })).observe(document.body, { childList: true, subtree: true });
+  };
+  if (document.readyState === 'complete') start();
+  else addEventListener('load', start, { once: true });
+})();
+
+// Page background: one long gradient down the page, deep navy at the top and lighter blue section by
+// section, each section with its own shade. Section heights differ by device and change while Framer
+// hydrates, so the colour stops are placed at each section's measured top and re-placed when the page resizes.
+(() => {
+  const rafOnce = f => { let t = 0; return () => { if (t) return; t = 1; requestAnimationFrame(() => { t = 0; f(); }); }; };
+  const stops = [
+    ['[data-framer-name="Hero"]', '#040a2c'],
+    ['.mg-svc-marquee-band', '#060e3a'],
+    ['#about', '#0a1650'],
+    ['.framer-19b0sxl', '#0d1b62'],
+    ['.mg-svcx', '#0f1f6e'],
+    ['.mg-svcx__grid', '#132585'],
+    ['#process', '#b4c2ff'],
+    ['#works', '#c6d0ff'],
+    ['.mg-perf', '#b9c6ff'],
+    ['[data-framer-name="Benefits"]', '#ccd5ff'],
+    ['.framer-gtsbnt', '#bfcbff'],
+    ['[data-framer-name="Tools"]', '#d3dbff'],
+    ['.mg-iwork', '#c5d0ff'],
+    ['.framer-1ynxxm3', '#d8dfff'],
+    ['[data-framer-name="FAQ"]', '#cbd5ff'],
+    ['#contact', '#dbe2ff'],
+  ];
+  const visible = sel => [...document.querySelectorAll(sel)].find(e => e.getBoundingClientRect().height > 0);
+  function paint() {
+    const H = document.documentElement.scrollHeight;
+    const parts = [];
+    let last = -1;
+    for (const [sel, colour] of stops) {
+      const el = visible(sel);
+      if (!el) continue;
+      const top = Math.round(el.getBoundingClientRect().top + scrollY);
+      if (top <= last) continue;
+      parts.push(`${colour} ${top}px`);
+      last = top;
+    }
+    parts.push(`#e4e9ff ${H}px`);
+    document.documentElement.style.backgroundImage = `linear-gradient(180deg, ${parts.join(', ')})`;
+  }
+  const schedule = rafOnce(paint);
+  const start = () => {
+    paint();
+    new ResizeObserver(schedule).observe(document.body);
+    addEventListener('resize', schedule);
   };
   if (document.readyState === 'complete') start();
   else addEventListener('load', start, { once: true });

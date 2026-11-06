@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MediaGroots</title>
+  <meta name="description" content="MediaGroots is a digital marketing and growth studio. We plant strategy, grow content and scale campaigns that turn attention into revenue.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Urbanist:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=110">
+</head>
+<body>
+  <!-- Ambient layers: drifting colour aura and film grain, tinted per section by app.js. -->
+  <div class="aura" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="light" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <header class="top">
+    <button class="top__menu" type="button" aria-expanded="false" aria-controls="menu"><span></span>Menu</button>
+    <a class="top__logo" href="#home" aria-label="MediaGroots home">
+      <svg viewBox="172 333 1589 806" aria-hidden="true"><path d="M172 333H291L966 750L1642 333H1761V553L966 1042L419 712V1139L172 1002Z"/><path d="M1065 1090L1322 931V1015H1624V816H1508L1706 694H1761V1139H1065Z"/></svg>
+      <span>media<em>groots</em></span>
+    </a>
+    <a class="top__chat" href="#contact">Let’s chat <span aria-hidden="true">→</span></a>
+  </header>
+
+  <nav class="menu" id="menu" aria-label="Main" hidden>
+    <ol>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#method">Method</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ol>
+  </nav>
+
+  <!-- Side index: which section is in view. -->
+  <div class="hero__scroll idle-scroll" aria-hidden="true">Scroll</div>
+  <!-- Badge: the MG marketing logo inside a ring of text. The ring turns with the page scroll (clockwise going down);
+       clicking the logo glides back to the top, so the ring winds back to where it started. -->
+  <a class="badge" href="#home" aria-label="MediaGroots marketing, back to top">
+    <svg class="badge__ring" viewBox="0 0 200 200" aria-hidden="true">
+      <defs><path id="badge-path" d="M100,100 m-84,0 a84,84 0 1,1 168,0 a84,84 0 1,1 -168,0"/></defs>
+      <text><textPath href="#badge-path" textLength="527" lengthAdjust="spacing">MEDIAGROOTS • DIGITAL MARKETING &amp; GROWTH STUDIO • </textPath></text>
+    </svg>
+    <img class="badge__logo" src="assets/mg-marketing-logo.png" alt="" width="1390" height="1020">
+  </a>
+  <aside class="index"><span class="index__bar" aria-hidden="true"><i></i></span><ol aria-hidden="true"></ol><a class="index__top" href="#home" aria-label="Back to top" tabindex="-1"><svg viewBox="0 0 12 16" aria-hidden="true"><path d="M6 15V2M1 7l5-5 5 5"/></svg><span>Top</span></a></aside>
+
+  <main>
+    <!-- 1. Hero -->
+    <section class="sec hero" id="home" data-label="Home" data-bg="#000B18" data-fg="light" data-aura="#0052A2,#000B18,#4d8fd6">
+      <h1 class="hero__title">
+        <span class="hero__line">We are a</span>
+        <span class="hero__line hero__line--in2">Results — led</span>
+        <span class="hero__line">Growth <span class="hero__pill" aria-hidden="true"><svg viewBox="172 333 1589 806"><path d="M172 333H291L966 750L1642 333H1761V553L966 1042L419 712V1139L172 1002Z"/><path d="M1065 1090L1322 931V1015H1624V816H1508L1706 694H1761V1139H1065Z"/></svg></span></span>
+        <span class="hero__line hero__line--in1"><span class="rotator" data-words="Studio|Partner|Engine">Studio</span></span>
+      </h1>
+      <div class="hero__meta">
+        <span>Thodupuzha · Kerala · IN</span>
+        <span class="hero__tag">Great brands grow from <i>deep groots</i></span>
+      </div>
+      <a class="hero__scroll" href="#manifesto">Scroll</a>
+    </section>
+
+    <!-- 2. Manifesto -->
+    <section class="sec manifesto" id="manifesto" data-label="About" data-bg="#00172D" data-fg="light" data-aura="#4d8fd6,#000B18,#0052A2">
+      <p class="manifesto__big" data-reveal>We plant strategy, grow content and scale campaigns that turn <i>attention</i> into revenue.</p>
+      <p class="manifesto__small" data-reveal>Performance marketing, AI video and automation, measured in customers, not likes. Think of us as your in-house growth team, without the overhead.</p>
+    </section>
+
+    <!-- 3. What we do: pinned list, the active discipline lit in the centre. -->
+    <section class="sec services" id="services" data-label="Services" data-bg="#00264D" data-fg="light" data-aura="#4d8fd6,#000B18,#7fb2ea">
+      <div class="services__pin">
+        <div class="services__groups">
+          <div class="services__group"><b>01</b><span>Growth</span></div>
+          <div class="services__group"><b>02</b><span>Content</span></div>
+          <div class="services__group"><b>03</b><span>Systems</span></div>
+        </div>
+        <ol class="services__list">
+          <li data-group="0">Performance Marketing</li>
+          <li data-group="0">Social Media</li>
+          <li data-group="0">SEO &amp; AEO</li>
+          <li data-group="0">Conversion Copy</li>
+          <li data-group="1">AI Video Studio</li>
+          <li data-group="1">Brand Identity</li>
+          <li data-group="2">Web Design &amp; Build</li>
+          <li data-group="2">Business Automation</li>
+        </ol>
+        <p class="services__note">Eight disciplines. One plan. One team.</p>
+      </div>
+    </section>
+
+    <!-- 4. Featured work: pinned, one project at a time, then the MG mark scene. -->
+    <section class="sec work" id="work" data-label="Work" data-bg="#02386E" data-fg="light" data-aura="#4d8fd6,#000B18,#9cc4ef">
+      <div class="work__pin">
+        <div class="work__titles">
+          <h3>Support Copilot<br>for SaaS</h3>
+          <h3>Underwriting<br>Risk Copilot</h3>
+          <h3>Clinical Note<br>Summarizer</h3>
+          <h3>Catalog Intelligence<br>Engine</h3>
+        </div>
+        <div class="work__media">
+          <img src="assets/work-support-copilot.svg" alt="Support Copilot for SaaS">
+          <img src="assets/work-underwriting.svg" alt="Underwriting Risk Copilot" loading="lazy">
+          <img src="assets/work-clinical.jpg" alt="Clinical Note Summarizer" loading="lazy">
+          <img src="assets/work-catalog.jpg" alt="Catalog Intelligence Engine" loading="lazy">
+        </div>
+        <div class="work__tags">
+          <ul><li>AI strategy</li><li>AI UX flows</li><li>LLM agent</li><li>RAG</li><li class="work__result">−38% first-response time</li></ul>
+          <ul><li>Use-case mapping</li><li>Prompt &amp; UI patterns</li><li>Fintech</li><li class="work__result">−42% manual review time</li></ul>
+          <ul><li>AI strategy</li><li>AI UX flows</li><li>Healthcare</li><li class="work__result">−28% front-desk calls</li></ul>
+          <ul><li>Data cleaning</li><li>Embeddings</li><li>Ecommerce</li><li class="work__result">+12% add-to-cart</li></ul>
+        </div>
+        <ol class="work__thumbs" aria-hidden="true">
+          <li><img src="assets/work-support-copilot.svg" alt=""></li>
+          <li><img src="assets/work-underwriting.svg" alt="" loading="lazy"></li>
+          <li><img src="assets/work-clinical.jpg" alt="" loading="lazy"></li>
+          <li><img src="assets/work-catalog.jpg" alt="" loading="lazy"></li>
+        </ol>
+        <!-- After the last project: the MG mark sweeps up and the screen turns pale. -->
+        <div class="work__brand">
+          <div class="wb-pale" aria-hidden="true"></div>
+          <p class="wb-say2">And grow<br>from deep<br>groots.</p>
+          <div class="wb-wipe" aria-hidden="true"><svg viewBox="172 333 1589 806"><path d="M172 333H291L966 750L1642 333H1761V553L966 1042L419 712V1139L172 1002Z"/><path d="M1065 1090L1322 931V1015H1624V816H1508L1706 694H1761V1139H1065Z"/></svg></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Method (after fromanother.love "Our team"): the screen pins; the heading comes first, then each stage
+         brings in a big number, two drifting panels and its text. -->
+    <section class="sec method" id="method" data-label="Method" data-bg="#00172D" data-fg="light" data-aura="#00264D,#02386E,#0052A2" style="--n:5">
+      <div class="method__pin">
+        <h2 class="method__title">Driven by<br><i>deep groots</i></h2>
+        <div class="method__frames" aria-hidden="true">
+          <figure class="frame frame--main frame--root" data-i="0"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M12 10v11M12 14l-5 5M12 14l5 5M12 18l-3 3M12 18l3 3"/></svg><figcaption><i>Root</i></figcaption></figure>
+          <figure class="frame frame--echo frame--root" data-i="0"><svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="3"/><path d="M12 10v11M12 14l-5 5M12 14l5 5M12 18l-3 3M12 18l3 3"/></svg></figure>
+          <figure class="frame frame--main frame--grow" data-i="1"><svg viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 13c-4 0-6-3-6-7 4 0 6 3 6 7zM12 11c0-4 2-7 6-7 0 4-2 7-6 7z"/></svg><figcaption><i>Grow</i></figcaption></figure>
+          <figure class="frame frame--echo frame--grow" data-i="1"><svg viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 13c-4 0-6-3-6-7 4 0 6 3 6 7zM12 11c0-4 2-7 6-7 0 4-2 7-6 7z"/></svg></figure>
+          <figure class="frame frame--main frame--validate" data-i="2"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg><figcaption><i>Validate</i></figcaption></figure>
+          <figure class="frame frame--echo frame--validate" data-i="2"><svg viewBox="0 0 24 24"><path d="M5 12.5l4.2 4.2L19 7"/></svg></figure>
+          <figure class="frame frame--main frame--launch" data-i="3"><svg viewBox="0 0 24 24"><path d="M12 3c3 2 5 5.5 5 9.5L15 16H9l-2-3.5C7 8.5 9 5 12 3z"/><path d="M9 16l-2 4 3-1M15 16l2 4-3-1"/></svg><figcaption><i>Launch</i></figcaption></figure>
+          <figure class="frame frame--echo frame--launch" data-i="3"><svg viewBox="0 0 24 24"><path d="M12 3c3 2 5 5.5 5 9.5L15 16H9l-2-3.5C7 8.5 9 5 12 3z"/><path d="M9 16l-2 4 3-1M15 16l2 4-3-1"/></svg></figure>
+          <figure class="frame frame--main frame--bloom" data-i="4"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><path d="M12 9.5C12 6 10 4 12 2c2 2 0 4 0 7.5zM14.5 12c3.5 0 5.5-2 7.5 0-2 2-4 0-7.5 0zM12 14.5c0 3.5 2 5.5 0 7.5-2-2 0-4 0-7.5zM9.5 12C6 12 4 14 2 12c2-2 4 0 7.5 0z"/></svg><figcaption><i>Bloom</i></figcaption></figure>
+          <figure class="frame frame--echo frame--bloom" data-i="4"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><path d="M12 9.5C12 6 10 4 12 2c2 2 0 4 0 7.5zM14.5 12c3.5 0 5.5-2 7.5 0-2 2-4 0-7.5 0zM12 14.5c0 3.5 2 5.5 0 7.5-2-2 0-4 0-7.5zM9.5 12C6 12 4 14 2 12c2-2 4 0 7.5 0z"/></svg></figure>
+        </div>
+        <div class="method__texts">
+          <article class="method__text" data-i="0"><h3>Root</h3><small>3–7 days</small><p>Align on problems, data reality and success metrics. Opportunity brief, KPI model, phased roadmap, effort and cost ranges.</p></article>
+          <article class="method__text" data-i="1"><h3>Grow</h3><small>1–2 weeks</small><p>We build the growth engine: funnels, campaigns, AI content and smart automations that tie it together.</p></article>
+          <article class="method__text" data-i="2"><h3>Validate</h3><small>1 week</small><p>Prove accuracy, usability, safety and cost. Eval dashboard, acceptance thresholds, a clear decision to iterate or ship.</p></article>
+          <article class="method__text" data-i="3"><h3>Launch</h3><small>1 week</small><p>Go live with eyes on every number. Go-live checklist and QA, tracking and dashboards switched on, team handover.</p></article>
+          <article class="method__text" data-i="4"><h3>Bloom</h3><small>Ongoing</small><p>Scale what works, cut what does not. Weekly optimisation sprints, monthly performance reviews, new channels as results compound.</p></article>
+        </div>
+        <div class="method__num" aria-hidden="true"><div class="method__num-roll"><span>01</span><span>02</span><span>03</span><span>04</span><span>05</span></div></div>
+      </div>
+    </section>
+
+    <!-- 6. Clients: names roll round a wheel; the centred client's logo shows on the right. -->
+    <section class="sec clients" id="clients" data-label="Clients" data-bg="#00264D" data-fg="light" data-aura="#0052A2,#000B18,#4d8fd6">
+      <div class="clients__pin">
+        <!-- Client names, in the same order as the logos below. app.js lays them out on one to three orbits (and,
+             on phones, a sliding strip for any that do not fit), so adding a client is one name + one logo. -->
+        <div class="clients__list">
+          <a href="#clients">Aroma Prime</a>
+          <a href="#clients">Padathil Stays</a>
+          <a href="#clients">Pure Gold</a>
+          <a href="#clients">Tripips Academy</a>
+          <a href="#clients">Conztek Academy</a>
+          <a href="#clients">Oyster Gypsum</a>
+        </div>
+        <div class="clients__orbits"></div>
+        <div class="clients__strip"><div class="clients__track"></div></div>
+        <div class="clients__logos" aria-hidden="true">
+          <div class="spot"><i class="spot__beam"></i><i class="spot__core"></i><i class="spot__dust"></i><i class="spot__lamp"></i><svg class="spot__fixture" viewBox="0 0 64 64" aria-hidden="true"><path class="spot__mount" d="M18 6h28M22 6v10M42 6v10"/><circle class="spot__pivot" cx="22" cy="18" r="2.5"/><circle class="spot__pivot" cx="42" cy="18" r="2.5"/><path class="spot__can" d="M20 16h24l4 30H16z"/><path class="spot__fin" d="M24 22h16M23 28h18M22 34h20"/><ellipse class="spot__lens" cx="32" cy="47" rx="17" ry="4.5"/></svg></div>
+          <img src="assets/client-aroma-prime.png" alt="">
+          <img src="assets/client-padathil-stays.png" alt="" loading="lazy">
+          <img src="assets/client-pure-gold.png" alt="" loading="lazy">
+          <img src="assets/client-tripips.png" alt="" loading="lazy">
+          <img src="assets/client-conztek.png" alt="" loading="lazy">
+          <img src="assets/client-oyster.png" alt="" loading="lazy">
+        </div>
+        <p class="clients__note">Trusted by 100+ brands, from family businesses to fast-growing academies. We grow them like our own.</p>
+      </div>
+    </section>
+
+    <!-- 7. What we build (after agencefoudre.com "Nous les rendons sociaux"): a pinned sequence in four scenes.
+         1 a condensed headline beside a picture with stickers; 2 a navy panel grows out of the picture to fill the
+         screen and a statement rises line by line; 3 a giant MG mark sweeps up through the screen and wipes it to
+         pale blue, with "And grow from deep groots."; 4 the five systems: headline, a stack of pictures and a list
+         with tags, the active system following the scroll. app.js drives every scene from the section's progress. -->
+    <section class="sec build" id="build" data-label="What we build" data-bg="#00498D" data-fg="light" data-aura="#7fb2ea,#000B18,#4d8fd6">
+      <div class="wb-pin">
+        <div class="wb-s1">
+          <h2 class="wb-big">We make<br>brands<br>grow</h2>
+          <div class="wb-faces" aria-hidden="true"><i></i><i></i><i></i><i></i><b>+100</b></div>
+          <figure class="wb-photo"><img src="assets/work-catalog.jpg" alt=""><span class="wb-sticker wb-sticker--a">📈 +38%</span><span class="wb-sticker wb-sticker--b">🌱 rooted</span></figure>
+        </div>
+        <div class="wb-panel" aria-hidden="true"></div>
+        <div class="wb-zoom" aria-hidden="true"></div>
+        <p class="wb-say"><span>It’s the impact</span><span>of honest strategy.</span><span>It’s aiming true.</span></p>
+        <div class="wb-s4">
+          <div class="wb-s4__head"><h2 class="wb-big wb-big--ink">Think<br>better,<br><em>build</em><br>better.</h2><p>MediaGroots is a growth studio built on five systems we put to work for every client.</p></div>
+          <div class="wb-stack" aria-hidden="true"><img src="assets/wb-ads.jpg" alt="" loading="lazy"><img src="assets/wb-film.jpg" alt="" loading="lazy"><img src="assets/wb-automation.jpg" alt="" loading="lazy"><img src="assets/wb-brand.jpg" alt="" loading="lazy"><img src="assets/wb-dashboard.jpg" alt="" loading="lazy"></div>
+          <ol class="wb-list">
+              <li class="wb-item"><h4>Full-funnel ad systems</h4><div class="wb-tags"><span>Meta &amp; Google Ads</span><span>Creative testing</span><span>Retargeting</span><span>CPA tracking</span></div></li>
+              <li class="wb-item"><h4>AI films &amp; reel engines</h4><div class="wb-tags"><span>Ad films</span><span>Weekly reels</span><span>Scripts</span><span>Edits</span></div></li>
+              <li class="wb-item"><h4>Lead machines that never sleep</h4><div class="wb-tags"><span>WhatsApp flows</span><span>CRM</span><span>Auto follow-up</span><span>AI agents</span></div></li>
+              <li class="wb-item"><h4>Brands built as systems</h4><div class="wb-tags"><span>Identity</span><span>Website</span><span>Guidelines</span><span>Collateral</span></div></li>
+              <li class="wb-item"><h4>Live KPI dashboards</h4><div class="wb-tags"><span>Revenue</span><span>CPA &amp; ROAS</span><span>Monthly reports</span><span>Attribution</span></div></li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. What we measure: big list; hovering a row blurs the rest. -->
+    <section class="sec measure" id="measure" data-label="Results" data-bg="#02386E" data-fg="light" data-aura="#0052A2,#000B18,#4d8fd6">
+      <div class="measure__side" data-reveal><small>Likes don’t pay salaries</small><em>We measure</em></div>
+      <ol class="measure__list">
+        <li data-reveal><span class="measure__tile measure__tile--1"></span><span>Revenue</span></li>
+        <li data-reveal><span class="measure__tile measure__tile--2"></span><span>Cost per acquisition</span></li>
+        <li data-reveal><span class="measure__tile measure__tile--3"></span><span>Return on ad spend</span></li>
+        <li data-reveal><span class="measure__tile measure__tile--4"></span><span>Qualified leads</span></li>
+      </ol>
+    </section>
+
+    <!-- 9. FAQ -->
+    <section class="sec faq" id="faq" data-label="FAQ" data-bg="#00264D" data-fg="light" data-aura="#4d8fd6,#000B18,#0052A2">
+      <h2 class="faq__title" data-reveal>Questions, <i>answered</i></h2>
+      <div class="faq__list">
+        <details data-reveal><summary>What’s the typical timeline from idea to v1?</summary><p>Typically 3–8 weeks depending on scope and complexity. We move from discovery to deployment with regular check-ins.</p></details>
+        <details data-reveal><summary>What do we need to start?</summary><p>A clear problem statement, success metrics, access to sample data, and a stakeholder who can make decisions. We’ll run a kickoff workshop to align scope.</p></details>
+        <details data-reveal><summary>Which models and stack do you use?</summary><p>Modern, scalable stacks like React, Node.js and cloud services. We choose models and APIs based on the use case, performance and cost.</p></details>
+        <details data-reveal><summary>Are model and API costs included in pricing?</summary><p>Model and API costs are usually billed separately based on usage. We share estimates upfront and help optimise costs.</p></details>
+      </div>
+    </section>
+
+    <!-- 10. Contact -->
+    <section class="sec contact" id="contact" data-label="Contact" data-bg="#000B18" data-fg="light" data-aura="#0052A2,#000B18,#4d8fd6">
+      <h2 class="contact__title">
+        <span>Let’s</span>
+        <span>grow</span>
+        <span class="rotator rotator--serif" data-words="brands|revenue|roots|futures">brands</span>
+        <span>together</span>
+      </h2>
+      <div class="contact__info">
+        <div class="office"><span class="office__icon" aria-hidden="true"></span><b>India</b><p>Thodupuzha, Kerala</p></div>
+        <div class="office"><span class="office__icon" aria-hidden="true"></span><b>Email</b><p><a href="mailto:hello@youraiagency.com">hello@youraiagency.com</a></p></div>
+        <div class="office"><span class="office__icon" aria-hidden="true"></span><b>Phone</b><p><a href="tel:+16475550172">+1 (647) 555 0172</a></p></div>
+      </div>
+      <div class="contact__foot">
+        <div><small>Start a project</small><a class="contact__mail" href="mailto:hello@youraiagency.com">hello@youraiagency.com</a></div>
+        <ul class="contact__social"><li><a href="#">Instagram</a></li><li><a href="#">LinkedIn</a></li><li><a href="#">Facebook</a></li><li><a href="#">X</a></li></ul>
+        <p class="contact__copy">© 2026 MediaGroots. All rights reserved.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="water.js?v=110" defer></script>
+  <script src="app.js?v=110" defer></script>
+</body>
+</html>

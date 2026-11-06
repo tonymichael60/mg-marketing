@@ -78,3 +78,58 @@
 
 @media (max-width: 1024px) { .mg-svcx__grid { grid-template-columns: 1fr; } .mg-svcx__index { display: none; } }
 @media (max-width: 809.98px) { .mg-svcx { padding: 0 20px; } .mg-chapter__num { font-size: 64px; } .mg-feats { grid-template-columns: 1fr; } }
+
+/* Discipline wheel (after fromanother.love "They trust us"). The section pins for one screen while the names
+   roll round a wheel; site-svcindex.js sets each name's rotation (about a hub off to its left) and fade. */
+.mg-wheel { position: relative; height: calc((var(--n) - 1) * 42vh + 100vh); margin: clamp(24px, 4vh, 48px) 0; }
+.mg-wheel__stage { position: sticky; top: 0; height: 100vh; overflow: hidden; }
+.mg-wheel__side { position: absolute; left: 0; top: 50%; translate: 0 -50%; display: flex; align-items: center; gap: 14px; }
+.mg-wheel__side ol { display: grid; gap: 6px; margin: 0; padding: 0; list-style: none; font-size: 11px; color: rgba(10, 18, 64, 0.3); font-variant-numeric: tabular-nums; }
+.mg-wheel__side li { transition: color 0.4s; }
+.mg-wheel__side li.is-active { color: #1422e3; font-weight: 700; }
+.mg-wheel__side em { font-style: italic; font-size: 14px; color: rgba(10, 18, 64, 0.6); }
+.mg-wheel__side em::before { content: ""; display: inline-block; width: 24px; height: 1px; margin-right: 10px; vertical-align: middle; background: currentColor; }
+.mg-wheel__names { position: absolute; left: 22%; top: 50%; width: 0; height: 0; }
+.mg-wheel__name {
+  position: absolute;
+  left: 0;
+  top: 0;
+  translate: 0 -50%;
+  white-space: nowrap;
+  font-size: clamp(32px, 4.1vw, 60px);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  font-weight: 700;
+  color: #0a1240;
+  text-decoration: none;
+  will-change: transform, opacity;
+}
+.mg-wheel__name.is-active { color: #1422e3; }
+.mg-wheel__name:focus-visible { outline: 2px solid #1422e3; outline-offset: 6px; border-radius: 8px; }
+.mg-wheel__details { position: absolute; right: 0; top: 50%; translate: 0 -50%; width: min(380px, 32%); }
+.mg-wheel__detail { position: absolute; left: 0; right: 0; top: 0; translate: 0 -50%; opacity: 0; transform: translateY(14px); transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1); pointer-events: none; }
+.mg-wheel__detail.is-active { opacity: 1; transform: none; pointer-events: auto; }
+.mg-wheel__tile {
+  display: grid; place-items: center; width: 64px; height: 52px; border-radius: 12px;
+  background: linear-gradient(150deg, #4b5cff, #020a70);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 12px 26px -10px rgba(20, 34, 227, 0.7);
+}
+.mg-wheel__tile svg { width: 26px; height: 26px; fill: none; stroke: #fff; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.mg-wheel__detail h4 { margin: 18px 0 10px; font-size: 26px; line-height: 1.15; letter-spacing: -0.03em; font-weight: 700; color: #0a1240; }
+.mg-wheel__detail h4 i { font-style: normal; color: #1422e3; }
+.mg-wheel__detail p { margin: 0 0 16px; font-size: 16px; line-height: 1.5; color: rgba(10, 18, 64, 0.65); }
+.mg-wheel__more { font-size: 15px; font-weight: 600; color: #1422e3; text-decoration: none; }
+.mg-wheel__more:hover { text-decoration: underline; }
+/* Phone: names in the upper part of the screen, the active discipline's summary below them. */
+@media (max-width: 809.98px) {
+  .mg-wheel__side { display: none; }
+  .mg-wheel__names { left: 6%; top: 36%; }
+  .mg-wheel__name { font-size: 30px; }
+  .mg-wheel__details { top: auto; bottom: 7%; left: 0; right: 0; width: auto; translate: none; height: 220px; }
+  .mg-wheel__detail { top: 0; translate: none; }
+  .mg-wheel__detail h4 { font-size: 21px; margin-top: 12px; }
+  .mg-wheel__detail p { font-size: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mg-wheel__detail { transition: none; }
+}

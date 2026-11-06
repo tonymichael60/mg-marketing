@@ -28,6 +28,33 @@
       ${feats}
     </article>`;
   }
+  // Discipline wheel (after fromanother.love "They trust us"): the section pins while the eight names roll
+  // round a large wheel. The centred one sits level and bright, and its icon, headline and summary show on
+  // the right. Clicking a name rolls the wheel to it; the summary links to that discipline's chapter.
+  const tileIcons = [
+    '<path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>',
+    '<path d="M4 5h16v11H9l-5 4z"/><path d="M8 10h8"/>',
+    '<path d="M8 5.5v13l11-6.5z"/>',
+    '<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>',
+    '<path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18"/>',
+    '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/>',
+    '<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>',
+    '<path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10z"/>',
+  ];
+  function wheelHTML() {
+    return `<div class="mg-wheel" style="--n:${data.length}">
+      <div class="mg-wheel__stage">
+        <div class="mg-wheel__side"><ol>${data.map((d, i) => `<li>${i + 1}</li>`).join('')}</ol><em>Our disciplines</em></div>
+        <div class="mg-wheel__names">${data.map((d, i) => `<a class="mg-wheel__name" href="#" style="--k:${i}">${esc(d.tag)}</a>`).join('')}</div>
+        <div class="mg-wheel__details">${data.map((d, i) => `<div class="mg-wheel__detail">
+          <span class="mg-wheel__tile" aria-hidden="true"><svg viewBox="0 0 24 24">${tileIcons[i]}</svg></span>
+          <h4>${d.h}</h4>
+          <p>${esc(d.p)}</p>
+          <a class="mg-wheel__more" href="#">Explore ${esc(d.tag)} →</a>
+        </div>`).join('')}</div>
+      </div>
+    </div>`;
+  }
   function buildHTML() {
     const items = data.map(d => `<li><a><span>${d.n}</span>${esc(d.tag)}</a></li>`).join('');
     const chapters = data.map(chapterHTML).join('');
@@ -39,6 +66,7 @@
         </div>
         <p class="mg-svcx__lead">Think of us as your in-house growth team, without the overhead. Eight disciplines working to one plan, led by performance, content and automation.</p>
       </div>
+      ${wheelHTML()}
       <div class="mg-svcx__grid">
         <aside class="mg-svcx__index">
           <ol><i class="mg-svcx__rail"></i>${items}</ol>
@@ -59,6 +87,7 @@
     chapters.forEach((c, i) => { if (c.getBoundingClientRect().top < innerHeight * .5) idx = i; });
     links.forEach((a, i) => a.classList.toggle('is-active', i === idx));
     if (count) count.textContent = String(idx + 1).padStart(2, '0') + ' / 08';
+    wheelFrame();
     if (!reduce) chapters.forEach(c => {
       if (!c.classList.contains('is-in')) return;
       const b = c.getBoundingClientRect(), p = clamp(-b.top / b.height, 0, 1);
@@ -67,6 +96,34 @@
     });
   }
   const req = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+
+  // Wheel position in steps (0 = first discipline centred), eased towards the scroll position each frame.
+  let wheelShown = 0;
+  function wheelTarget() {
+    const r = ctx.wheel.getBoundingClientRect(), span = r.height - innerHeight;
+    return span > 0 ? clamp(-r.top / span, 0, 1) * (data.length - 1) : 0;
+  }
+  function wheelFrame() {
+    const t = wheelTarget();
+    wheelShown = reduce ? t : wheelShown + (t - wheelShown) * 0.14;
+    if (Math.abs(t - wheelShown) < 0.001) wheelShown = t;
+    // The names are spokes of a wheel whose hub sits off to the left (as on fromanother.love): neighbours
+    // above swing up and to the left, those below swing down and to the left, away from the summary.
+    const radius = innerWidth < 810 ? 260 : Math.max(420, innerWidth * 0.34);
+    ctx.names.forEach((n, i) => {
+      const d = i - wheelShown, a = Math.abs(d);
+      n.style.transformOrigin = `${-radius}px 50%`;
+      n.style.transform = `rotate(${d * 12}deg)`;
+      // On phones the summary sits under the wheel, so names more than a step below the centre fade out.
+      const hidden = a > 4.5 || (innerWidth < 810 && d > 1.4);
+      n.style.opacity = hidden ? 0 : String(Math.max(0.12, 1 - a * (d < 0 ? 0.2 : 0.28)));
+      n.classList.toggle('is-active', a < 0.5);
+    });
+    const active = Math.round(wheelShown);
+    ctx.details.forEach((el, i) => el.classList.toggle('is-active', i === active));
+    ctx.sideNums.forEach((el, i) => el.classList.toggle('is-active', i === active));
+    if (wheelShown !== t) req();
+  }
 
   function mount() {
     const host = document.querySelector('.framer-7u2uc9');
@@ -78,7 +135,17 @@
     host.appendChild(block);
     const chapters = [...block.querySelectorAll('.mg-chapter')];
     const links = [...block.querySelectorAll('.mg-svcx__index a')];
-    ctx = { wrap: block.querySelector('.mg-svcx__chapters'), rail: block.querySelector('.mg-svcx__rail'), links, chapters, count: block.querySelector('.mg-svcx__count') };
+    const wheel = block.querySelector('.mg-wheel');
+    const names = [...block.querySelectorAll('.mg-wheel__name')];
+    ctx = { wrap: block.querySelector('.mg-svcx__chapters'), rail: block.querySelector('.mg-svcx__rail'), links, chapters, count: block.querySelector('.mg-svcx__count'),
+      wheel, names, details: [...block.querySelectorAll('.mg-wheel__detail')], sideNums: [...block.querySelectorAll('.mg-wheel__side li')] };
+    // Clicking a name scrolls to the point where the wheel centres it.
+    names.forEach((n, i) => n.addEventListener('click', e => {
+      e.preventDefault();
+      const r = wheel.getBoundingClientRect(), span = r.height - innerHeight;
+      scrollTo({ top: scrollY + r.top + span * i / (data.length - 1), behavior: reduce ? 'auto' : 'smooth' });
+    }));
+    block.querySelectorAll('.mg-wheel__more').forEach((a, i) => a.addEventListener('click', e => { e.preventDefault(); chapters[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }));
     links.forEach((a, i) => a.addEventListener('click', e => { e.preventDefault(); chapters[i].scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' }); }));
     if (!io) io = new IntersectionObserver((es, o) => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('is-in'); o.unobserve(e.target); } }), { threshold: .12, rootMargin: '0px 0px -8% 0px' });
     chapters.forEach(c => io.observe(c));

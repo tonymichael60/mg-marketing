@@ -6,7 +6,7 @@
 /* Drop the white card: logos sit on the page background like overtake-wbs.framer.website. */
 .framer-19b0sxl { background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }
 /* Rings separate overlapping avatars against the page grey, not white. */
-.mg-trust-avatars > span { box-shadow: 0 0 0 3px rgb(237, 236, 236); }
+.mg-trust-avatars > span { box-shadow: 0 0 0 3px #dce3ff; }
 
 .mg-trust-avatars {
   flex: none;

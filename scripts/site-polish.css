@@ -267,7 +267,7 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #1422e3 !important; }
 .framer-1aue9ps { margin-top: clamp(96px, 13vh, 170px) !important; }
 /* Features: white panel with a soft navy halo behind the central logo. */
 .framer-gtsbnt {
-  background: radial-gradient(45% 40% at 50% 55%, rgba(20, 34, 227, 0.12) 0%, rgba(20, 34, 227, 0.04) 50%, transparent 75%), linear-gradient(180deg, #fff 0%, #f2f4ff 60%, #edecec 100%) !important;
+  background: radial-gradient(45% 40% at 50% 55%, rgba(20, 34, 227, 0.12) 0%, rgba(20, 34, 227, 0.04) 50%, transparent 75%), linear-gradient(180deg, #fff 0%, #f2f4ff 60%, #e3e8ff 100%) !important;
 }
 /* Tools: a soft white glow with a pale-navy ring that fades into the page grey, so it has no hard edges. */
 .framer-1vb41im {
@@ -412,3 +412,46 @@ body { --token-d52e5dda-bf93-4e3b-9f9c-1648f76a7a7a: #0b0b0c !important; }
   .mgv-play, .mgv-head, .mgv-track::after, .framer-570b9w .framer-zli2me { animation: none !important; }
   .mgv-track::after { display: none; }
 }
+
+/* Page background (after fromanother.love, where colour fills every section): site-bg.js paints one long
+   gradient on <html>, deep navy at the top and lighter blue section by section. The body and the grey page
+   root/FAQ container are made transparent so it shows through; #dce3ff is the fallback before the script
+   runs. A fixed layer adds soft drifting glows on top. Framer's page-colour token (used by the hero's
+   "Scroll for more" tab) is set to the navy around the hero so the tab still blends in. */
+html { background-color: #dce3ff; }
+:root, body { --token-10319844-22a0-4484-88cd-68e9879c6c2e: #060e3a !important; }
+body { background: transparent !important; }
+.framer-qZQ5t, .framer-1ntlu9c { background-color: transparent !important; }
+body::before { content: ""; position: fixed; inset: -10%; z-index: -1; pointer-events: none;
+  background:
+    radial-gradient(34% 46% at 0% 22%, rgba(96, 118, 255, 0.34) 0%, rgba(96, 118, 255, 0) 70%),
+    radial-gradient(36% 48% at 100% 78%, rgba(60, 80, 235, 0.3) 0%, rgba(60, 80, 235, 0) 70%),
+    radial-gradient(30% 30% at 92% 8%, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 70%);
+}
+@media (prefers-reduced-motion: no-preference) and (min-width: 810px) {
+  body::before { animation: mg-ambient 38s ease-in-out infinite alternate; }
+  @keyframes mg-ambient { to { translate: 3% -4%; } }
+}
+
+/* Text that sits straight on the navy top of the page (services strip, About heading, trust bar, Services
+   heading and wheel) is switched to light colours; text inside cards keeps its own colours. */
+.mg-svc-marquee__track span { color: rgba(232, 236, 255, 0.78) !important; }
+#about [data-framer-name="Text-Box"] .framer-text { --framer-text-color: #eef1ff !important; color: #eef1ff !important; }
+.framer-19b0sxl .framer-text { --framer-text-color: rgba(232, 236, 255, 0.8) !important; color: rgba(232, 236, 255, 0.8) !important; }
+.framer-19b0sxl .framer-662aja .framer-e4sd2r > div img { filter: brightness(0) invert(1) !important; opacity: 0.72 !important; }
+/* The About heading's text box fades its second line out; on navy that hid it, so the fade is gentler. */
+#about [data-framer-name="Text-Box"] { -webkit-mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.6) 100%) !important; mask-image: linear-gradient(#000 0%, rgba(0, 0, 0, 0.6) 100%) !important; }
+.mg-trust-avatars > span { box-shadow: 0 0 0 3px #0d1b62 !important; }
+.mg-svcx__head h2 { background: linear-gradient(180deg, #ffffff 0%, #e4e8ff 45%, #8e9cf0 100%) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+.mg-svcx__head h2 i { background: linear-gradient(180deg, #b9c3ff 0%, #7d8dff 100%) !important; -webkit-background-clip: text !important; background-clip: text !important; }
+.mg-svcx__lead { color: rgba(232, 236, 255, 0.72) !important; }
+.mg-wheel__name { color: #e8ecff !important; }
+.mg-wheel__name.is-active { color: #ffffff !important; text-shadow: 0 0 30px rgba(120, 140, 255, 0.55); }
+.mg-wheel__side ol { color: rgba(232, 236, 255, 0.35) !important; }
+.mg-wheel__side li.is-active { color: #ffffff !important; }
+.mg-wheel__side em { color: rgba(232, 236, 255, 0.7) !important; }
+.mg-wheel__detail h4 { color: #ffffff !important; }
+.mg-wheel__detail h4 i { color: #a9b6ff !important; }
+.mg-wheel__detail p { color: rgba(232, 236, 255, 0.72) !important; }
+.mg-wheel__more { color: #a9b6ff !important; }
+.mg-wheel__name:focus-visible { outline-color: #a9b6ff !important; }
