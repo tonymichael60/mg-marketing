@@ -4,9 +4,10 @@
   "private": true,
   "description": "Faithful capture of the supplied MediaGroots Framer website",
   "scripts": {
-    "build": "node scripts/apply-customizations.mjs",
+    "build": "echo \"dist/ holds the new MediaGroots site (copied from new-site/); nothing to build\"",
     "dev": "node scripts/serve.mjs",
     "start": "node scripts/serve.mjs",
-    "check": "node scripts/check.mjs"
+    "check": "node scripts/check.mjs",
+    "build:framer": "node scripts/apply-customizations.mjs"
   }
 }
